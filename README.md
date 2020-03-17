@@ -41,7 +41,7 @@ Note(
 ```
 
 This Note would be a A5, played on Beat 1 of a given Bar, for a duration of 1 beat (i.e. a quarter note / crotchet)
-
+Note: beats are 0-indexed, so beat 1 is actually the second beat in the bar
 
 - Bar
 

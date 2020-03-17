@@ -126,8 +126,8 @@ def GenerateExample3():
     bars = [deepcopy(bar) for i in range(6)]
 
     mainScale = Scale("C#", "Minor")
-    neighbourScales = cof.GetAllowedScales(mainScale)
-    allowedScales = [mainScale] + neighbourScales
+    # Get scales neighbouring the mainScale
+    allowedScales = cof.GetAllowedScales(mainScale)
 
     for b in bars:
         currScale = choice(allowedScales)

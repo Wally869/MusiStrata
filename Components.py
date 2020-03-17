@@ -27,11 +27,13 @@ class Bar:
 
 @dataclass
 class Track:
-    Name: str = ""
+    Name: str = "Untitled"
     Instrument: str = ""
     Bars: list = field(default_factory=list)
     Velocity: int = 80
 
+    def __str__(self):
+        return "Track - " + self.Name + " - " + self.Instrument
 
 
 @dataclass

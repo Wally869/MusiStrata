@@ -9,7 +9,8 @@ from dataclasses import dataclass, field
 @dataclass
 class Scale:
     RefNote: str = "A"
-    Mode: str = "Major"
+    Type: str = "Major"
+    Mode: str = "Ionian"
 
 
 @dataclass

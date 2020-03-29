@@ -44,24 +44,24 @@ MINOR_FROM_MAJOR = {
 
 def FindMajorNeighbours(noteRef: str) -> List[ScaleSpecs]:
     outNoteRefs = MAJOR_NEIGHBOURS[noteRef]
-    return [ScaleSpecs(refNote=n, type="Major") for n in outNoteRefs]
+    return [ScaleSpecs(RefNote=n, ScaleType="Major") for n in outNoteRefs]
 
 
 def FindMinorNeighbours(noteRef: str) -> List[ScaleSpecs]:
     outNoteRefs = MINOR_NEIGHBOURS[noteRef]
-    return [ScaleSpecs(refNote=n, type="Minor") for n in outNoteRefs]
+    return [ScaleSpecs(RefNote=n, ScaleType="Minor") for n in outNoteRefs]
 
 
 def FindMinorFromMajor(noteRef: str) -> ScaleSpecs:
     outNoteRef = MINOR_FROM_MAJOR[noteRef]
-    return ScaleSpecs(refNote=outNoteRef, type="Minor")
+    return ScaleSpecs(RefNote=outNoteRef, ScaleType="Minor")
 
 
 def FindMajorFromMinor(noteRef: str) -> ScaleSpecs:
     keys = list(MINOR_FROM_MAJOR.keys())
     for k in keys:
         if (MINOR_FROM_MAJOR[k] == noteRef):
-            return ScaleSpecs(refNote=k, type="Major")
+            return ScaleSpecs(RefNote=k, ScaleType="Major")
 
 
 def GetAllowedScales(mainScale: ScaleSpecs) -> List[ScaleSpecs]:

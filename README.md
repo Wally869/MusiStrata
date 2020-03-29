@@ -89,7 +89,7 @@ class Song:
 
 ### Converter
 
-The function ConvertSong in MidoConverter.py takes as input a Song object and a string specying the name of the output file (for example "test.mid").
+The function ConvertSong in MidoConverter.py takes as input a Song object and a string specifying the name of the output file (for example "test.mid").
 
 ```python
 import mido

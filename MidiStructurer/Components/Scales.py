@@ -15,6 +15,40 @@ TONES_SUCCESSION = {
     ]
 }
 
+# not using flats coz of implementation restrictions
+MAJOR_NEIGHBOURS = {
+    "C": ["F", "G"],
+    "G": ["C", "D"],
+    "D": ["G", "A"],
+    "A": ["D", "E"],
+    "E": ["A", "B"],
+    "B": ["E", "Fs"],
+    "Fs": ["B", "Cs"],
+    "Cs": ["Fs", "Gs"],
+    "Gs": ["Cs", "Ds"],
+    "Ds": ["Gs", "As"],
+    "As": ["Ds", "F"],
+    "F": ["As", "C"]
+}
+
+# Minors have same neighbours as majors
+MINOR_NEIGHBOURS = MAJOR_NEIGHBOURS
+
+MINOR_FROM_MAJOR = {
+    "C": "A",
+    "G": "E",
+    "D": "B",
+    "A": "Fs",
+    "E": "Cs",
+    "B": "Gs",
+    "Fs": "Ds",
+    "Cs": "As",
+    "Gs": "F",
+    "Ds": "C",
+    "As": "G",
+    "F": "D"
+}
+
 
 class ScaleTypes(Enum):
     Major = 0
@@ -33,9 +67,9 @@ class ScaleModes(Enum):
 
 
 class ScaleSpecs(object):
-    def __init__(self, refNote: str = "A", type: str = "Major"):
-        self.RefNote = refNote
-        self.Type = type
+    def __init__(self, RefNote: str = "A", ScaleType: str = "Major"):
+        self.RefNote = RefNote
+        self.Type = ScaleType
 
     def __str__(self):
         return "ScaleSpecs({})".format(self.RefNote + "-" + self.Type)
@@ -73,3 +107,41 @@ class ScaleSpecs(object):
     def GetScaleNotesNamesFromMode(self, mode: str = "Ionian") -> List[str]:
         return [n.Name for n in self.GetScaleNotesFromMode(mode)]
 
+    # Implementing circle of fifths here
+    def FindNeighbouringScales(self) -> List:
+        return self.FindSameTypeNeighbours() + [self.FindDifferentTypeNeighbour()]
+
+    def FindSameTypeNeighbours(self) -> List:
+        # Minors and Majors have the same neighbours, but differentiating anyway
+        if self.Type == "Major":
+            neighboursRefNotes = MAJOR_NEIGHBOURS[self.RefNote]
+        else:
+            neighboursRefNotes = MINOR_NEIGHBOURS[self.RefNote]
+
+        return [
+            ScaleSpecs(
+                RefNote=refNote,
+                ScaleType=self.Type
+            ) for refNote in neighboursRefNotes
+        ]
+
+    def FindDifferentTypeNeighbour(self):
+        if self.Type == "Major":
+            return self.FindMinorFromMajorByRefNote(self.RefNote)
+        else:
+            return self.FindMajorFromMinorByRefNote(self.RefNote)
+
+    @staticmethod
+    def FindMinorFromMajorByRefNote(refNote: str):
+        return ScaleSpecs(
+            RefNote=MINOR_FROM_MAJOR[refNote],
+            ScaleType="Minor"
+        )
+
+    @staticmethod
+    def FindMajorFromMinorByRefNote(refNote: str):
+        keys = list(MINOR_FROM_MAJOR.keys())
+        for k in keys:
+            if (MINOR_FROM_MAJOR[k] == refNote):
+                return ScaleSpecs(RefNote=k, ScaleType="Major")
+        return KeyError

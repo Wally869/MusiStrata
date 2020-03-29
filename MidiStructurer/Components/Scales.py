@@ -84,16 +84,23 @@ class ScaleSpecs(object):
         # Get tone succession for the scale type
         tonesSuccession = TONES_SUCCESSION[self.Type]
 
+        # In modern theory, I actually need to switch the reference note for mode?
+        refNote = Note(
+            Name=self.RefNote,
+            Octave=referenceOctave
+        )
+
+        """
+        # Getting the mode ref note
+        for toneDelta in tonesSuccession[:ScaleModes[mode].value]:
+            refNote = refNote + int(toneDelta * 2)
+        """
+
         # Reorganize tones_succession according to ScaleModes value (in different mode, tones_succession changes)
         tonesSuccession = tonesSuccession[ScaleModes[mode].value:] + tonesSuccession[:ScaleModes[mode].value]
 
         # Create the reference note for the scale wanted and get notes
-        scaleNotes = [
-            Note(
-                Name=self.RefNote,
-                Octave=referenceOctave
-            )
-        ]
+        scaleNotes = [refNote]
         for toneDelta in tonesSuccession:
             scaleNotes.append(
                 scaleNotes[-1] + int(toneDelta * 2)
@@ -145,3 +152,32 @@ class ScaleSpecs(object):
             if (MINOR_FROM_MAJOR[k] == refNote):
                 return ScaleSpecs(RefNote=k, ScaleType="Major")
         return KeyError
+
+    def GetPentatonicScaleNotesFromMode(self, referenceOctave: int = 5, mode: str = "Ionian") -> List[Note]:
+        # pretty much same as GetScaleNotes
+        tonesSuccession = TONES_SUCCESSION[self.Type]
+        tonesSuccession = tonesSuccession[ScaleModes[mode].value:] + tonesSuccession[:ScaleModes[mode].value]
+
+        # Create the reference note for the scale wanted and get notes
+        scaleNotes = [
+            Note(
+                Name=self.RefNote,
+                Octave=referenceOctave
+            )
+        ]
+
+        for toneDelta in tonesSuccession:
+            currNote = scaleNotes[-1] + int(toneDelta * 2)
+            # Only add notes where the delta is 1
+            if toneDelta == 1:
+                scaleNotes.append(
+                    currNote
+                )
+
+        return currNote
+
+    def GetPentatonicScaleNotes(self, referenceOctave: int = 5):
+        return GetPentatonicScaleNotesFromMode(
+            referenceOctave=referenceOctave,
+            mode="Ionian"
+        )

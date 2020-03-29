@@ -1,5 +1,8 @@
 # MidiStructurer
 
+# COMPONENTS DEFINITION IS OUTDATED
+# NEED TO UPDATE README
+
 ### Overview
 
 Classes and Utilities for algorithmic music generation of midi files.

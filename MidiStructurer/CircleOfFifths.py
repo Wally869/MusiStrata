@@ -3,7 +3,7 @@ Handling Scale switching:
 Switch to close scales
 dependent on refNote and Mode obviously
 """
-from .Components import Scale
+from .Components.Scales import ScaleSpecs
 
 from typing import List
 
@@ -14,13 +14,13 @@ MAJOR_NEIGHBOURS = {
     "D": ["G", "A"],
     "A": ["D", "E"],
     "E": ["A", "B"],
-    "B": ["E", "F#"],
-    "F#": ["B", "C#"],
-    "C#": ["F#", "G#"],
-    "G#": ["C#", "D#"],
-    "D#": ["G#", "A#"],
-    "A#": ["D#", "F"],
-    "F": ["A#", "C"]
+    "B": ["E", "Fs"],
+    "Fs": ["B", "Cs"],
+    "Cs": ["Fs", "Gs"],
+    "Gs": ["Cs", "Ds"],
+    "Ds": ["Gs", "As"],
+    "As": ["Ds", "F"],
+    "F": ["As", "C"]
 }
 
 # Minors have same neighbours as majors
@@ -30,38 +30,43 @@ MINOR_FROM_MAJOR = {
     "C": "A",
     "G": "E",
     "D": "B",
-    "A": "F#",
-    "E": "C#",
-    "B": "G#",
-    "F#": "D#",
-    "C#": "A#",
-    "G#": "F",
-    "D#": "C",
-    "A#": "G",
+    "A": "Fs",
+    "E": "Cs",
+    "B": "Gs",
+    "Fs": "Ds",
+    "Cs": "As",
+    "Gs": "F",
+    "Ds": "C",
+    "As": "G",
     "F": "D"
 }
 
-def FindMajorNeighbours(noteRef: str) -> List[Scale]:
+
+def FindMajorNeighbours(noteRef: str) -> List[ScaleSpecs]:
     outNoteRefs = MAJOR_NEIGHBOURS[noteRef]
-    return [Scale(n, "Major") for n in outNoteRefs]
+    return [ScaleSpecs(refNote=n, type="Major") for n in outNoteRefs]
 
-def FindMinorNeighbours(noteRef: str) -> List[Scale]:
+
+def FindMinorNeighbours(noteRef: str) -> List[ScaleSpecs]:
     outNoteRefs = MINOR_NEIGHBOURS[noteRef]
-    return [Scale(n, "Minor") for n in outNoteRefs]
+    return [ScaleSpecs(refNote=n, type="Minor") for n in outNoteRefs]
 
-def FindMinorFromMajor(noteRef: str) -> Scale:
+
+def FindMinorFromMajor(noteRef: str) -> ScaleSpecs:
     outNoteRef = MINOR_FROM_MAJOR[noteRef]
-    return Scale(outNoteRef, "Minor")
+    return ScaleSpecs(refNote=outNoteRef, type="Minor")
 
-def FindMajorFromMinor(noteRef: str) -> Scale:
+
+def FindMajorFromMinor(noteRef: str) -> ScaleSpecs:
     keys = list(MINOR_FROM_MAJOR.keys())
     for k in keys:
         if (MINOR_FROM_MAJOR[k] == noteRef):
-            return Scale(k, "Major")
+            return ScaleSpecs(refNote=k, type="Major")
 
-def GetAllowedScales(mainScale: Scale) -> List[Scale]:
+
+def GetAllowedScales(mainScale: ScaleSpecs) -> List[ScaleSpecs]:
     outScales = [mainScale]
-    if mainScale.Mode == "Major":
+    if mainScale.Type == "Major":
         outScales += FindMajorNeighbours(mainScale.RefNote)
         outScales += [FindMinorFromMajor(mainScale.RefNote)]
     else:

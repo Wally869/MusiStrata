@@ -1,7 +1,6 @@
-from .Components import *
-import .ScalesUtils as sc
-import .MidoConverter as mc
-import .CircleOfFifths as cof
+from MidiStructurer.Components import *
+import MidiStructurer.MidoConverter as mc
+import MidiStructurer.CircleOfFifths as cof
 
 from random import seed, choice
 from copy import deepcopy
@@ -11,27 +10,33 @@ from os import path, mkdir
 Generate a single bar, single track song with predefined note heights and durations
 """
 def GenerateExample1():
-    note1 = Note(
+    note1 = SoundEvent(
         Beat=0.0,
         Duration=1.0,
-        Octave=5,
-        NoteName="A"
+        Note=Note(
+            Name="A",
+            Octave=5,
+        )
     )
-    note2 = Note(
+    note2 = SoundEvent(
         Beat=2.0,
         Duration=1.0,
-        Octave=5,
-        NoteName="C"
+        Note=Note(
+            Name="C",
+            Octave=5,
+        )
     )
-    note3 = Note(
+    note3 = SoundEvent(
         Beat=3.0,
         Duration=0.5,
-        Octave=5,
-        NoteName="D"
+        Note=Note(
+            Name="D",
+            Octave=5,
+        )
     )
 
     bar = Bar(
-        Notes=[note1, note2, note3]
+        SoundEvents=[note1, note2, note3]
     )
 
     track = Track(
@@ -53,33 +58,41 @@ Note heights are set by randomly choosing among notes composing a given scale (h
 def GenerateExample2():
     seed(42)
 
-    note1 = Note(
+    note1 = SoundEvent(
         Beat=0.0,
         Duration=1.0,
-        Octave=5
+        Note=Note(
+            Name="A",
+            Octave=5,
+        )
     )
-    note2 = Note(
+    note2 = SoundEvent(
         Beat=2.0,
         Duration=1.0,
-        Octave=5
+        Note=Note(
+            Name="C",
+            Octave=5,
+        )
     )
-    note3 = Note(
+    note3 = SoundEvent(
         Beat=3.0,
         Duration=0.5,
-        Octave=5
+        Note=Note(
+            Name="D",
+            Octave=5,
+        )
     )
 
     bar = Bar(
         [note1, note2, note3]
     )
 
-    mainScale = Scale("C#", "Minor")
+    mainScale = ScaleSpecs("Cs", "Minor")
     # Get the notes in this scale
-    allowedNotes = sc.GeneratePentatonicScaleNotesWithOctaveDelta(mainScale)
-    for n in bar.Notes:
-        chosenNote = choice(allowedNotes)
-        n.NoteName = chosenNote["noteName"]
-        n.Octave += chosenNote["octaveDelta"]
+    allowedNotes = mainScale.GetScaleNotes()
+    for e in bar.SoundEvents:
+        e.Note = choice(allowedNotes)
+
 
     track = Track(
         Bars=[bar, bar],
@@ -100,23 +113,25 @@ choose different scales from each bar.
 Possible scales are selected from the Circle of Fifths, which means we select neighbour scales
 Note heights are set by randomly choosing among notes composing a given scale
 """
+
+
 def GenerateExample3():
     seed(42)
 
-    note1 = Note(
+    note1 = SoundEvent(
         Beat=0.0,
         Duration=1.0,
-        Octave=5
+        Note=Note(Octave=5)
     )
-    note2 = Note(
+    note2 = SoundEvent(
         Beat=2.0,
         Duration=1.0,
-        Octave=5
+        Note=Note(Octave=5)
     )
-    note3 = Note(
+    note3 = SoundEvent(
         Beat=3.0,
         Duration=0.5,
-        Octave=5
+        Note=Note(Octave=5)
     )
 
     bar = Bar(
@@ -125,18 +140,16 @@ def GenerateExample3():
 
     bars = [deepcopy(bar) for i in range(6)]
 
-    mainScale = Scale("C#", "Minor")
+    mainScale = ScaleSpecs("Cs", "Minor")
     # Get scales neighbouring the mainScale
     allowedScales = cof.GetAllowedScales(mainScale)
 
     for b in bars:
         currScale = choice(allowedScales)
         # Get the notes in this scale
-        allowedNotes = sc.GeneratePentatonicScaleNotesWithOctaveDelta(currScale)
-        for n in b.Notes:
-            chosenNote = choice(allowedNotes)
-            n.NoteName = chosenNote["noteName"]
-            n.Octave += chosenNote["octaveDelta"]
+        allowedNotes = currScale.GetScaleNotes()
+        for e in b.SoundEvents:
+            e.Note = choice(allowedNotes)
 
     track = Track(
         Bars=bars,

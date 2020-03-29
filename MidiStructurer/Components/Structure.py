@@ -4,10 +4,10 @@ Dataclasses to represent song components
 
 """
 
-
 from dataclasses import dataclass, field
 
-from Notes import *
+from .Notes import *
+
 
 @dataclass
 class SoundEvent:
@@ -18,7 +18,13 @@ class SoundEvent:
 
 @dataclass
 class Bar:
-    Notes: list = field(default_factory=list)
+    SoundEvents: list = field(default_factory=list)
+
+    def __str__(self):
+        return "Bar({} SoundEvents)".format(len(self.SoundEvents))
+
+    def __repr__(self):
+        return str(self)
 
 
 @dataclass
@@ -30,18 +36,23 @@ class Track:
     IsDrumsTrack: bool = False
 
     def __str__(self):
-        if self.IsDrumTrack:
-            outStr =  "Drum Track - "
+        if self.IsDrumsTrack:
+            outStr = "Drum Track - "
         else:
             outStr = "Track - "
 
         return outStr + self.Name + " - " + self.Instrument
 
+    def __repr__(self):
+        return str(self)
 
+
+"""
 @dataclass
 class SongSegment:
-    ScaleSegment: Scale = Scale()
+    ScaleSegment: ScaleSpecs = ScaleSpecs()
     Bars: list = field(default_factory=list)
+"""
 
 
 @dataclass
@@ -50,4 +61,6 @@ class Song:
     BeatsPerBar: int = 4
     Tracks: list = field(default_factory=list)
 
+    def __str__(self):
+        return "Song(Tempo={}, BeatsPerBar={}, {} Tracks)".format(self.Tempo, self.BeatsPerBar, len(self.Tracks))
 

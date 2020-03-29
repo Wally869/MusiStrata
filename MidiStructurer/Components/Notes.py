@@ -1,5 +1,6 @@
 from enum import Enum
-from utils import OrderedEnum
+
+from .utils import OrderedEnum
 
 ALL_NOTES = [
     "A", "As", "B", "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs"
@@ -7,6 +8,7 @@ ALL_NOTES = [
 
 
 # Values give the distance between notes in term of halftones
+# s denotes a Sharp
 class NoteNames(OrderedEnum):
     A = 0
     As = 1
@@ -23,9 +25,9 @@ class NoteNames(OrderedEnum):
 
 
 class Note(object):
-    def __init__(self, name: str = "A", octave: int = 5):
-        self.Name = name
-        self.Octave = octave
+    def __init__(self, Name: str = "A", Octave: int = 5):
+        self.Name = Name
+        self.Octave = Octave
 
     def __str__(self):
         return "Note({})".format(self.Name + str(self.Octave))
@@ -44,10 +46,10 @@ class Note(object):
                 currNoteId -= len(NoteNames)
 
             return Note(
-                name=NoteNames[
+                Name=NoteNames[
                     self.GetNoteNameFromNamesEnum(currNoteId)
                 ].name,
-                octave=self.Octave + deltaOctave
+                Octave=self.Octave + deltaOctave
             )
 
     def __sub__(self, other: int):
@@ -61,10 +63,10 @@ class Note(object):
                 currNoteId += len(NoteNames)
 
             return Note(
-                name=NoteNames[
+                Name=NoteNames[
                     self.GetNoteNameFromNamesEnum(currNoteId)
                 ].name,
-                octave=self.Octave + deltaOctave
+                Octave=self.Octave + deltaOctave
             )
 
     def GetNoteId(self) -> int:
@@ -73,15 +75,23 @@ class Note(object):
                 return n.value
         return KeyError
 
-    def GetNoteNameFromNamesEnum(self, idNote: int) -> str:
-        for n in NoteNames:
-            if n.value == idNote:
-                return n.name
-        return KeyError
-
     def ComputeHeight(self) -> int:
         return self.Octave * 12 + self.GetNoteId()
 
     # Return distance between this note and another in term of semitones
     def ComputeTonalDistance(self, otherNote) -> int:
         return self.ComputeHeight() - otherNote.ComputeHeight()
+
+    @staticmethod
+    def GetNoteNameFromNamesEnum(idNote: int) -> str:
+        for n in NoteNames:
+            if n.value == idNote:
+                return n.name
+        return KeyError
+
+
+def CreateNoteFromHeight(height: int) -> Note:
+    octave = height // 12
+    name = Note.GetNoteNameFromNamesEnum(height - octave * 12)
+
+    return Note(Name=name, Octave=octave)

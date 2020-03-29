@@ -4,7 +4,6 @@ from copy import deepcopy
 
 from .Components import *
 from .Instruments import GetSignalFromInstrument
-from .ScalesUtils import GetHeightNote
 
 # as default, 480 ticks per beat
 TICKS_PER_BEAT = 480
@@ -76,12 +75,12 @@ class NoteOff:
         return "note_off"
 
 
-def CreateEventsStructs(note, baseTime, velocity) -> Tuple:
+def CreateEventsStructs(soundEvent, baseTime, velocity) -> Tuple:
     # here using the Note struct defined in Structs.py
     # will have to rewrite all this BS btw, this is getting fucked up
-    noteHeight = GetHeightNote(note)
+    noteHeight = soundEvent.Note.ComputeHeight()
     noteOnObject = NoteOn(baseTime, noteHeight, velocity)
-    deltaTime = note.Duration * TICKS_PER_BEAT
+    deltaTime = soundEvent.Duration * TICKS_PER_BEAT
     noteOffObject = NoteOff(baseTime + deltaTime, noteHeight)
     return noteOnObject, noteOffObject
 
@@ -99,20 +98,26 @@ def ConvertNoteStructToMidoMessage(noteStruct, deltaTime, channelId) -> mido.Mes
     return outMessage
 
 
-def PrepTrack(track, velocity, nbBeatsPerBar) -> List:
+def PrepTrack(track: Track, velocity: int, nbBeatsPerBar: int) -> List:
     events = []
     startTick = 50
 
     for id_bar in range(len(track.Bars)):
         timeBar = int(startTick + id_bar * nbBeatsPerBar * TICKS_PER_BEAT)
         currBar = track.Bars[id_bar]
-        for note in currBar.Notes:
+        for soundEvent in currBar.SoundEvents:
             noteon, noteoff = CreateEventsStructs(
-                note,
-                timeBar + note.Beat * TICKS_PER_BEAT,
+                soundEvent,
+                timeBar + soundEvent.Beat * TICKS_PER_BEAT,
                 velocity
             )
             events += [noteon, noteoff]
+
+    events.append(
+        mido.MetaMessage(
+            "end_of_track"
+        )
+    )
 
     return events
 

@@ -35,39 +35,76 @@ class Note(object):
     def __repr__(self):
         return str(self)
 
+    def __eq__(self, other):
+        if type(other) is not Note:
+            return False
+        else:
+            if self.Name == other.Name and self.Octave == other.Octave:
+                return True
+            else:
+                return False
+
+    def __ge__(self, other):
+        if self.__class__ is other.__class__:
+            return self.ComputeHeight() >= other.ComputeHeight()
+        return NotImplemented
+
+    def __gt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.ComputeHeight() > other.ComputeHeight()
+        return NotImplemented
+
+    def __le__(self, other):
+        if self.__class__ is other.__class__:
+            return self.ComputeHeight() <= other.ComputeHeight()
+        return NotImplemented
+
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.ComputeHeight() < other.ComputeHeight()
+        return NotImplemented
+
     def __add__(self, other: int):
-        if type(other) != int:
+        if type(other) is not int:
             return NotImplemented
         else:
-            currNoteId = self.GetNoteId() + other
-            deltaOctave = 0
-            while currNoteId >= len(NoteNames):
-                deltaOctave += 1
-                currNoteId -= len(NoteNames)
+            # error if other is negative. Fixing this
+            if (other < 0):
+                return self.__sub__(abs(other))
+            else:
+                currNoteId = self.GetNoteId() + other
+                deltaOctave = 0
+                while currNoteId >= len(NoteNames):
+                    deltaOctave += 1
+                    currNoteId -= len(NoteNames)
 
-            return Note(
-                Name=NoteNames[
-                    self.GetNoteNameFromNamesEnum(currNoteId)
-                ].name,
-                Octave=self.Octave + deltaOctave
-            )
+                return Note(
+                    Name=NoteNames[
+                        self.GetNoteNameFromNamesEnum(currNoteId)
+                    ].name,
+                    Octave=self.Octave + deltaOctave
+                )
 
     def __sub__(self, other: int):
         if type(other) != int:
             return NotImplemented
         else:
-            currNoteId = self.GetNoteId() - other
-            deltaOctave = 0
-            while currNoteId <= 0:
-                deltaOctave -= 1
-                currNoteId += len(NoteNames)
+            if (other < 0):
+                return self.__add__(abs(other))
+            else:
+                currNoteId = self.GetNoteId() - other
+                deltaOctave = 0
+                # handling negative values
+                while currNoteId <= 0:
+                    deltaOctave -= 1
+                    currNoteId += len(NoteNames)
 
-            return Note(
-                Name=NoteNames[
-                    self.GetNoteNameFromNamesEnum(currNoteId)
-                ].name,
-                Octave=self.Octave + deltaOctave
-            )
+                return Note(
+                    Name=NoteNames[
+                        self.GetNoteNameFromNamesEnum(currNoteId)
+                    ].name,
+                    Octave=self.Octave + deltaOctave
+                )
 
     def GetNoteId(self) -> int:
         for n in NoteNames:

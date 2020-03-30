@@ -113,11 +113,13 @@ def PrepTrack(track: Track, velocity: int, nbBeatsPerBar: int) -> List:
             )
             events += [noteon, noteoff]
 
+    """
     events.append(
         mido.MetaMessage(
             "end_of_track"
         )
     )
+    """
 
     return events
 

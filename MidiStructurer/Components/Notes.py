@@ -6,6 +6,10 @@ ALL_NOTES = [
     "A", "As", "B", "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs"
 ]
 
+ALL_STAFF_POSITIONS = [
+    "A", "B", "C", "D", "E", "F", "G"
+]
+
 
 # Values give the distance between notes in term of halftones
 # s denotes a Sharp
@@ -22,6 +26,16 @@ class NoteNames(OrderedEnum):
     Fs = 9
     G = 10
     Gs = 11
+
+
+class StaffPositions(OrderedEnum):
+    A = 0
+    B = 1
+    C = 2
+    D = 3
+    E = 4
+    F = 5
+    G = 6
 
 
 class Note(object):
@@ -116,8 +130,62 @@ class Note(object):
         return self.Octave * 12 + self.GetNoteId()
 
     # Return distance between this note and another in term of semitones
-    def ComputeTonalDistance(self, otherNote) -> int:
-        return self.ComputeHeight() - otherNote.ComputeHeight()
+    def ComputeTonalDistance(self, other) -> int:
+        if self.__class__ is other.__class__:
+            return self.ComputeHeight() - other.ComputeHeight()
+        return NotImplemented
+
+    # Returning a positive tonal distance
+    def ComputeRootedTonalDistance(self, other) -> int:
+        if self.__class__ is other.__class__:
+            return max(
+                self.ComputeHeight() - other.ComputeHeight(),
+                other.ComputeHeight() - self.ComputeHeight()
+            )
+        return NotImplemented
+
+    def GetStaffPositionAsLetter(self) -> str:
+        # A sharp is considered as a higher staff position
+        # we only used sharps, it's important to know this for right now
+        if len(self.Name) == 1:
+            return self.Name[:1]
+        else:
+            temp = self.Name[:1]
+            for k, val in enumerate(ALL_STAFF_POSITIONS):
+                if temp == val:
+                    k += 1
+                    break
+            if k >= len(ALL_STAFF_POSITIONS):
+                k -= len(ALL_STAFF_POSITIONS)
+
+            return ALL_STAFF_POSITIONS[k]
+
+    def GetStaffPositionAsInteger(self) -> int:
+        # A sharp is considered as a higher staff position
+        staffPosAsLetter = self.GetStaffPositionAsLetter()
+        for k, val in enumerate(ALL_STAFF_POSITIONS):
+            if val == staffPosAsLetter:
+                return k
+        return KeyError
+
+    # This is order dependent. Self should be the root note of the chord
+    def GetIntervalNumber(self, other) -> int:
+        if self.__class__ is other.__class__:
+            staff1 = self.GetStaffPositionAsLetter()
+            staff2 = other.GetStaffPositionAsLetter()
+
+            outValue = (
+                StaffPositions[staff2].value - StaffPositions[staff1].value
+            )
+
+            if outValue < 0:
+                outValue += len(StaffPositions)
+
+            # lowest note is root of chord and therefore the base for interval calculation
+            # Incrementing by one so that it makes sense (a A - B chord is a second, but this return 1)
+            return outValue + 1
+
+        return NotImplemented
 
     @staticmethod
     def GetNoteNameFromNamesEnum(idNote: int) -> str:

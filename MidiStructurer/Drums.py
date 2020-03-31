@@ -80,4 +80,5 @@ def GetHeightFromDrums(drums: str) -> int:
         print("Invalid instrument provided. " + drums + " is not in the list of allowed drums instruments")
         print("Please Check Drums.DRUMS_NAMES for allowed drums instruments")
         print("Defaulting to Open Hi-Hat (height 46)")
+        print()
     return outHeight

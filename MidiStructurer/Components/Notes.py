@@ -183,7 +183,29 @@ class Note(object):
 
             # lowest note is root of chord and therefore the base for interval calculation
             # Incrementing by one so that it makes sense (a A - B chord is a second, but this return 1)
-            return outValue + 1
+            outValue += 1
+
+            # adding exception for octave
+            if staff1 == staff2:  # and self.Octave != other.Octave:
+                # issue with sharp so need another check
+                # (A5 and Gs5 would give interval 1 while it should be 8)
+                # simple: check height. If different, it's an octave
+                if self != other:
+                    outValue = 8
+
+            return outValue
+
+        return NotImplemented
+
+    def GetIntervalSpecs(self, other):
+        if self.__class__ is other.__class__:
+            intervalNumber = self.GetIntervalNumber(other)
+            deltaTone = self.ComputeRootedTonalDistance(other)
+
+            return {
+                "IntervalNumber": intervalNumber,
+                "TonalDistance": deltaTone
+            }
 
         return NotImplemented
 

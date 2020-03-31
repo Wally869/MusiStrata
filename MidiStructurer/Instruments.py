@@ -145,4 +145,5 @@ def GetSignalFromInstrument(instrument: str) -> int:
         print("Invalid instrument provided. " + instrument + " is not in the list of allowed instruments")
         print("Please Check Instruments.INSTRUMENT_NAMES for allowed instruments")
         print("Defaulting to Acoustic Grand Piano (signal 0 of General Midi)")
+        print()
     return outSignal

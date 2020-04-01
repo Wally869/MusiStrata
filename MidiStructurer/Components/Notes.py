@@ -2,6 +2,9 @@ from enum import Enum
 
 from .utils import OrderedEnum
 
+from typing import List, Dict
+
+
 ALL_NOTES = [
     "A", "As", "B", "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs"
 ]
@@ -40,8 +43,51 @@ class StaffPositions(OrderedEnum):
 
 class Note(object):
     def __init__(self, Name: str = "A", Octave: int = 5):
-        self.Name = Name
-        self.Octave = Octave
+        # can't call methods in init?
+        if Name not in ALL_NOTES:
+            raise KeyError("'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(Name))
+
+        # Need to check max octave for Midi
+        if type(Octave) != int:
+            raise TypeError("Octave must be a non-negative integer.")
+
+        if Octave < 0 :
+            raise ValueError("Octave value cannot be negative.")
+
+        self.__Name = Name
+        self.__Octave = Octave
+
+    # Need to check name to see if correct
+    @staticmethod
+    def CheckNameCorrect(name: str):
+        if name in ALL_NOTES:
+            return True
+        else:
+            return False
+
+    @property
+    def Name(self):
+        return self.__Name
+
+    @Name.setter
+    def Name(self, newName: str):
+        if self.CheckNameCorrect(newName):
+            self.__Name = newName
+        else:
+            raise KeyError("'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(newName))
+
+    @property
+    def Octave(self):
+        return self.__Octave
+
+    @Octave.setter
+    def Octave(self, newOctave: int):
+        if type(newOctave) != int:
+            raise TypeError("Octave must be a non-negative integer")
+        # Separating value checking from type checking
+        if newOctave < 0:
+            raise TypeError("Octave must be a non-negative integer")
+        self.__Octave = newOctave
 
     def __str__(self):
         return "Note({})".format(self.Name + str(self.Octave))
@@ -109,7 +155,7 @@ class Note(object):
                 currNoteId = self.GetNoteId() - other
                 deltaOctave = 0
                 # handling negative values
-                while currNoteId <= 0:
+                while currNoteId < 0:
                     deltaOctave -= 1
                     currNoteId += len(NoteNames)
 
@@ -192,6 +238,10 @@ class Note(object):
                 # simple: check height. If different, it's an octave
                 if self != other:
                     outValue = 8
+                # still another error crept up if base note is A6 and other Gs5
+                # was returning octave instead of second. This should fix it?
+                if abs(self.ComputeTonalDistance(other)) < 2:
+                    outValue = 2
 
             return outValue
 
@@ -208,6 +258,19 @@ class Note(object):
             }
 
         return NotImplemented
+
+    """
+    specs has form: 
+    {
+        "IntervalNumber": (int) intervalNumber,
+        "TonalDistance": (int) deltaTone
+    }
+
+    See GetIntervalSpecs above
+    maybe not in this file?
+    """
+    def ComputeNoteFromIntervalSpecs(self, specs: Dict):
+        pass
 
     @staticmethod
     def GetNoteNameFromNamesEnum(idNote: int) -> str:

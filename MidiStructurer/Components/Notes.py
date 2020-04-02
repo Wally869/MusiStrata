@@ -1,5 +1,6 @@
 from enum import Enum
 
+from .Intervals import *
 from .utils import OrderedEnum
 
 from typing import List, Dict
@@ -52,7 +53,7 @@ class Note(object):
             raise TypeError("Octave must be a non-negative integer.")
 
         if Octave < 0 :
-            raise ValueError("Octave value cannot be negative.")
+            raise ValueError("Octave must be a non-negative.")
 
         self.__Name = Name
         self.__Octave = Octave
@@ -146,9 +147,9 @@ class Note(object):
                 )
 
     def __sub__(self, other: int):
-        if type(other) != int:
-            return NotImplemented
-        else:
+        if self.__class__ is other.__class__:
+            return self.ComputeTonalDistance(other)
+        elif type(other) == int:
             if (other < 0):
                 return self.__add__(abs(other))
             else:
@@ -165,6 +166,8 @@ class Note(object):
                     ].name,
                     Octave=self.Octave + deltaOctave
                 )
+        else:
+            return NotImplemented
 
     def GetNoteId(self) -> int:
         for n in NoteNames:
@@ -240,6 +243,9 @@ class Note(object):
                     outValue = 8
                 # still another error crept up if base note is A6 and other Gs5
                 # was returning octave instead of second. This should fix it?
+                # Actually not supposed to happen since this function is order dependent with root note as base object
+                # should just perform a height check at start of function and throw error
+                # so follow up here is unneeded?
                 if abs(self.ComputeTonalDistance(other)) < 2:
                     outValue = 2
 

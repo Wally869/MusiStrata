@@ -1,10 +1,9 @@
 from enum import Enum
 
 from .Intervals import *
-from .utils import OrderedEnum
+from .utils import LoopingOrderedEnum, OrderedEnum
 
 from typing import List, Dict
-
 
 ALL_NOTES = [
     "A", "As", "B", "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs"
@@ -17,7 +16,7 @@ ALL_STAFF_POSITIONS = [
 
 # Values give the distance between notes in term of halftones
 # s denotes a Sharp
-class NoteNames(OrderedEnum):
+class NoteNames(LoopingOrderedEnum):
     A = 0
     As = 1
     B = 2
@@ -32,7 +31,7 @@ class NoteNames(OrderedEnum):
     Gs = 11
 
 
-class StaffPositions(OrderedEnum):
+class StaffPositions(LoopingOrderedEnum):
     A = 0
     B = 1
     C = 2
@@ -40,6 +39,23 @@ class StaffPositions(OrderedEnum):
     E = 4
     F = 5
     G = 6
+
+
+# A note with a sharp is considered to belong to higher staff
+NOTE_NAME_TO_STAFF = {
+    "A": "A",
+    "As": "B",
+    "B": "B",
+    "C": "C",
+    "Cs": "D",
+    "D": "D",
+    "Ds": "E",
+    "E": "E",
+    "F": "F",
+    "Fs": "G",
+    "G": "G",
+    "Gs": "G"
+}
 
 
 class Note(object):
@@ -52,19 +68,11 @@ class Note(object):
         if type(Octave) != int:
             raise TypeError("Octave must be a non-negative integer.")
 
-        if Octave < 0 :
+        if Octave < 0:
             raise ValueError("Octave must be a non-negative.")
 
-        self.__Name = Name
+        self.__Name = NoteNames[Name]
         self.__Octave = Octave
-
-    # Need to check name to see if correct
-    @staticmethod
-    def CheckNameCorrect(name: str):
-        if name in ALL_NOTES:
-            return True
-        else:
-            return False
 
     @property
     def Name(self):
@@ -72,10 +80,8 @@ class Note(object):
 
     @Name.setter
     def Name(self, newName: str):
-        if self.CheckNameCorrect(newName):
-            self.__Name = newName
-        else:
-            raise KeyError("'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(newName))
+        # raise KeyError("'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(newName))
+        self.__Name = NoteNames[newName]
 
     @property
     def Octave(self):
@@ -84,14 +90,14 @@ class Note(object):
     @Octave.setter
     def Octave(self, newOctave: int):
         if type(newOctave) != int:
-            raise TypeError("Octave must be a non-negative integer")
+            raise TypeError("Octave must be a non-negative integer.")
         # Separating value checking from type checking
         if newOctave < 0:
-            raise TypeError("Octave must be a non-negative integer")
+            raise TypeError("Octave must be a non-negative integer.")
         self.__Octave = newOctave
 
     def __str__(self):
-        return "Note({})".format(self.Name + str(self.Octave))
+        return "Note({})".format(self.Name.name + str(self.Octave))
 
     def __repr__(self):
         return str(self)
@@ -133,16 +139,10 @@ class Note(object):
             if (other < 0):
                 return self.__sub__(abs(other))
             else:
-                currNoteId = self.GetNoteId() + other
-                deltaOctave = 0
-                while currNoteId >= len(NoteNames):
-                    deltaOctave += 1
-                    currNoteId -= len(NoteNames)
+                outName, deltaOctave = self.Name + other
 
                 return Note(
-                    Name=NoteNames[
-                        self.GetNoteNameFromNamesEnum(currNoteId)
-                    ].name,
+                    Name=outName.name,
                     Octave=self.Octave + deltaOctave
                 )
 
@@ -153,30 +153,17 @@ class Note(object):
             if (other < 0):
                 return self.__add__(abs(other))
             else:
-                currNoteId = self.GetNoteId() - other
-                deltaOctave = 0
-                # handling negative values
-                while currNoteId < 0:
-                    deltaOctave -= 1
-                    currNoteId += len(NoteNames)
+                outName, deltaOctave = self.Name - other
 
                 return Note(
-                    Name=NoteNames[
-                        self.GetNoteNameFromNamesEnum(currNoteId)
-                    ].name,
+                    Name=outName.name,
                     Octave=self.Octave + deltaOctave
                 )
         else:
             return NotImplemented
 
-    def GetNoteId(self) -> int:
-        for n in NoteNames:
-            if n.name == self.Name:
-                return n.value
-        return KeyError
-
     def ComputeHeight(self) -> int:
-        return self.Octave * 12 + self.GetNoteId()
+        return self.Octave * 12 + self.Name.value
 
     # Return distance between this note and another in term of semitones
     def ComputeTonalDistance(self, other) -> int:
@@ -193,61 +180,33 @@ class Note(object):
             )
         return NotImplemented
 
-    def GetStaffPositionAsLetter(self) -> str:
-        # A sharp is considered as a higher staff position
-        # we only used sharps, it's important to know this for right now
-        if len(self.Name) == 1:
-            return self.Name[:1]
-        else:
-            temp = self.Name[:1]
-            for k, val in enumerate(ALL_STAFF_POSITIONS):
-                if temp == val:
-                    k += 1
-                    break
-            if k >= len(ALL_STAFF_POSITIONS):
-                k -= len(ALL_STAFF_POSITIONS)
+    def GetStaffPositionAsEnumElem(self):
+        return StaffPositions[self.GetStaffPositionAsLetter()]
 
-            return ALL_STAFF_POSITIONS[k]
+    def GetStaffPositionAsLetter(self) -> str:
+        return NOTE_NAME_TO_STAFF[self.Name.name]
 
     def GetStaffPositionAsInteger(self) -> int:
-        # A sharp is considered as a higher staff position
-        staffPosAsLetter = self.GetStaffPositionAsLetter()
-        for k, val in enumerate(ALL_STAFF_POSITIONS):
-            if val == staffPosAsLetter:
-                return k
-        return KeyError
+        return StaffPositions[
+            self.GetStaffPositionAsLetter()
+        ].value
 
     # This is order dependent. Self should be the root note of the chord
     def GetIntervalNumber(self, other) -> int:
         if self.__class__ is other.__class__:
-            staff1 = self.GetStaffPositionAsLetter()
-            staff2 = other.GetStaffPositionAsLetter()
+            staff1 = self.GetStaffPositionAsEnumElem()
+            staff2 = other.GetStaffPositionAsEnumElem()
 
-            outValue = (
-                StaffPositions[staff2].value - StaffPositions[staff1].value
-            )
-
-            if outValue < 0:
-                outValue += len(StaffPositions)
+            outValue = staff2 - staff1
 
             # lowest note is root of chord and therefore the base for interval calculation
             # Incrementing by one so that it makes sense (a A - B chord is a second, but this return 1)
             outValue += 1
 
             # adding exception for octave
-            if staff1 == staff2:  # and self.Octave != other.Octave:
-                # issue with sharp so need another check
-                # (A5 and Gs5 would give interval 1 while it should be 8)
-                # simple: check height. If different, it's an octave
+            if staff1 == staff2:
                 if self != other:
                     outValue = 8
-                # still another error crept up if base note is A6 and other Gs5
-                # was returning octave instead of second. This should fix it?
-                # Actually not supposed to happen since this function is order dependent with root note as base object
-                # should just perform a height check at start of function and throw error
-                # so follow up here is unneeded?
-                if abs(self.ComputeTonalDistance(other)) < 2:
-                    outValue = 2
 
             return outValue
 
@@ -275,19 +234,13 @@ class Note(object):
     See GetIntervalSpecs above
     maybe not in this file?
     """
+
     def ComputeNoteFromIntervalSpecs(self, specs: Dict):
         pass
-
-    @staticmethod
-    def GetNoteNameFromNamesEnum(idNote: int) -> str:
-        for n in NoteNames:
-            if n.value == idNote:
-                return n.name
-        return KeyError
 
 
 def CreateNoteFromHeight(height: int) -> Note:
     octave = height // 12
-    name = Note.GetNoteNameFromNamesEnum(height - octave * 12)
+    name = NoteNames.GetElementFromValue(height - octave * 12).name
 
     return Note(Name=name, Octave=octave)

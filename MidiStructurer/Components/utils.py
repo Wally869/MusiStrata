@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 # Can do some work to extend enums?
 class ExtendedEnum(Enum):
     @classmethod
@@ -17,14 +18,14 @@ class ExtendedEnum(Enum):
     @classmethod
     def GetElementFromName(cls, name: str):
         for c in cls:
-            if cls.name == name:
+            if c.name == name:
                 return c
         raise KeyError("Element not in Enum.")
 
     @classmethod
     def GetElementFromValue(cls, value):
         for c in cls:
-            if cls.value == value:
+            if c.value == value:
                 return c
         raise KeyError("Value not in Enum.")
 
@@ -33,7 +34,6 @@ class ExtendedEnum(Enum):
         for idItem in range(len(allElems)):
             if allElems[idItem].name == self.name:
                 return idItem
-
 
 
 class OrderedEnum(ExtendedEnum):
@@ -84,24 +84,31 @@ class LoopingOrderedEnum(OrderedEnum):
             currId -= nbElements
             nbLoops += 1
 
-        return self.GetAllElements[currId]
+        return self.GetAllElements()[currId], nbLoops
 
     def __sub__(self, other):
-        if type(other) != int:
+        # Order-dependent implementation of __sub__ if objects of same class
+        if self.__class__ is other.__class__:
+            outValue = self.value - other.value
+            if outValue < 0:
+                outValue += len(self.GetAllElements())
+
+            return outValue
+
+        elif type(other) == int:
+            if other < 0:
+                return self.__add__(
+                    abs(other)
+                )
+
+            nbLoops = 0
+            nbElements = len(self.GetAllElements())
+            currId = self.GetPosition() - other
+            while currId < 0:
+                currId += nbElements
+                nbLoops -= 1
+
+            return self.GetAllElements()[currId], nbLoops
+
+        else:
             return NotImplemented
-
-        if other < 0:
-            return self.__add__(
-                abs(other)
-            )
-
-        nbLoops = 0
-
-        nbElements = len(self.GetAllElements())
-        currId = self.GetPosition() - other
-
-        while currId < 0:
-            currId += nbElements
-            nbLoops += 1
-
-        return self.GetAllElements[currId]

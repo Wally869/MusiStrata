@@ -1,5 +1,8 @@
 # MidiStructurer
 
+# COMPONENTS DEFINITION IS OUTDATED
+# NEED TO UPDATE README
+
 ### Overview
 
 Classes and Utilities for algorithmic music generation of midi files.
@@ -86,7 +89,7 @@ class Song:
 
 ### Converter
 
-The function ConvertSong in MidoConverter.py takes as input a Song object and a string specying the name of the output file (for example "test.mid").
+The function ConvertSong in MidoConverter.py takes as input a Song object and a string specifying the name of the output file (for example "test.mid").
 
 ```python
 import mido

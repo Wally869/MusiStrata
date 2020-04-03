@@ -103,7 +103,7 @@ class Note(object):
         return str(self)
 
     def __eq__(self, other) -> bool:
-        if type(other) is not Note:
+        if self.__class__ is not other.__class__:
             return False
         else:
             if self.Name == other.Name and self.Octave == other.Octave:
@@ -140,10 +140,13 @@ class Note(object):
             if other == generatedInterval:
                 return newNote, None
             else:
-                return newNote, ValueError("Expected Interval Cannot Be Generated: Invalid Interval from given starting note. Target Interval: {}, GeneratedInterval: {}".format(other, generatedInterval))
+                return newNote, ValueError(
+                    "Expected Interval Cannot Be Generated: Invalid Interval from given starting note. "
+                    "Target Interval: {}, GeneratedInterval: {}".format(
+                        other, generatedInterval))
         elif type(other) == int:
             # error if other is negative. Fixing this
-            if (other < 0):
+            if other < 0:
                 return self.__sub__(abs(other))
             else:
                 outName, deltaOctave = self.Name + other
@@ -155,7 +158,7 @@ class Note(object):
         else:
             return NotImplemented
 
-    def __sub__(self, other: Union[int, List[cls, ValueError], cls]):
+    def __sub__(self, other: Union[int, List[Note, ValueError], Note]):
         if self.__class__ is other.__class__:
             return self.ComputeTonalDistance(other)
         elif type(other) is Interval:
@@ -164,9 +167,12 @@ class Note(object):
             if other == generatedInterval:
                 return newNote, None
             else:
-                return newNote, ValueError("Expected Interval Cannot Be Generated: Invalid Interval from given starting note. Target Interval: {}, GeneratedInterval: {}".format(other, generatedInterval))
+                return newNote, ValueError(
+                    "Expected Interval Cannot Be Generated: Invalid Interval from given starting note. "
+                    "Target Interval: {}, GeneratedInterval: {}".format(
+                        other, generatedInterval))
         elif type(other) == int:
-            if (other < 0):
+            if other < 0:
                 return self.__add__(abs(other))
             else:
                 outName, deltaOctave = self.Name - other
@@ -250,7 +256,10 @@ class Note(object):
             if interval == generatedInterval:
                 return newNote
             else:
-                return ValueError("The interval cannot be created from the given starting note. Interval: {}, Starting Note: {}, GeneratedNote: {}".format(interval, self, newNote))
+                return ValueError(
+                    "The interval cannot be created from the given starting note. "
+                    "Interval: {}, Starting Note: {}, GeneratedNote: {}".format(
+                        interval, self, newNote))
         else:
             return NotImplemented
 
@@ -261,6 +270,7 @@ class Note(object):
             if err is None:
                 outIntervals.append(interval)
         return outIntervals
+
 
 def CreateNoteFromHeight(height: int) -> Note:
     octave = height // 12

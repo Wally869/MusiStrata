@@ -136,12 +136,11 @@ INSTRUMENT_NAME_TO_SIGNAL = {inst["instrument"]: int(inst["hexcode"], 16) for in
 INSTRUMENT_NAMES = list(INSTRUMENT_NAME_TO_SIGNAL.keys())
 
 
-
 def GetSignalFromInstrument(instrument: str) -> int:
     outSignal = 0
     try:
         outSignal = INSTRUMENT_NAME_TO_SIGNAL[instrument]
-    except:
+    except KeyError:
         print("Invalid instrument provided. " + instrument + " is not in the list of allowed instruments")
         print("Please Check Instruments.INSTRUMENT_NAMES for allowed instruments")
         print("Defaulting to Acoustic Grand Piano (signal 0 of General Midi)")

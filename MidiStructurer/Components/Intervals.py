@@ -70,7 +70,8 @@ class Interval(object):
                 if elem[1] == quality:
                     return elem[2]
 
-        raise KeyError("Wrong Inputs: (IntervalNumber: {}, Quality: {}) is not a valid combination for an interval.".format(intervalNumber, quality))
+        raise KeyError("Wrong Inputs: (IntervalNumber: {}, Quality: {}) "
+                       "is not a valid combination for an interval.".format(intervalNumber, quality))
 
     @classmethod
     def FindQualityFromOtherSpecs(cls, intervalNumber: int, tonalDistance: int) -> str:

@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 # Can do some work to extend enums?
 class ExtendedEnum(Enum):
     @classmethod

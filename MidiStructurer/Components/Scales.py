@@ -151,7 +151,7 @@ class ScaleSpecs(object):
     def FindMajorFromMinorByRefNote(refNote: str) -> ScaleSpecs:
         keys = list(MINOR_FROM_MAJOR.keys())
         for k in keys:
-            if (MINOR_FROM_MAJOR[k] == refNote):
+            if MINOR_FROM_MAJOR[k] == refNote:
                 return ScaleSpecs(RefNote=k, ScaleType="Major")
         return KeyError
 
@@ -176,7 +176,7 @@ class ScaleSpecs(object):
                     currNote
                 )
 
-        return currNote
+        return scaleNotes
 
     def GetPentatonicScaleNotes(self, referenceOctave: int = 5) -> List[Note]:
         return self.GetPentatonicScaleNotesFromMode(

@@ -1,6 +1,5 @@
 from MidiStructurer.Components import *
 import MidiStructurer.MidoConverter as mc
-import MidiStructurer.CircleOfFifths as cof
 
 from random import seed, choice
 from copy import deepcopy
@@ -142,7 +141,7 @@ def GenerateExample3():
 
     mainScale = ScaleSpecs("Cs", "Minor")
     # Get scales neighbouring the mainScale
-    allowedScales = cof.GetAllowedScales(mainScale)
+    allowedScales = mainScale.FindNeighbouringScales()
 
     for b in bars:
         currScale = choice(allowedScales)

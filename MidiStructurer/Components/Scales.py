@@ -177,7 +177,7 @@ class ScaleSpecs(object):
         return currNote
 
     def GetPentatonicScaleNotes(self, referenceOctave: int = 5):
-        return GetPentatonicScaleNotesFromMode(
+        return self.GetPentatonicScaleNotesFromMode(
             referenceOctave=referenceOctave,
             mode="Ionian"
         )

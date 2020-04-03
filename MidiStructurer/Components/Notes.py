@@ -69,7 +69,7 @@ class Note(object):
             raise TypeError("Octave must be a non-negative integer.")
 
         if Octave < 0:
-            raise ValueError("Octave must be a non-negative.")
+            raise ValueError("Octave must be a non-negative integer.")
 
         self.__Name = NoteNames[Name]
         self.__Octave = Octave
@@ -132,9 +132,16 @@ class Note(object):
         return NotImplemented
 
     def __add__(self, other: int):
-        if type(other) is not int:
-            return NotImplemented
-        else:
+        if type(other) is Interval:
+            # Return Note, None if no error
+            # else return Note, ValueError?
+            newNote = self + other.TonalDistance
+            generatedInterval = self.GetIntervalSpecs(newNote)
+            if other == generatedInterval:
+                return newNote, None
+            else:
+                return newNote, ValueError("Expected Interval Cannot Be Generated: Invalid Interval from given starting note. Target Interval: {}, GeneratedInterval: {}".format(other, generatedInterval))
+        elif type(other) == int:
             # error if other is negative. Fixing this
             if (other < 0):
                 return self.__sub__(abs(other))
@@ -145,10 +152,19 @@ class Note(object):
                     Name=outName.name,
                     Octave=self.Octave + deltaOctave
                 )
+        else:
+            return NotImplemented
 
     def __sub__(self, other: int):
         if self.__class__ is other.__class__:
             return self.ComputeTonalDistance(other)
+        elif type(other) is Interval:
+            newNote = self - other.TonalDistance
+            generatedInterval = newNote.GetIntervalSpecs(self)
+            if other == generatedInterval:
+                return newNote, None
+            else:
+                return newNote, ValueError("Expected Interval Cannot Be Generated: Invalid Interval from given starting note. Target Interval: {}, GeneratedInterval: {}".format(other, generatedInterval))
         elif type(other) == int:
             if (other < 0):
                 return self.__add__(abs(other))
@@ -212,31 +228,31 @@ class Note(object):
 
         return NotImplemented
 
-    def GetIntervalSpecs(self, other):
+    def GetIntervalSpecs(self, other) -> Interval:
         if self.__class__ is other.__class__:
+            # Problem if compound interval (i.e. octave + second for example)
+            # Not sure how to solve it
             intervalNumber = self.GetIntervalNumber(other)
             deltaTone = self.ComputeRootedTonalDistance(other)
+            quality = Interval.FindQualityFromOtherSpecs(intervalNumber, deltaTone)
 
-            return {
-                "IntervalNumber": intervalNumber,
-                "TonalDistance": deltaTone
-            }
+            return Interval(
+                intervalNumber,
+                quality
+            )
 
         return NotImplemented
 
-    """
-    specs has form: 
-    {
-        "IntervalNumber": (int) intervalNumber,
-        "TonalDistance": (int) deltaTone
-    }
-
-    See GetIntervalSpecs above
-    maybe not in this file?
-    """
-
-    def ComputeNoteFromIntervalSpecs(self, specs: Dict):
-        pass
+    def ComputeNoteFromIntervalSpecs(self, interval: Interval):
+        if type(interval) == Interval:
+            newNote = self + interval.TonalDistance
+            generatedInterval = self.GetIntervalSpecs(newNote)
+            if interval == generatedInterval:
+                return newNote
+            else:
+                return ValueError("The interval cannot be created from the given starting note. Interval: {}, Starting Note: {}, GeneratedNote: {}".format(interval, self, newNote))
+        else:
+            return NotImplemented
 
 
 def CreateNoteFromHeight(height: int) -> Note:

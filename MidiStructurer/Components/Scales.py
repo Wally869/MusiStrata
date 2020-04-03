@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .Notes import NoteNames, Note, ALL_NOTES
 
 from typing import List
@@ -115,10 +117,10 @@ class ScaleSpecs(object):
         return [n.Name for n in self.GetScaleNotesFromMode(mode)]
 
     # Implementing circle of fifths here
-    def FindNeighbouringScales(self) -> List:
+    def FindNeighbouringScales(self) -> List[ScaleSpecs]:
         return self.FindSameTypeNeighbours() + [self.FindDifferentTypeNeighbour()]
 
-    def FindSameTypeNeighbours(self) -> List:
+    def FindSameTypeNeighbours(self) -> List[ScaleSpecs]:
         # Minors and Majors have the same neighbours, but differentiating anyway
         if self.Type == "Major":
             neighboursRefNotes = MAJOR_NEIGHBOURS[self.RefNote]
@@ -132,21 +134,21 @@ class ScaleSpecs(object):
             ) for refNote in neighboursRefNotes
         ]
 
-    def FindDifferentTypeNeighbour(self):
+    def FindDifferentTypeNeighbour(self) -> ScaleSpecs:
         if self.Type == "Major":
             return self.FindMinorFromMajorByRefNote(self.RefNote)
         else:
             return self.FindMajorFromMinorByRefNote(self.RefNote)
 
     @staticmethod
-    def FindMinorFromMajorByRefNote(refNote: str):
+    def FindMinorFromMajorByRefNote(refNote: str) -> ScaleSpecs:
         return ScaleSpecs(
             RefNote=MINOR_FROM_MAJOR[refNote],
             ScaleType="Minor"
         )
 
     @staticmethod
-    def FindMajorFromMinorByRefNote(refNote: str):
+    def FindMajorFromMinorByRefNote(refNote: str) -> ScaleSpecs:
         keys = list(MINOR_FROM_MAJOR.keys())
         for k in keys:
             if (MINOR_FROM_MAJOR[k] == refNote):
@@ -176,7 +178,7 @@ class ScaleSpecs(object):
 
         return currNote
 
-    def GetPentatonicScaleNotes(self, referenceOctave: int = 5):
+    def GetPentatonicScaleNotes(self, referenceOctave: int = 5) -> List[Note]:
         return self.GetPentatonicScaleNotesFromMode(
             referenceOctave=referenceOctave,
             mode="Ionian"

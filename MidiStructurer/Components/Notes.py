@@ -1,9 +1,9 @@
-from enum import Enum
+from __future__ import annotations
 
 from .Intervals import *
 from .utils import LoopingOrderedEnum, OrderedEnum
 
-from typing import List, Dict
+from typing import List, Dict, Union
 
 ALL_NOTES = [
     "A", "As", "B", "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs"
@@ -75,20 +75,20 @@ class Note(object):
         self.__Octave = Octave
 
     @property
-    def Name(self):
+    def Name(self) -> NoteNames:
         return self.__Name
 
     @Name.setter
-    def Name(self, newName: str):
+    def Name(self, newName: str) -> None:
         # raise KeyError("'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(newName))
         self.__Name = NoteNames[newName]
 
     @property
-    def Octave(self):
+    def Octave(self) -> int:
         return self.__Octave
 
     @Octave.setter
-    def Octave(self, newOctave: int):
+    def Octave(self, newOctave: int) -> None:
         if type(newOctave) != int:
             raise TypeError("Octave must be a non-negative integer.")
         # Separating value checking from type checking
@@ -96,13 +96,13 @@ class Note(object):
             raise TypeError("Octave must be a non-negative integer.")
         self.__Octave = newOctave
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Note({})".format(self.Name.name + str(self.Octave))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if type(other) is not Note:
             return False
         else:
@@ -111,27 +111,27 @@ class Note(object):
             else:
                 return False
 
-    def __ge__(self, other):
+    def __ge__(self, other) -> bool:
         if self.__class__ is other.__class__:
             return self.ComputeHeight() >= other.ComputeHeight()
         return NotImplemented
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         if self.__class__ is other.__class__:
             return self.ComputeHeight() > other.ComputeHeight()
         return NotImplemented
 
-    def __le__(self, other):
+    def __le__(self, other) -> bool:
         if self.__class__ is other.__class__:
             return self.ComputeHeight() <= other.ComputeHeight()
         return NotImplemented
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         if self.__class__ is other.__class__:
             return self.ComputeHeight() < other.ComputeHeight()
         return NotImplemented
 
-    def __add__(self, other: int):
+    def __add__(self, other: Union[Interval, int]) -> Union[List[Note, None], List[Note, ValueError], Note]:
         if type(other) is Interval:
             # Return Note, None if no error
             # else return Note, ValueError?
@@ -155,7 +155,7 @@ class Note(object):
         else:
             return NotImplemented
 
-    def __sub__(self, other: int):
+    def __sub__(self, other: Union[int, List[cls, ValueError], cls]):
         if self.__class__ is other.__class__:
             return self.ComputeTonalDistance(other)
         elif type(other) is Interval:
@@ -196,7 +196,7 @@ class Note(object):
             )
         return NotImplemented
 
-    def GetStaffPositionAsEnumElem(self):
+    def GetStaffPositionAsEnumElem(self) -> StaffPositions:
         return StaffPositions[self.GetStaffPositionAsLetter()]
 
     def GetStaffPositionAsLetter(self) -> str:
@@ -243,7 +243,7 @@ class Note(object):
 
         return NotImplemented
 
-    def ComputeNoteFromIntervalSpecs(self, interval: Interval):
+    def ComputeNoteFromIntervalSpecs(self, interval: Interval) -> Union[Note, ValueError]:
         if type(interval) == Interval:
             newNote = self + interval.TonalDistance
             generatedInterval = self.GetIntervalSpecs(newNote)
@@ -254,6 +254,13 @@ class Note(object):
         else:
             return NotImplemented
 
+    def GetValidIntervals(self) -> List[Interval]:
+        outIntervals = []
+        for interval in ALL_INTERVALS:
+            _, err = self + interval
+            if err is None:
+                outIntervals.append(interval)
+        return outIntervals
 
 def CreateNoteFromHeight(height: int) -> Note:
     octave = height // 12

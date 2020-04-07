@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import mido
 from typing import List, Tuple
 from copy import deepcopy
@@ -36,7 +38,6 @@ def ConvertSong(song: Song, outfile: str) -> mido.MidiFile:
                     "program_change", program=signal, channel=realIdChannel, time=0
                 )
             )
-
 
         prepped = PrepTrack(trackData, currVelocity, song.BeatsPerBar)
         messages = EventsToMido(prepped, realIdChannel)

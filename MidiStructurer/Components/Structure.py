@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Dataclasses to represent song components
 
@@ -8,6 +10,7 @@ from dataclasses import dataclass, field
 
 from .Notes import *
 
+from copy import deepcopy
 
 @dataclass
 class SoundEvent:
@@ -46,6 +49,16 @@ class Track:
     def __repr__(self):
         return str(self)
 
+    # Adding an __add__ overload to allow concatenating bars in a simple way
+    # this is to make easier to generate sections and then appending them
+    def __add__(self, other: Track) -> Track:
+        if self.__class__ is other.__class__:
+            outTrack = deepcopy(self)
+            outTrack.Bars = outTrack.Bars + other.Bars
+            return outTrack
+        else:
+            return NotImplemented
+
 
 """
 @dataclass
@@ -64,3 +77,31 @@ class Song:
     def __str__(self):
         return "Song(Tempo={}, BeatsPerBar={}, {} Tracks)".format(self.Tempo, self.BeatsPerBar, len(self.Tracks))
 
+
+# Structure Creators
+def GenerateBarFromRhythmicPreset(rhythmicPreset: List[Dict[str, Union[float, int]]]) -> Bar:
+    """
+    :param rhythmicPreset: {
+        "Beat": float,
+        "Duration": float,
+        "NoteName": str (facultative),
+        "Octave": int (facultative)
+    }
+    :return: Bar
+    """
+    outBar = Bar()
+    for rp in rhythmicPreset:
+        newEvent = SoundEvent(
+            Beat=rp["Beat"],
+            Duration=rp["Duration"]
+        )
+
+        rpKeys = list(rp.keys())
+        if "NoteName" in rpKeys and "Octave" in rpKeys:
+            newEvent.Note = Note(
+                Name=rp["NoteName"],
+                Octave=rp["Octave"]
+            )
+        outBar.SoundEvents.append(newEvent)
+
+    return outBar

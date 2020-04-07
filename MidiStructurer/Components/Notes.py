@@ -249,20 +249,6 @@ class Note(object):
 
         return NotImplemented
 
-    def ComputeNoteFromIntervalSpecs(self, interval: Interval) -> Union[Note, ValueError]:
-        if type(interval) == Interval:
-            newNote = self + interval.TonalDistance
-            generatedInterval = self.GetIntervalSpecs(newNote)
-            if interval == generatedInterval:
-                return newNote
-            else:
-                return ValueError(
-                    "The interval cannot be created from the given starting note. "
-                    "Interval: {}, Starting Note: {}, GeneratedNote: {}".format(
-                        interval, self, newNote))
-        else:
-            return NotImplemented
-
     def GetValidIntervals(self) -> List[Interval]:
         outIntervals = []
         for interval in ALL_INTERVALS:

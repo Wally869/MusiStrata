@@ -35,7 +35,12 @@ AUGMENTED_DIMINISHED_INTERVALS = [
     [7, "Augmented", 12]  # Augmented Seventh
 ]
 
-ALL_INTERVALS_RAW = MINOR_MAJOR_PERFECT_INTERVALS + AUGMENTED_DIMINISHED_INTERVALS
+# Will need to fill this
+DOUBLY_AUGMENTED_DIMINISHED_INTERVALS = [
+    [3, "DoublyAugmented", 5]
+]
+
+ALL_INTERVALS_RAW = MINOR_MAJOR_PERFECT_INTERVALS + AUGMENTED_DIMINISHED_INTERVALS + DOUBLY_AUGMENTED_DIMINISHED_INTERVALS
 
 
 # Need to perform check on input arguments. Done in findtonaldistancefromotherspecs
@@ -77,6 +82,7 @@ class Interval(object):
     def FindQualityFromOtherSpecs(cls, intervalNumber: int, tonalDistance: int) -> str:
         # Need to implement Augmented and Diminished intervals
         # function, or use bigger all_intervals_raw?
+
         for interval in ALL_INTERVALS:
             if interval.IntervalNumber == intervalNumber and interval.TonalDistance == tonalDistance:
                 return interval.Quality
@@ -85,4 +91,3 @@ class Interval(object):
 
 ALL_INTERVALS = [Interval(*spec[:2]) for spec in ALL_INTERVALS_RAW]
 ALL_INTERVALS.sort(key=lambda x: x.TonalDistance)
-

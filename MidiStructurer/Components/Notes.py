@@ -3,6 +3,8 @@ from __future__ import annotations
 from .Intervals import *
 from .utils import LoopingOrderedEnum, OrderedEnum
 
+from copy import deepcopy
+
 from typing import List, Dict, Union
 
 ALL_NOTES = [
@@ -54,7 +56,7 @@ NOTE_NAME_TO_STAFF = {
     "F": "F",
     "Fs": "G",
     "G": "G",
-    "Gs": "G"
+    "Gs": "A"
 }
 
 
@@ -158,7 +160,8 @@ class Note(object):
         else:
             return NotImplemented
 
-    def __sub__(self, other: Union[int, List[Note, ValueError], Note]):
+    def __sub__(self, other: Union[int, List[Note, ValueError], Note]) -> Union[
+                Tuple(Note, None), Tuple(Note, ValueError), Note]:
         if self.__class__ is other.__class__:
             return self.ComputeTonalDistance(other)
         elif type(other) is Interval:
@@ -183,6 +186,13 @@ class Note(object):
                 )
         else:
             return NotImplemented
+
+    # Added this to expand scales. Can also use Note + 12 for octave difference
+    # but I thought additional method would be nice
+    def NewFromOctaveDifference(self, octaveDiff: int) -> Note:
+        newNote = deepcopy(self)
+        newNote.Octave += octaveDiff
+        return newNote
 
     def ComputeHeight(self) -> int:
         return self.Octave * 12 + self.Name.value
@@ -226,8 +236,10 @@ class Note(object):
             outValue += 1
 
             # adding exception for octave
-            if staff1 == staff2:
-                if self != other:
+            if outValue == 1:
+                if abs(self - other) <= 2:
+                    outValue = 1
+                else:
                     outValue = 8
 
             return outValue
@@ -249,9 +261,17 @@ class Note(object):
 
         return NotImplemented
 
-    def GetValidIntervals(self) -> List[Interval]:
+    def GetValidIntervalsFromAll(self) -> List[Interval]:
         outIntervals = []
         for interval in ALL_INTERVALS:
+            _, err = self + interval
+            if err is None:
+                outIntervals.append(interval)
+        return outIntervals
+
+    def GetValidIntervalsFromSelected(self, selectedIntervals: List[Interval]) -> List[Interval]:
+        outIntervals = []
+        for interval in selectedIntervals:
             _, err = self + interval
             if err is None:
                 outIntervals.append(interval)

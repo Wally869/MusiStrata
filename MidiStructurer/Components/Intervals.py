@@ -89,5 +89,9 @@ class Interval(object):
         return None
 
 
+CHROMATIC_AND_DIATONIC_INTERVALS = [Interval(*spec[:2]) for spec in MINOR_MAJOR_PERFECT_INTERVALS]
+PERTURBED_INTERVALS = [Interval(*spec[:2]) for spec in
+                       (AUGMENTED_DIMINISHED_INTERVALS + DOUBLY_AUGMENTED_DIMINISHED_INTERVALS)]
+
 ALL_INTERVALS = [Interval(*spec[:2]) for spec in ALL_INTERVALS_RAW]
 ALL_INTERVALS.sort(key=lambda x: x.TonalDistance)

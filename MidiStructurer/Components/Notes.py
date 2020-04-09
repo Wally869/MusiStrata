@@ -269,10 +269,14 @@ class Note(object):
                 outIntervals.append(interval)
         return outIntervals
 
-    def GetValidIntervalsFromSelected(self, selectedIntervals: List[Interval]) -> List[Interval]:
+    def GetValidIntervalsFromSelected(self, selectedIntervals: List[Interval], toHigher: bool = True) -> List[Interval]:
         outIntervals = []
         for interval in selectedIntervals:
-            _, err = self + interval
+            if toHigher:
+                _, err = self + interval
+            else:
+                _, err = self - interval
+
             if err is None:
                 outIntervals.append(interval)
         return outIntervals

@@ -19,28 +19,28 @@ ALL_STAFF_POSITIONS = [
 # Values give the distance between notes in term of halftones
 # s denotes a Sharp
 class NoteNames(LoopingOrderedEnum):
-    A = 0
-    As = 1
-    B = 2
-    C = 3
-    Cs = 4
-    D = 5
-    Ds = 6
-    E = 7
-    F = 8
-    Fs = 9
-    G = 10
-    Gs = 11
+    C = 0
+    Cs = 1
+    D = 2
+    Ds = 3
+    E = 4
+    F = 5
+    Fs = 6
+    G = 7
+    Gs = 8
+    A = 9
+    As = 10
+    B = 11
 
 
 class StaffPositions(LoopingOrderedEnum):
-    A = 0
-    B = 1
-    C = 2
-    D = 3
-    E = 4
-    F = 5
-    G = 6
+    C = 0
+    D = 1
+    E = 2
+    F = 3
+    G = 4
+    A = 5
+    B = 6
 
 
 # A note with a sharp is considered to belong to higher staff
@@ -161,7 +161,7 @@ class Note(object):
             return NotImplemented
 
     def __sub__(self, other: Union[int, List[Note, ValueError], Note]) -> Union[
-                Tuple(Note, None), Tuple(Note, ValueError), Note]:
+        Tuple(Note, None), Tuple(Note, ValueError), Note]:
         if self.__class__ is other.__class__:
             return self.ComputeTonalDistance(other)
         elif type(other) is Interval:
@@ -195,10 +195,17 @@ class Note(object):
         return newNote
 
     def ComputeHeight(self) -> int:
-        return self.Octave * 12 + self.Name.value + 21
+        return (self.Octave + 1) * 12 + self.Name.value
 
     def ComputeFrequency(self) -> float:
-        return 0.0
+        """
+        # Using this as reference: https://pages.mtu.edu/~suits/notefreqs.html
+        baseFreq = 16.35
+        # Frequency doubles at each octave, so using power of 12
+        freq = baseFreq * (2 ** note.Octave) * (2 ** (1 / 12)) ** note.Name.value
+        return freq
+        """
+        return 16.35 * (2 ** self.Octave) * (2 ** (1 / 12)) ** self.Name.value
 
     # Return distance between this note and another in term of semitones
     def ComputeTonalDistance(self, other) -> int:
@@ -289,4 +296,4 @@ def CreateNoteFromHeight(height: int) -> Note:
     octave = height // 12
     name = NoteNames.GetElementFromValue(height - octave * 12).name
 
-    return Note(Name=name, Octave=octave)
+    return Note(Name=name, Octave=octave - 1)

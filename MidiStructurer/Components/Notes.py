@@ -195,7 +195,10 @@ class Note(object):
         return newNote
 
     def ComputeHeight(self) -> int:
-        return self.Octave * 12 + self.Name.value
+        return self.Octave * 12 + self.Name.value + 21
+
+    def ComputeFrequency(self) -> float:
+        return 0.0
 
     # Return distance between this note and another in term of semitones
     def ComputeTonalDistance(self, other) -> int:

@@ -46,7 +46,7 @@ ALL_NOTES = [
 ]
 ```
 
-To note: the input value for Name when creating a Note is a string, but it is converted to an enum value inside the Note class.
+Remark: the input value for Name when creating a Note is a string, but it is converted to an enum value inside the Note class.
 
 ```python
 # Creating a Note. Default values are Name="A" and Octave=5
@@ -70,6 +70,18 @@ Note(Cs5)
 0
 ```
 
+The intent of this library is to represent a song as a succession of Notes, ordered into Structural classes, to then generate a midi file, or interface with other libraries.    
+As such a Note object has methods to return its height, aka its note for a midi note_on/note_off message, as well as its frequency.  
+Remark: the height computation is what allows all comparisons, and tonal distance computations. 
+
+```python
+>> n.ComputeHeight()
+72
+
+>> n.ComputeFrequency()
+523.2
+```
+
 ### ScaleSpecs Class
 
 A ScaleSpecs object allows to generate Scales, aka List of Notes, according to presets.
@@ -90,7 +102,7 @@ ScaleSpecs(A-Major)
 ScaleSpecs(A-Major)
 
 # Get A-Major Notes using the GetScaleNotes method
-# can supply a referenceOctave parameter. Default it 5
+# can supply a referenceOctave parameter. Default is 5
 >> sc.GetScaleNotes(referenceOctave=5)
 [Note(A5), Note(B5), Note(Cs6), Note(D6), Note(E6), Note(Fs6), Note(Gs6), Note(A6)]
 # It also possible to generate a scale using modes other than Ionian
@@ -100,24 +112,63 @@ ScaleSpecs(A-Major)
 # Similarly, can generate pentatonic scales
 >> sc.GetPentatonicScaleNotes(referenceOctave=5)
 [Note(A5), Note(B5), Note(Cs6), Note(Ds6), Note(F6), Note(G6)]
-# and from specific modes. Useless since same result no matter the mode
+# and from specific modes
 >> sc.GetPentatonicScaleNotesFromMode(referenceOctave=4, mode="Mixolydian")
 [Note(A4), Note(B4), Note(Cs5), Note(E5), Note(Fs5)]
 
 ```
 
+The ScaleSpecs class also implements methods to find neighboring scales according to the Circle of Fifth theory
+```python
+# Find all neighbouring scales of the same type (Major or Minor)
+>> sc.FindSameTypeNeighbours()
+[ScaleSpecs(D-Major), ScaleSpecs(E-Major)]
+
+# can also find the neighbouring minor from a major scale, and vice versa
+>> sc.FindDifferentTypeNeighbour()
+ScaleSpecs(Fs-Minor)
+
+# Get all neighbours
+>> sc.FindNeighbouringScales()
+[ScaleSpecs(D-Major), ScaleSpecs(E-Major), ScaleSpecs(Fs-Minor)]
+```
 
 ## Operations on Notes
 
 The __add__ and __sub__ operators have been overloaded to allow special operations.
   
-
-##### Notes and integers
+##### Notes and Notes
 ```python
 # base note for all our examples
 >> n = Note("C", 5)
 Note(C5)
 
+# Notes have a Height, defined by its Name and Octave, so comparisons are supported
+>> n > n
+False
+>> n >= n 
+True
+
+# Can perform a substraction between two notes. Will return an integer representing tonal distance in semitones
+>> n - Note("F", 4)
+7
+>> Note("F", 4) - n
+-7
+# Use the method ComputeRootedTonalDistance to ensure positive value is returned
+>> n.ComputeRootedTonalDistance(Note("F", 4))
+7
+>> Note("F", 4).ComputeRootedTonalDistance(n)
+7
+
+# It is also possible to get an Interval object describing the distance between 2 notes
+# This method requires the lower note to be the one calling the method
+>> Note("F", 4).GetIntervalSpecs(n)
+Interval(5-Perfect--7 semitones)
+```
+
+
+##### Notes and integers
+```python
 # Adding a Note and a int returns a new note, translated by a given number of semitones
 >> n + 4
 Note(E5)

@@ -14,7 +14,7 @@ TICKS_PER_BEAT = 480
 def ConvertSong(song: Song, outfile: str) -> mido.MidiFile:
     outMidoSong = mido.MidiFile(type=1)
 
-    # set tempo here
+    # create tempo message here. Maybe put this message in specific channel?
     tempoMessage = mido.MetaMessage(
         "set_tempo",
         tempo=int(mido.tempo2bpm(song.Tempo))
@@ -62,8 +62,6 @@ def ConvertSong(song: Song, outfile: str) -> mido.MidiFile:
 
 
 # first, create all NoteOn and NoteOff structs
-
-
 # Use NoteOn and NoteOff structs to get time of message
 # and compute deltaTime between messages
 class NoteOn:

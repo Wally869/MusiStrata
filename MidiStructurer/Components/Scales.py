@@ -156,27 +156,23 @@ class ScaleSpecs(object):
         return KeyError
 
     def GetPentatonicScaleNotesFromMode(self, referenceOctave: int = 5, mode: str = "Ionian") -> List[Note]:
-        # pretty much same as GetScaleNotes
-        tonesSuccession = TONES_SUCCESSION[self.Type]
-        tonesSuccession = tonesSuccession[ScaleModes[mode].value:] + tonesSuccession[:ScaleModes[mode].value]
+        # Make use of GetScaleNotes method
+        allScaleNotes = self.GetScaleNotesFromMode(
+            referenceOctave=referenceOctave,
+            mode=mode
+        )
 
-        # Create the reference note for the scale wanted and get notes
-        scaleNotes = [
-            Note(
-                Name=self.RefNote,
-                Octave=referenceOctave
-            )
-        ]
-
-        for toneDelta in tonesSuccession:
-            currNote = scaleNotes[-1] + int(toneDelta * 2)
-            # Only add notes where the delta is 1
-            if toneDelta == 1:
-                scaleNotes.append(
-                    currNote
+        # only keep notes where there is a difference of a whole tone 
+        # compared to previous in scale
+        pentatonicScaleNotes = [allScaleNotes[0]]
+        for idn in range(1, len(allScaleNotes)):
+            if (allScaleNotes[idn] - allScaleNotes[idn - 1]) == 2:
+                pentatonicScaleNotes.append(
+                    allScaleNotes[idn]
                 )
 
-        return scaleNotes
+        # only 5 notes in pentatonic scale
+        return pentatonicScaleNotes[:5]
 
     def GetPentatonicScaleNotes(self, referenceOctave: int = 5) -> List[Note]:
         return self.GetPentatonicScaleNotesFromMode(

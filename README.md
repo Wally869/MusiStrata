@@ -7,6 +7,8 @@ Classes and Utilities for representing Notes and performing transformations on t
 In this library I strive to implement some basic concepts of Music Theory, to serve as base for a music generation package.
 This is still a WIP, but the main operations are well defined and future work will likely only be extensions.
 
+This readme is a quick overview of the main functions of this library. Extended explanations can be found in the wiki (WIP).
+
 See the following sections for usage documentation (WIP). 
 This library serves as base for my music generation project: https://github.com/Wally869/MidiGenerator
 
@@ -30,7 +32,7 @@ Written in python, the only dependency is Mido (https://github.com/mido/mido)
 
 ## Components
 
-### The Note Object
+### Note Class
 
 A note can be created easily, with 2 parameters: the note name, and the octave. 
 Valid Note Names are letters A to G.  
@@ -68,7 +70,44 @@ Note(Cs5)
 0
 ```
 
-### Operations on Notes
+### ScaleSpecs Class
+
+A ScaleSpecs object allows to generate Scales, aka List of Notes, according to presets.
+
+```python
+"""
+class ScaleSpecs(object):
+    def __init__(self, RefNote: str = "A", ScaleType: str = "Major"):
+        self.RefNote = RefNote
+        self.Type = ScaleType
+"""
+
+# Defaults to A-Major
+>> ScaleSpecs()
+ScaleSpecs(A-Major)
+
+>> sc = ScaleSpecs(RefNote="A", ScaleType="Major")
+ScaleSpecs(A-Major)
+
+# Get A-Major Notes using the GetScaleNotes method
+# can supply a referenceOctave parameter. Default it 5
+>> sc.GetScaleNotes(referenceOctave=5)
+[Note(A5), Note(B5), Note(Cs6), Note(D6), Note(E6), Note(Fs6), Note(Gs6), Note(A6)]
+# It also possible to generate a scale using modes other than Ionian
+>> sc.GetScaleNotesFromMode(referenceOctave=4, mode="Phrygian")
+[Note(A4), Note(As4), Note(C5), Note(D5), Note(E5), Note(F5), Note(G5), Note(A5)]
+
+# Similarly, can generate pentatonic scales
+>> sc.GetPentatonicScaleNotes(referenceOctave=5)
+[Note(A5), Note(B5), Note(Cs6), Note(Ds6), Note(F6), Note(G6)]
+# and from specific modes. Useless since same result no matter the mode
+>> sc.GetPentatonicScaleNotesFromMode(referenceOctave=4, mode="Mixolydian")
+[Note(A4), Note(B4), Note(Cs5), Note(E5), Note(Fs5)]
+
+```
+
+
+## Operations on Notes
 
 The __add__ and __sub__ operators have been overloaded to allow special operations.
   

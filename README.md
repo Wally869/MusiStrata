@@ -87,15 +87,27 @@ Note(E5)
 >> (n + 4) - 4 
 Note(C5)
 
+# Changes in Octave are handled automatically
+>> n - 1
+Note(B4)
 ```
 
 ##### Notes and Intervals
 See Intervals section for more details on Interval class
 
 ```python
->> i = Interval(IntervalNumber=4, Quality="Major")
+>> i = Interval(IntervalNumber=3, Quality="Major")
 # Can add interval to a note, returns a tuple (Note, error)
-# error is None, except when unable to compute a note from the given starting note and intervam
+# error is None, except when unable to compute a note from the given starting note and interval
+# Here no error since it is possible to create a Major Third from a C note
 >> n + i
 (Note(E5), None)
+
+>> i2 = Interval(IntervalNumber=2, Quality="Augmented")
+# In this case it is not possible to generate an Augmented Second from a C note
+# Intervals are linked to a number of semitones, so it returns Note + number of semitones associated with the interval
+# and an error as second element of the return tuple (error is very verbose)
+>> n + i2
+(Note(Ds5), ValueError('Expected Interval Cannot Be Generated: Invalid Interval from given starting note. Target Interval: Interval(2-Augmented--3 semitones), GeneratedInterval: Interval(3-Minor--3 semitones)'))
+# There is no throw in this case so execution is not interrupted
 ```

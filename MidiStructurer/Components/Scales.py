@@ -86,17 +86,10 @@ class ScaleSpecs(object):
         # Get tone succession for the scale type
         tonesSuccession = TONES_SUCCESSION[self.Type]
 
-        # In modern theory, I actually need to switch the reference note for mode?
         refNote = Note(
             Name=self.RefNote,
             Octave=referenceOctave
         )
-
-        """
-        # Getting the mode ref note
-        for toneDelta in tonesSuccession[:ScaleModes[mode].value]:
-            refNote = refNote + int(toneDelta * 2)
-        """
 
         # Reorganize tones_succession according to ScaleModes value (in different mode, tones_succession changes)
         tonesSuccession = tonesSuccession[ScaleModes[mode].value:] + tonesSuccession[:ScaleModes[mode].value]

@@ -82,8 +82,10 @@ class Note(object):
 
     @Name.setter
     def Name(self, newName: str) -> None:
-        # raise KeyError("'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(newName))
-        self.__Name = NoteNames[newName]
+        try:
+            self.__Name = NoteNames[newName]
+        except KeyError:
+            raise KeyError("'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(newName))
 
     @property
     def Octave(self) -> int:

@@ -32,7 +32,10 @@ def ConvertSong(song: Song, outfile: str) -> mido.MidiFile:
             realIdChannel = 9
         else:
             signal = GetSignalFromInstrument(trackData.Instrument)
+            if idChannel == 9:
+                idChannel += 1
             realIdChannel = idChannel
+
             track.append(
                 mido.Message(
                     "program_change", program=signal, channel=realIdChannel, time=0

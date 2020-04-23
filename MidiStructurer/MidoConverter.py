@@ -47,6 +47,13 @@ def ConvertSong(song: Song, outfile: str) -> mido.MidiFile:
         for m in messages:
             track.append(m)
 
+        track.append(
+            mido.MetaMessage(
+                type="end_of_track",
+                time=50
+            )
+        )
+
         idChannel += 1
         outMidoSong.tracks.append(track)
 
@@ -120,7 +127,8 @@ def PrepTrack(track: Track, velocity: int, nbBeatsPerBar: int) -> List:
     """
     events.append(
         mido.MetaMessage(
-            "end_of_track"
+            "end_of_track",
+            50
         )
     )
     """

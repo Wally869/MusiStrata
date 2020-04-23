@@ -4,6 +4,7 @@ from .Notes import NoteNames, Note, ALL_NOTES
 
 from typing import List
 from enum import Enum
+from copy import deepcopy
 
 TONES_SUCCESSION = {
     "Major": [
@@ -172,3 +173,54 @@ class ScaleSpecs(object):
             referenceOctave=referenceOctave,
             mode="Ionian"
         )
+
+    # Might move this from namespace Scales.ScaleSpecs to Scales
+    # No real reason to have it as a static method
+    @staticmethod
+    def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: float,
+                         singleDirection: bool = False, direction: str = "+"):
+        """
+        Extend a list of note by a given factor by transposing them by N octaves
+        """
+        # ensure scaleNotes are sorted in ascending order
+        scaleNotes = sorted(scaleNotes, key=lambda x: x.ComputeHeight())
+
+        directions = ["+", "-"]
+        # Get number of elements
+        targetLenDirection = int(extensionFactor * len(scaleNotes))
+        if singleDirection:
+            directions = [direction]
+
+        outScaleNotes = deepcopy(scaleNotes)
+        for currDirection in directions:
+            addedElements = 0
+            refNotes = scaleNotes
+            nbOctaves = 1
+            tonalDelta = 12
+            if currDirection == "-":
+                tonalDelta = -12
+                # need to take order into account
+                # if going down, pool note must be reversed
+                refNotes = refNotes[::-1]
+
+            while addedElements < targetLenDirection:
+                for note in refNotes:
+                    if addedElements > targetLenDirection:
+                        break
+                    outScaleNotes.append(note + nbOctaves * tonalDelta)
+                    addedElements += 1
+                nbOctaves += 1
+
+        # sort again and get rid of repeated notes
+        outScaleNotes = sorted(outScaleNotes, key=lambda x: x.ComputeHeight())
+        return FilterOutRepeatedNotes(outScaleNotes)
+
+
+def FilterOutRepeatedNotes(notes: List[Note]):
+    outNotes = []
+    outNotesHeight = []
+    for n in notes:
+        if n.ComputeHeight() not in outNotesHeight:
+            outNotes.append(n)
+            outNotesHeight.append(n.ComputeHeight())
+    return outNotes

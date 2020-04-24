@@ -123,6 +123,7 @@ ScaleSpecs(A-Major)
 ```
 
 The ScaleSpecs class also implements methods to find neighboring scales according to the Circle of Fifth theory
+
 ```python
 # Find all neighbouring scales of the same type (Major or Minor)
 >> sc.FindSameTypeNeighbours()
@@ -135,6 +136,31 @@ ScaleSpecs(Fs-Minor)
 # Get all neighbours
 >> sc.FindNeighbouringScales()
 [ScaleSpecs(D-Major), ScaleSpecs(E-Major), ScaleSpecs(Fs-Minor)]
+```
+
+### Interval Class
+
+In Music Theory, the distance between 2 Notes is called an Interval. Intervals are defined by their number, their quality and the distance in terms on semitones.  
+Some combinations are considered consonants (i.e. nice sounding) while others are dissonants.  
+The use of this class requires some knowledge interval numbers and interval quality, so if you need a refresher [check out Wikipedia](https://en.wikipedia.org/wiki/Interval_(music\))
+or the wiki (WIP)
+
+```python
+# All Intervals can be found in ALL_INTERVALS, sorted by tonal distance
+>> Intervals.ALL_INTERVALS
+
+# Create an Interval object by specifying an Interval Number and a Quality
+>> interval = Interval(4, "Perfect")
+Interval(4-Augmented--6 semitones)
+
+# An invalid interval definition will throw an error
+>> Interval(4, "Major")
+KeyError: 'Wrong Inputs: (IntervalNumber: 4, Quality: Major) is not a valid combination for an interval.'
+
+# If needed, there is a class method to find Interval quality from interval number and tonal distance
+>> Interval.FindQualityFromOtherSpecs(intervalNumber=4, tonalDistance=4)
+'Diminished'
+# If there is no relevant interval, this returns None
 ```
 
 ## Operations on Notes

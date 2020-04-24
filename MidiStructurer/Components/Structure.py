@@ -68,7 +68,7 @@ class SongSegment:
     Bars: list = field(default_factory=list)
 """
 
-
+# Do I really need a timesignature? For my implementation, beats per bar is enough?
 @dataclass
 class TimeSignature:
     BeatsPerBar: int = 4

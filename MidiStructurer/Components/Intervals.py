@@ -67,6 +67,15 @@ class Interval(object):
         else:
             return NotImplemented
 
+    def ShortStr(self):
+        if self.Quality == "DoublyAugmented":
+            qualityString = "DA"
+        elif self.Quality == "DoublyDiminished":
+            qualityString = "DD"
+        else:
+            qualityString = self.Quality[0]
+        return "{}{}".format(qualityString, self.IntervalNumber)
+
     @staticmethod
     def FindTonalDistanceFromOtherSpecs(intervalNumber: int, quality: str) -> int:
         # This function gets us the tonal distance, but also ensures that correct parameters have been input

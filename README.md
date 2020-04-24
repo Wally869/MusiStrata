@@ -14,7 +14,7 @@ This library serves as base for my music generation project: https://github.com/
 
 ## Installing
 
-```
+```shell script
 git clone https://github.com/Wally869/MidiStructurer.git
 cd MidiStructurer
 pip install -e .
@@ -75,11 +75,15 @@ As such a Note object has methods to return its height, aka its note for a midi 
 Remark: the height computation is what allows all comparisons, and tonal distance computations. 
 
 ```python
->> n.ComputeHeight()
+>> Note("C", 5).ComputeHeight()
 72
 
->> n.ComputeFrequency()
+>> Note("C", 5).ComputeFrequency()
 523.2
+
+# This means it is also possible to create a note from its height
+>> CreateNoteFromHeight(72)
+Note(C5)
 ```
 
 ### ScaleSpecs Class

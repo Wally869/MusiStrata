@@ -12,6 +12,7 @@ from .Notes import *
 
 from copy import deepcopy
 
+
 @dataclass
 class SoundEvent:
     Beat: float = 0.0
@@ -66,6 +67,18 @@ class SongSegment:
     ScaleSegment: ScaleSpecs = ScaleSpecs()
     Bars: list = field(default_factory=list)
 """
+
+
+@dataclass
+class TimeSignature:
+    BeatsPerBar: int = 4
+    BeatUnit: int = 4
+
+    def __str__(self):
+        return "TimeSignature(BeatsPerBar={}, BeatUnit={})".format(self.BeatsPerBar, self.BeatUnit)
+
+    def __repr__(self):
+        return self.__str__()
 
 
 @dataclass

@@ -80,10 +80,7 @@ class ScaleSpecs(object):
     def __repr__(self):
         return str(self)
 
-    def GetScaleNotes(self, referenceOctave: int = 5) -> List[Note]:
-        return self.GetScaleNotesFromMode(referenceOctave=referenceOctave, mode="Ionian")
-
-    def GetScaleNotesFromMode(self, referenceOctave: int = 5, mode: str = "Ionian") -> List[Note]:
+    def GetScaleNotes(self, referenceOctave: int = 5, mode: str = "Ionian") -> List[Note]:
         # Get tone succession for the scale type
         tonesSuccession = TONES_SUCCESSION[self.Type]
 
@@ -104,11 +101,8 @@ class ScaleSpecs(object):
 
         return scaleNotes
 
-    def GetScaleNotesNames(self) -> List[str]:
-        return [n.Name for n in self.GetScaleNotes()]
-
-    def GetScaleNotesNamesFromMode(self, mode: str = "Ionian") -> List[str]:
-        return [n.Name for n in self.GetScaleNotesFromMode(mode)]
+    def GetScaleNotesNames(self, mode: str = "Ionian") -> List[str]:
+        return [n.Name for n in self.GetScaleNotes(mode=mode)]
 
     # Implementing circle of fifths here
     def FindNeighbouringScales(self) -> List[ScaleSpecs]:
@@ -149,9 +143,9 @@ class ScaleSpecs(object):
                 return ScaleSpecs(RefNote=k, ScaleType="Major")
         return KeyError
 
-    def GetPentatonicScaleNotesFromMode(self, referenceOctave: int = 5, mode: str = "Ionian") -> List[Note]:
+    def GetPentatonicScaleNotes(self, referenceOctave: int = 5, mode: str = "Ionian") -> List[Note]:
         # Make use of GetScaleNotes method
-        allScaleNotes = self.GetScaleNotesFromMode(
+        allScaleNotes = self.GetScaleNotes(
             referenceOctave=referenceOctave,
             mode=mode
         )
@@ -167,12 +161,6 @@ class ScaleSpecs(object):
 
         # only 5 notes in pentatonic scale
         return pentatonicScaleNotes[:5]
-
-    def GetPentatonicScaleNotes(self, referenceOctave: int = 5) -> List[Note]:
-        return self.GetPentatonicScaleNotesFromMode(
-            referenceOctave=referenceOctave,
-            mode="Ionian"
-        )
 
 
 def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: Union[int, float],

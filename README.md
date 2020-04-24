@@ -106,14 +106,14 @@ ScaleSpecs(A-Major)
 >> sc.GetScaleNotes(referenceOctave=5)
 [Note(A5), Note(B5), Note(Cs6), Note(D6), Note(E6), Note(Fs6), Note(Gs6), Note(A6)]
 # It also possible to generate a scale using modes other than Ionian
->> sc.GetScaleNotesFromMode(referenceOctave=4, mode="Phrygian")
+>> sc.GetScaleNotes(referenceOctave=4, mode="Phrygian")
 [Note(A4), Note(As4), Note(C5), Note(D5), Note(E5), Note(F5), Note(G5), Note(A5)]
 
 # Similarly, can generate pentatonic scales
 >> sc.GetPentatonicScaleNotes(referenceOctave=5)
 [Note(A5), Note(B5), Note(Cs6), Note(Ds6), Note(F6), Note(G6)]
 # and from specific modes
->> sc.GetPentatonicScaleNotesFromMode(referenceOctave=4, mode="Mixolydian")
+>> sc.GetPentatonicScaleNotes(referenceOctave=4, mode="Mixolydian")
 [Note(A4), Note(B4), Note(Cs5), Note(E5), Note(Fs5)]
 
 ```

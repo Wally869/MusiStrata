@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+ALL_POSSIBLE_QUALITIES = [
+    "Minor", "Major", "Perfect", "Diminished", "Augmented", "DoublyDiminished", "DoublyAugmented"
+]
+
 # only use interval number and quality, which gives number semitones?
 # still wtf do i do with tritones
 # Just ignore it for now?
@@ -67,11 +71,35 @@ class Interval(object):
         else:
             return NotImplemented
 
+    # Added mathematical comparisons for easier computation of chords and potential subsetting
+    # Purely based on tonal distance?
+    def __ge__(self, other) -> bool:
+        if self.__class__ is other.__class__:
+            return self.TonalDistance >= other.TonalDistance
+        return NotImplemented
+
+    def __gt__(self, other) -> bool:
+        if self.__class__ is other.__class__:
+            return self.TonalDistance > other.TonalDistance
+        return NotImplemented
+
+    def __le__(self, other) -> bool:
+        if self.__class__ is other.__class__:
+            return self.TonalDistance <= other.TonalDistance
+        return NotImplemented
+
+    def __lt__(self, other) -> bool:
+        if self.__class__ is other.__class__:
+            return self.TonalDistance < other.TonalDistance
+        return NotImplemented
+
     def ShortStr(self):
         if self.Quality == "DoublyAugmented":
             qualityString = "DA"
         elif self.Quality == "DoublyDiminished":
             qualityString = "DD"
+        elif self.Quality == "Minor":
+            qualityString = "m"
         else:
             qualityString = self.Quality[0]
         return "{}{}".format(qualityString, self.IntervalNumber)

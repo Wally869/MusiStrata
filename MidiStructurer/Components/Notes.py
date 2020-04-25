@@ -145,7 +145,7 @@ class Note(object):
                 return newNote, None
             else:
                 return newNote, ValueError(
-                    "Expected Interval Cannot Be Generated: Invalid Interval from given starting note. "
+                    "Invalid Interval from given starting note. "
                     "Target Interval: {}, GeneratedInterval: {}".format(
                         other, generatedInterval))
         elif type(other) == int:

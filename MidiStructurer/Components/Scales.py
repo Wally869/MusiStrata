@@ -6,6 +6,8 @@ from typing import List
 from enum import Enum
 from copy import deepcopy
 
+from .utils import ExtendedEnum
+
 TONES_SUCCESSION = {
     "Major": [
         1, 1, 0.5, 1, 1, 1, 0.5
@@ -59,7 +61,7 @@ class ScaleTypes(Enum):
     MinorMelodic = 2
 
 
-class ScaleModes(Enum):
+class ScaleModes(ExtendedEnum):
     Ionian = 0
     Dorian = 1
     Phrygian = 2

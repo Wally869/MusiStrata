@@ -78,7 +78,10 @@ class LoopingOrderedEnum(OrderedEnum):
         nbLoops = 0
 
         nbElements = len(self.GetAllElements())
-        currId = self.GetPosition() + other
+
+        # replace by self.value
+        # currId = self.GetPosition() - other
+        currId = self.value + other
 
         while currId >= nbElements:
             currId -= nbElements
@@ -103,7 +106,10 @@ class LoopingOrderedEnum(OrderedEnum):
 
             nbLoops = 0
             nbElements = len(self.GetAllElements())
-            currId = self.GetPosition() - other
+
+            # currId = self.GetPosition() - other
+            currId = self.value - other
+
             while currId < 0:
                 currId += nbElements
                 nbLoops -= 1

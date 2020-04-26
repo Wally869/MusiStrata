@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .Notes import *
+
 ALL_POSSIBLE_QUALITIES = [
     "Minor", "Major", "Perfect", "Diminished", "Augmented", "DoublyDiminished", "DoublyAugmented"
 ]
@@ -39,7 +41,7 @@ AUGMENTED_DIMINISHED_INTERVALS = [
     [7, "Augmented", 12]  # Augmented Seventh
 ]
 
-# Will need to fill this
+# Will need to fill this?
 DOUBLY_AUGMENTED_DIMINISHED_INTERVALS = [
     [3, "DoublyAugmented", 5]
 ]
@@ -93,6 +95,19 @@ class Interval(object):
             return self.TonalDistance < other.TonalDistance
         return NotImplemented
 
+    # Mathematical Operations on Notes, with enforced order
+    def __radd__(self, other):
+        if type(other) == Note:
+            newNote = other + self.TonalDistance
+            generatedInterval = self.GetIntervalSpecs(newNote)
+            if other == generatedInterval:
+                return newNote, None
+            else:
+                return newNote, ValueError(
+                    "Invalid Interval from given starting note. "
+                    "Target Interval: {}, GeneratedInterval: {}".format(
+                        other, generatedInterval))
+
     def ShortStr(self):
         if self.Quality == "DoublyAugmented":
             qualityString = "DA"
@@ -124,6 +139,55 @@ class Interval(object):
             if interval.IntervalNumber == intervalNumber and interval.TonalDistance == tonalDistance:
                 return interval.Quality
         return None
+
+    def GetConsonanceType(self):
+        # https://en.wikipedia.org/wiki/Consonance_and_dissonance#Consonance
+        # perfect consonances: unisons, octaves, perfect fourths, perfect fifths
+        # imperfect consonances: major 2nd, minor 7th, major 3rd, minor sixths, minor 3rd, major sixth
+        if self.Quality == "Perfect":
+            return "PerfectConsonance"
+        specs = [self.Quality, self.IntervalNumber]
+        if self.Quality == "Major":
+            if self.IntervalNumber in [2, 3, 6]:
+                return "ImperfectConsonance"
+        elif self.Quality == "Minor":
+            if self.IntervalNumber in [7, 6, 3]:
+                return "ImperfectConsonance"
+        return "Dissonance"
+
+    @classmethod
+    def FromNotes(cls, note0, note1):
+        if note0 > note1:
+            note0, note1 = note1, note0
+        intervalNumber = note0.GetIntervalNumber(note1)
+        tonalDistance = note1 - note0
+        quality = cls.FindQualityFromOtherSpecs(intervalNumber, tonalDistance)
+        return Interval(intervalNumber, quality)
+
+
+# Handling the case where interval > octave
+# Can rework interval as a specific case of CompoundInterval where len(self.Intervals) == 1?
+# would be much much better
+# will do that once I am more sure of what to do
+class CompoundInterval(object):
+    def __init__(self, intervals: List[Interval]):
+        self.Intervals = intervals
+
+    def __str__(self):
+        return "CompoundInterval({} Octaves - {})".format(len(self.Intervals) - 1, self.Intervals[-1])
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __radd__(self, other):
+        # Have to assume other is Note, want to avoid circular import but seems rough
+        # maybe can rewrite so that intervals stuff happens here and not in note?
+        # seems more logical: intervals are based on notes, and not reverse
+        pass
+
+    @classmethod
+    def CreateFrom(cls):
+        pass
 
 
 CHROMATIC_AND_DIATONIC_INTERVALS = [Interval(*spec[:2]) for spec in MINOR_MAJOR_PERFECT_INTERVALS]

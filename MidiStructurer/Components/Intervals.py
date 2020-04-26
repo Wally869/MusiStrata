@@ -161,7 +161,7 @@ class BaseInterval(object):
                 return interval.Quality
         return None
 
-    def GetConsonanceType(self):
+    def GetConsonanceType(self) -> str:
         # https://en.wikipedia.org/wiki/Consonance_and_dissonance#Consonance
         # perfect consonances: unisons, octaves, perfect fourths, perfect fifths
         # imperfect consonances: major 2nd, minor 7th, major 3rd, minor sixths, minor 3rd, major sixth
@@ -177,20 +177,9 @@ class BaseInterval(object):
         return "Dissonance"
 
     @classmethod
-    def FromNotes(cls, note0, note1):
-        if note0 > note1:
-            note0, note1 = note1, note0
-
-        tonalDistance = note1 - note0
-        if tonalDistance > 12:
-            # too big, return a compound interval
-            return Interval.FromNotes(note0, note1)
-        intervalNumber = note0.GetIntervalNumber(note1)
-        quality = cls.FindQualityFromNumberAndDistance(intervalNumber, tonalDistance)
-        return Interval(intervalNumber, quality)
-
-    @classmethod
-    def GetValidIntervals(cls, rootNote: Note, listIntervals: List[Interval] = ALL_INTERVALS):
+    def GetValidIntervals(cls, rootNote: Note, listIntervals: List[Interval] = []):
+        if listIntervals == []:
+            listIntervals = ALL_INTERVALS
         outIntervals = []
         for interval in listIntervals:
             _, err = rootNote + interval
@@ -216,30 +205,30 @@ class Interval(object):
 
     # Properties exposing the sublying properties of the last interval in self.Intervals
     @property
-    def TonalDistance(self):
+    def TonalDistance(self) -> int:
         # return (len(self.Intervals) - 1) * 12 + self.Intervals[-1].TonalDistance
         return self.Intervals[-1].TonalDistance
 
     @property
-    def Quality(self):
+    def Quality(self) -> str:
         return self.Intervals[-1].Quality
 
     @property
-    def IntervalNumber(self):
+    def IntervalNumber(self) -> int:
         return self.Intervals[-1].IntervalNumber
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.Intervals)
 
     def __getitem__(self, id: int) -> Interval:
         return self.Intervals[id]
 
-    def __str__(self):
+    def __str__(self) -> str:
         if len(self) == 1:
             return self[-1].__str__()
         return "Interval({} Octaves + {})".format(len(self.Intervals) - 1, self.Intervals[-1])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
 
     def __eq__(self, other) -> bool:
@@ -337,10 +326,10 @@ class Interval(object):
             return newNote, err
         return NotImplemented
 
-    def ShortStr(self):
+    def ShortStr(self) -> str:
         return self[-1].ShortStr()
 
-    def GetConsonanceType(self):
+    def GetConsonanceType(self) -> str:
         return self[-1].GetConsonanceType()
 
     @staticmethod
@@ -354,7 +343,7 @@ class Interval(object):
         return BaseInterval.FindQualityFromNumberAndDistance(intervalNumber, tonalDistance)
 
     @classmethod
-    def FromNotes(cls, note0, note1):
+    def FromNotes(cls, note0: Note, note1: Note) -> Interval:
         intervals = []
         if note0 > note1:
             note0, note1 = note1, note0
@@ -370,6 +359,17 @@ class Interval(object):
         quality = BaseInterval.FindQualityFromNumberAndDistance(intervalNumber, tonalDistance)
         intervals.append(BaseInterval(intervalNumber, quality))
         return Interval(Intervals=intervals)
+
+    @classmethod
+    def GetValidIntervals(cls, rootNote: Note, listIntervals: List[Interval] = []):
+        if listIntervals == []:
+            listIntervals = ALL_INTERVALS
+        outIntervals = []
+        for interval in listIntervals:
+            _, err = rootNote + interval
+            if err is None:
+                outIntervals.append(interval)
+        return outIntervals
 
 
 CHROMATIC_AND_DIATONIC_INTERVALS = [Interval(*spec[:2]) for spec in MINOR_MAJOR_PERFECT_INTERVALS]

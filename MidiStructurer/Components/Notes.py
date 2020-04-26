@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from .Intervals import *
 from .utils import LoopingOrderedEnum, OrderedEnum
 
 from copy import deepcopy
@@ -136,19 +135,7 @@ class Note(object):
         return NotImplemented
 
     def __add__(self, other: Union[Interval, int]) -> Union[List[Note, None], List[Note, ValueError], Note]:
-        if type(other) is Interval:
-            # Return Note, None if no error
-            # else return Note, ValueError?
-            newNote = self + other.TonalDistance
-            generatedInterval = self.GetIntervalSpecs(newNote)
-            if other == generatedInterval:
-                return newNote, None
-            else:
-                return newNote, ValueError(
-                    "Invalid Interval from given starting note. "
-                    "Target Interval: {}, GeneratedInterval: {}".format(
-                        other, generatedInterval))
-        elif type(other) == int:
+        if type(other) == int:
             # error if other is negative. Fixing this
             if other < 0:
                 return self.__sub__(abs(other))
@@ -162,20 +149,9 @@ class Note(object):
         else:
             return NotImplemented
 
-    def __sub__(self, other: Union[int, List[Note, ValueError], Note]) -> Union[
-        Tuple(Note, None), Tuple(Note, ValueError), Note]:
+    def __sub__(self, other: Union[int, Note]) -> Union[int, Note]:
         if self.__class__ is other.__class__:
             return self.ComputeTonalDistance(other)
-        elif type(other) is Interval:
-            newNote = self - other.TonalDistance
-            generatedInterval = newNote.GetIntervalSpecs(self)
-            if other == generatedInterval:
-                return newNote, None
-            else:
-                return newNote, ValueError(
-                    "Expected Interval Cannot Be Generated: Invalid Interval from given starting note. "
-                    "Target Interval: {}, GeneratedInterval: {}".format(
-                        other, generatedInterval))
         elif type(other) == int:
             if other < 0:
                 return self.__add__(abs(other))
@@ -246,7 +222,6 @@ class Note(object):
             # lowest note is root of chord and therefore the base for interval calculation
             # Incrementing by one so that it makes sense (a A - B chord is a second, but this return 1)
             outValue += 1
-
             # adding exception for octave
             if outValue == 1:
                 if abs(self - other) <= 2:
@@ -257,41 +232,6 @@ class Note(object):
             return outValue
 
         return NotImplemented
-
-    def GetIntervalSpecs(self, other) -> Interval:
-        if self.__class__ is other.__class__:
-            # Problem if compound interval (i.e. octave + second for example)
-            # Not sure how to solve it
-            intervalNumber = self.GetIntervalNumber(other)
-            deltaTone = self.ComputeRootedTonalDistance(other)
-            quality = Interval.FindQualityFromOtherSpecs(intervalNumber, deltaTone)
-
-            return Interval(
-                intervalNumber,
-                quality
-            )
-
-        return NotImplemented
-
-    def GetValidIntervalsFromAll(self) -> List[Interval]:
-        outIntervals = []
-        for interval in ALL_INTERVALS:
-            _, err = self + interval
-            if err is None:
-                outIntervals.append(interval)
-        return outIntervals
-
-    def GetValidIntervalsFromSelected(self, selectedIntervals: List[Interval], toHigher: bool = True) -> List[Interval]:
-        outIntervals = []
-        for interval in selectedIntervals:
-            if toHigher:
-                _, err = self + interval
-            else:
-                _, err = self - interval
-
-            if err is None:
-                outIntervals.append(interval)
-        return outIntervals
 
 
 def CreateNoteFromHeight(height: int) -> Note:

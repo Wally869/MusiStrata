@@ -48,6 +48,10 @@ DOUBLY_AUGMENTED_DIMINISHED_INTERVALS = [
 
 ALL_INTERVALS_RAW = MINOR_MAJOR_PERFECT_INTERVALS + AUGMENTED_DIMINISHED_INTERVALS + DOUBLY_AUGMENTED_DIMINISHED_INTERVALS
 
+# Setting empty reference, filled after creating the Interval object.
+# it is used in a method of Interval so using this trick
+ALL_INTERVALS = []
+
 
 # Need to perform check on input arguments. Done in findtonaldistancefromotherspecs
 # Here, can add checks to see if consonance, dissonance, perfect/imperfect?
@@ -55,7 +59,7 @@ class Interval(object):
     def __init__(self, IntervalNumber: int, Quality: str):  # , TonalDistance: int):
         self.IntervalNumber = IntervalNumber
         self.Quality = Quality
-        self.TonalDistance = self.FindTonalDistanceFromOtherSpecs(IntervalNumber, Quality)
+        self.TonalDistance = self.FindTonalDistanceFromNumberAndQuality(IntervalNumber, Quality)
 
     def __str__(self) -> str:
         return "Interval({}-{}--{} semitones)".format(self.IntervalNumber, self.Quality, self.TonalDistance)
@@ -98,15 +102,33 @@ class Interval(object):
     # Mathematical Operations on Notes, with enforced order
     def __radd__(self, other):
         if type(other) == Note:
+            # Return Note, None if no error
+            # else return Note, ValueError
             newNote = other + self.TonalDistance
-            generatedInterval = self.GetIntervalSpecs(newNote)
-            if other == generatedInterval:
+            generatedInterval = Interval.FromNotes(other, newNote)
+            if generatedInterval == self:
                 return newNote, None
             else:
                 return newNote, ValueError(
-                    "Invalid Interval from given starting note. "
-                    "Target Interval: {}, GeneratedInterval: {}".format(
-                        other, generatedInterval))
+                    "Invalid from given starting note. "
+                    "Target: {}, Generated: {}".format(
+                        self, generatedInterval))
+        return NotImplemented
+
+    def __rsub__(self, other):
+        if type(other) == Note:
+            # Return Note, None if no error
+            # else return Note, ValueError
+            newNote = other - self.TonalDistance
+            generatedInterval = Interval.FromNotes(other, newNote)
+            if generatedInterval == self:
+                return newNote, None
+            else:
+                return newNote, ValueError(
+                    "Invalid from given starting note. "
+                    "Target: {}, Generated: {}".format(
+                        self, generatedInterval))
+        return NotImplemented
 
     def ShortStr(self):
         if self.Quality == "DoublyAugmented":
@@ -120,7 +142,7 @@ class Interval(object):
         return "{}{}".format(qualityString, self.IntervalNumber)
 
     @staticmethod
-    def FindTonalDistanceFromOtherSpecs(intervalNumber: int, quality: str) -> int:
+    def FindTonalDistanceFromNumberAndQuality(intervalNumber: int, quality: str) -> int:
         # This function gets us the tonal distance, but also ensures that correct parameters have been input
         for elem in ALL_INTERVALS_RAW:
             if elem[0] == intervalNumber:
@@ -131,10 +153,9 @@ class Interval(object):
                        "is not a valid combination for an interval.".format(intervalNumber, quality))
 
     @classmethod
-    def FindQualityFromOtherSpecs(cls, intervalNumber: int, tonalDistance: int) -> str:
+    def FindQualityFromNumberAndDistance(cls, intervalNumber: int, tonalDistance: int) -> str:
         # Need to implement Augmented and Diminished intervals
         # function, or use bigger all_intervals_raw?
-
         for interval in ALL_INTERVALS:
             if interval.IntervalNumber == intervalNumber and interval.TonalDistance == tonalDistance:
                 return interval.Quality
@@ -161,8 +182,17 @@ class Interval(object):
             note0, note1 = note1, note0
         intervalNumber = note0.GetIntervalNumber(note1)
         tonalDistance = note1 - note0
-        quality = cls.FindQualityFromOtherSpecs(intervalNumber, tonalDistance)
+        quality = cls.FindQualityFromNumberAndDistance(intervalNumber, tonalDistance)
         return Interval(intervalNumber, quality)
+
+    @classmethod
+    def GetValidIntervals(cls, rootNote: Note, listIntervals: List[Interval] = ALL_INTERVALS):
+        outIntervals = []
+        for interval in listIntervals:
+            _, err = rootNote + interval
+            if err is None:
+                outIntervals.append(interval)
+        return outIntervals
 
 
 # Handling the case where interval > octave
@@ -183,7 +213,12 @@ class CompoundInterval(object):
         # Have to assume other is Note, want to avoid circular import but seems rough
         # maybe can rewrite so that intervals stuff happens here and not in note?
         # seems more logical: intervals are based on notes, and not reverse
-        pass
+        if type(other) == Note:
+            newNote = other
+            for interval in self.Intervals:
+                newNote = newNote + interval
+            return newNote
+        return NotImplemented
 
     @classmethod
     def CreateFrom(cls):
@@ -193,6 +228,5 @@ class CompoundInterval(object):
 CHROMATIC_AND_DIATONIC_INTERVALS = [Interval(*spec[:2]) for spec in MINOR_MAJOR_PERFECT_INTERVALS]
 PERTURBED_INTERVALS = [Interval(*spec[:2]) for spec in
                        (AUGMENTED_DIMINISHED_INTERVALS + DOUBLY_AUGMENTED_DIMINISHED_INTERVALS)]
-
 ALL_INTERVALS = [Interval(*spec[:2]) for spec in ALL_INTERVALS_RAW]
 ALL_INTERVALS.sort(key=lambda x: x.TonalDistance)

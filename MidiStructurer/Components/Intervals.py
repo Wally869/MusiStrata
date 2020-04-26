@@ -180,8 +180,12 @@ class Interval(object):
     def FromNotes(cls, note0, note1):
         if note0 > note1:
             note0, note1 = note1, note0
-        intervalNumber = note0.GetIntervalNumber(note1)
+
         tonalDistance = note1 - note0
+        if tonalDistance > 12:
+            # too big, return a compound interval
+            return CompoundInterval.FromNotes(note0, note1)
+        intervalNumber = note0.GetIntervalNumber(note1)
         quality = cls.FindQualityFromNumberAndDistance(intervalNumber, tonalDistance)
         return Interval(intervalNumber, quality)
 
@@ -203,26 +207,56 @@ class CompoundInterval(object):
     def __init__(self, intervals: List[Interval]):
         self.Intervals = intervals
 
+    def __len__(self):
+        return len(self.Intervals)
+
+    def __getitem__(self, id: int) -> Interval:
+        return self.Intervals[id]
+
     def __str__(self):
-        return "CompoundInterval({} Octaves - {})".format(len(self.Intervals) - 1, self.Intervals[-1])
+        return "CompoundInterval({} Octaves + {})".format(len(self.Intervals) - 1, self.Intervals[-1])
 
     def __repr__(self):
         return self.__str__()
 
-    def __radd__(self, other):
+    def __radd__(self, other) -> Tuple[Note, ValueError]:
         # Have to assume other is Note, want to avoid circular import but seems rough
         # maybe can rewrite so that intervals stuff happens here and not in note?
         # seems more logical: intervals are based on notes, and not reverse
         if type(other) == Note:
             newNote = other
             for interval in self.Intervals:
-                newNote = newNote + interval
+                # all intervals are combination of octave and sub octave
+                # octave ALWAYS exist, so only need to keep last error
+                newNote, err = newNote + interval
             return newNote
         return NotImplemented
 
+    def __rsub__(self, other) -> Tuple[Note, ValueError]:
+        if type(other) == Note:
+            newNote = other
+            for interval in self.Intervals:
+                newNote, err = newNote - interval
+            return newNote, err
+        return NotImplemented
+
     @classmethod
-    def CreateFrom(cls):
-        pass
+    def FromNotes(cls, note0, note1):
+        intervals = []
+        if note0 > note1:
+            note0, note1 = note1, note0
+        # check if there is more than one octave of difference
+        while note1 - note0 > 12:
+            intervals.append(
+                Interval(8, "Perfect")
+            )
+            note1 = note1 - 12
+
+        intervalNumber = note0.GetIntervalNumber(note1)
+        tonalDistance = note1 - note0
+        quality = Interval.FindQualityFromNumberAndDistance(intervalNumber, tonalDistance)
+        intervals.append(Interval(intervalNumber, quality))
+        return CompoundInterval(intervals)
 
 
 CHROMATIC_AND_DIATONIC_INTERVALS = [Interval(*spec[:2]) for spec in MINOR_MAJOR_PERFECT_INTERVALS]

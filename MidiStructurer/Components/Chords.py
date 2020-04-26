@@ -40,8 +40,24 @@ class Chord(object):
         self.Intervals = chordIntervals
         self.Size = len(chordIntervals) + 1
 
+        consonancesTypes = [interval.GetConsonanceType() for interval in chordIntervals]
+        tempSumTypes = []
+        for field in ["PerfectConsonance", "ImperfectConsonance", "Dissonance"]:
+            tempSumTypes.append(
+                len(
+                    list(
+                        filter(
+                            lambda consoType: consoType == field,
+                            consonancesTypes
+                        )
+                    )
+                )
+            )
+
+        self.NbPerfectConsonances, self.NbImperfectConsonances, self.NbDissonances = tempSumTypes
+
     def __len__(self):
-        return self.Size
+        return len(self.Intervals)
 
     def GenerateFromRootNote(self, rootNote: Note, rootInOutput: bool = True) -> Tuple[List[Note], List[Error]]:
         if type(rootNote) != Note:
@@ -56,8 +72,8 @@ class Chord(object):
             errors.append(err)
         return outNotes, errors
 
-    def __call__(self, rootNote: Note):
-        return self.GenerateFromRootNote(rootNote)
+    def __call__(self, rootNote: Note, rootInOutput: bool = True):
+        return self.GenerateFromRootNote(rootNote, rootInOutput)
 
 
 ALL_CHORDS = [
@@ -65,4 +81,3 @@ ALL_CHORDS = [
     for intervals
     in dychordsIntervals + trichordsIntervals + quadchordsIntervals
 ]
-

@@ -361,12 +361,15 @@ class Interval(object):
         return Interval(Intervals=intervals)
 
     @classmethod
-    def GetValidIntervals(cls, rootNote: Note, listIntervals: List[Interval] = []):
+    def GetValidIntervals(cls, rootNote: Note, listIntervals: List[Interval] = [], toHigher: Bool = True):
         if listIntervals == []:
             listIntervals = ALL_INTERVALS
         outIntervals = []
         for interval in listIntervals:
-            _, err = rootNote + interval
+            if toHigher:
+                _, err = rootNote + interval
+            else:
+                _, err = rootNote - interval
             if err is None:
                 outIntervals.append(interval)
         return outIntervals

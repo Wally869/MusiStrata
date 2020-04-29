@@ -20,6 +20,16 @@ class SoundEvent:
     Note: Note = Note()
 
 
+def GenerateSoundEventsFromListNotes(beat: float, duration: float, notes: List[Note]):
+    return [
+        SoundEvent(
+            Beat=beat,
+            Duration=duration,
+            Note=note
+        ) for note in notes
+    ]
+
+
 @dataclass
 class Bar:
     SoundEvents: list = field(default_factory=list)
@@ -67,6 +77,7 @@ class SongSegment:
     ScaleSegment: ScaleSpecs = ScaleSpecs()
     Bars: list = field(default_factory=list)
 """
+
 
 # Do I really need a timesignature? For my implementation, beats per bar is enough?
 @dataclass

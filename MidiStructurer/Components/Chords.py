@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from .Notes import *
 from .Intervals import *
-from .Structure import SoundEvent
 
 # Using good old wikipedia as starting point
 # https://en.wikipedia.org/wiki/Chord_(music)
@@ -99,8 +98,8 @@ class Chord(object):
             errors.append(err)
         return outNotes, errors
 
-    def __call__(self, rootNote: Union[Note, SoundEvent], fromRoot: bool = True, rootInOutput: bool = True,
-                 excludeErrors: bool = False) -> List[Note]:
+    def __call__(self, rootNote: UnionNote, fromRoot: bool = True,
+                 rootInOutput: bool = True, excludeErrors: bool = False) -> List[Note]:
         if fromRoot:
             notes, err = self.GenerateFromRootNote(rootNote, rootInOutput)
         else:

@@ -16,7 +16,7 @@ from copy import deepcopy
 @dataclass
 class SoundEvent:
     Beat: float = 0.0
-    Duration: float = 0.0
+    Duration: float = 1.0
     Note: Note = Note()
 
 

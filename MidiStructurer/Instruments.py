@@ -1,3 +1,7 @@
+from dataclasses import dataclass
+
+from typing import Union, List
+
 # List taken from: https://github.com/mobyvb/midi-converter/blob/master/lib/instruments.json
 RAW_INSTRUMENTS = [
     {"hexcode": "0x00", "family": "Piano", "instrument": "Acoustic Grand Piano"},
@@ -135,7 +139,61 @@ INSTRUMENT_NAME_TO_SIGNAL = {inst["instrument"]: int(inst["hexcode"], 16) for in
 
 INSTRUMENT_NAMES = list(INSTRUMENT_NAME_TO_SIGNAL.keys())
 
+@dataclass
+class Instrument:
+    Signal: int
+    Family: str
+    Name: str
 
+
+class InstrumentsLibrary(object):
+    Instruments = [
+        Instrument(
+            Signal=int(inst["hexcode"], 16),
+            Family=inst["family"],
+            Name=inst["instrument"]
+        ) for inst in RAW_INSTRUMENTS
+    ]
+
+    @classmethod
+    def GetFromValueInField(cls, field: str, value: Union[str, int]):
+        if type(value) == str:
+            value = "'" + value + "'"
+        found = eval(
+            "list(filter(lambda x: x.{} == {}, cls.Instruments))".format(field, value)
+        )
+
+        if len(found) == 0:
+            print("InstrumentsLibrary - KeyError: {} not found in {}. Returning default value. \n".format(value, field))
+            found = [cls.Instruments[0]]
+        return found
+
+    @classmethod
+    def GetSignalFromInstrument(cls, instrument: str) -> int:
+        return cls.GetFromValueInField("Name", instrument)[0].Signal
+
+    @classmethod
+    def GetInstrumentFromSignal(cls, signal: int) -> str:
+        return cls.GetFromValueInField("Signal", signal)[0].Name
+
+    @classmethod
+    def GetFamilyFromSignal(cls, signal: int) -> str:
+        return cls.GetFromValueInField("Signal", signal)[0].Family
+
+    @classmethod
+    def GetFamilyFromInstrument(cls, instrument: str) -> str:
+        return cls.GetFromValueInField("Name", instrument)[0].Family
+
+
+
+# unnecessary, but keeping a function for current backward compatibility
+def GetSignalFromInstrument(instrument: str) -> int:
+    print("DEPRECATION WARNING: GetSignalFromInstrument has been deprecated.")
+    print("Use InstrumentsLibrary.GetSignalFromInstrument directly instead")
+    return InstrumentsLibrary.GetSignalFromInstrument(instrument)
+
+
+'''
 def GetSignalFromInstrument(instrument: str) -> int:
     outSignal = 0
     try:
@@ -146,3 +204,9 @@ def GetSignalFromInstrument(instrument: str) -> int:
         print("Defaulting to Acoustic Grand Piano (signal 0 of General Midi)")
         print()
     return outSignal
+'''
+
+
+
+def GetInstrumentFromSignal(signal: int) -> str:
+    outInstrument = "Acoustic Grand Piano"

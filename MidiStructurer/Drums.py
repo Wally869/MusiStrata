@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from .PrimitiveClassesUtils import Record, Library
+
 from typing import List, Union
 
 # List taken from https://github.com/ianjennings/midi-wtf/blob/master/index.js
@@ -75,68 +77,32 @@ DRUMS_NAMES = list(
     DRUMS_NAME_TO_HEIGHT.keys()
 )
 
-@dataclass
-class Drum:
-    Signal: int
-    Name: str
-
 
 # Might want to create a base class to be inherited from
 # since used in both Drums and Instruments, and I'm likely to reuse it in some other package
-class DrumsLibrary(object):
-    Drums = [
-        Drum(
-            Signal=key,
-            Name=RAW_DRUMS[key]
-        ) for key in RAW_DRUMS
-    ]
-
-    @classmethod
-    def GetFromValueInField(cls, field: str, value: Union[str, int]):
-        if type(value) == str:
-            value = "'" + value + "'"
-        found = eval(
-            "list(filter(lambda x: x.{} == {}, cls.Drums))".format(field, value)
-        )
-
-        if len(found) == 0:
-            print("DrumsLibrary - KeyError: {} not found in {}. Returning default value. \n".format(value, field))
-            found = [cls.Drums[0]]
-        return found
+class DrumsLibraryClass(Library):
+    BaseName: str = "DrumsLibrary"
+    Records: List[Record] = None
 
     # not sure if use Drum or Drums, so using both
-    @classmethod
-    def GetDrumFromSignal(cls, signal: int):
-        return cls.GetFromValueInField("Signal", signal)[0].Name
+    def GetDrumNameFromSignal(self, signal: int):
+        return self.GetFromValueInField("Signal", signal)[0].Name
 
-    @classmethod
-    def GetSignalFromDrum(cls, drums: str):
-        return cls.GetFromValueInField("Name", drums)[0].Signal
+    def GetSignalFromDrumName(self, drums: str):
+        return self.GetFromValueInField("Name", drums)[0].Signal
 
-    @classmethod
-    def GetDrumsFromSignal(cls, signal: int):
-        return cls.GetFromValueInField("Signal", signal)[0].Name
+    def GetDrumsNameFromSignal(self, signal: int):
+        return self.GetFromValueInField("Signal", signal)[0].Name
 
-    @classmethod
-    def GetSignalFromDrums(cls, drums: str):
-        return cls.GetFromValueInField("Name", drums)[0].Signal
+    def GetSignalFromDrumsName(self, drums: str):
+        return self.GetFromValueInField("Name", drums)[0].Signal
+
+
+RAW_PREPARED = [{"Signal": k, "Name": RAW_DRUMS[k]} for k in RAW_DRUMS]
+DrumsLibrary = DrumsLibraryClass(RAW_PREPARED)
 
 
 def GetHeightFromDrumsInstrumentName(drums: str) -> int:
-    print("DEPRECATION WARNING: GetSignalFromInstrument has been deprecated.")
-    print("Use InstrumentsLibrary.GetSignalFromInstrument directly instead. \n")
-    return DrumsLibrary.GetSignalFromDrum(drums)
-
-
-'''
-def GetHeightFromDrumsInstrumentName(drums: str) -> int:
-    outHeight = 46
-    try:
-        outHeight = DRUMS_NAME_TO_HEIGHT[drums]
-    except:
-        print("Invalid instrument provided. " + drums + " is not in the list of allowed drums instruments")
-        print("Please Check Drums.DRUMS_NAMES for allowed drums instruments")
-        print("Defaulting to Open Hi-Hat (height 46)")
-        print()
-    return outHeight
-'''
+    print("DEPRECATION WARNING: GetHeightFromDrumsInstrumentName has been deprecated.")
+    print("Use DrumsLibrary.GetSignalFromDrumsName instead. \n")
+    return DrumsLibrary.GetSignalFromDrumsName(drums)

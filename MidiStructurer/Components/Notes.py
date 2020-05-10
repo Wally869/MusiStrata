@@ -176,6 +176,7 @@ class Note(object):
         return (self.Octave + 1) * 12 + self.Name.value
 
     def ComputeFrequency(self) -> float:
+        print("DEPRECATION WARNING - Use Frequency property instead of ComputeFrequency property")
         """
         # Using this as reference: https://pages.mtu.edu/~suits/notefreqs.html
         baseFreq = 16.35
@@ -183,6 +184,10 @@ class Note(object):
         freq = baseFreq * (2 ** note.Octave) * (2 ** (1 / 12)) ** note.Name.value
         return freq
         """
+        return 16.35 * (2 ** self.Octave) * (2 ** (1 / 12)) ** self.Name.value
+
+    @property
+    def Frequency(self):
         return 16.35 * (2 ** self.Octave) * (2 ** (1 / 12)) ** self.Name.value
 
     # Return distance between this note and another in term of semitones

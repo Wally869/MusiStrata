@@ -375,6 +375,11 @@ class Interval(object):
         return outIntervals
 
 
+# same as Instruments and Drums?
+class IntervalsLibrary(object):
+    pass
+
+
 CHROMATIC_AND_DIATONIC_INTERVALS = [Interval(*spec[:2]) for spec in MINOR_MAJOR_PERFECT_INTERVALS]
 PERTURBED_INTERVALS = [Interval(*spec[:2]) for spec in
                        (AUGMENTED_DIMINISHED_INTERVALS + DOUBLY_AUGMENTED_DIMINISHED_INTERVALS)]

@@ -8,6 +8,8 @@ from os import path, mkdir
 """
 Generate a single bar, single track song with predefined note heights and durations
 """
+
+
 def GenerateExample1():
     note1 = SoundEvent(
         Beat=0.0,
@@ -50,10 +52,13 @@ def GenerateExample1():
 
     return song
 
+
 """
 Generate a single track, 2 bars song by repeating a pattern bar
 Note heights are set by randomly choosing among notes composing a given scale (here C# Major)
 """
+
+
 def GenerateExample2():
     seed(42)
 
@@ -91,7 +96,6 @@ def GenerateExample2():
     allowedNotes = mainScale.GetScaleNotes()
     for e in bar.SoundEvents:
         e.Note = choice(allowedNotes)
-
 
     track = Track(
         Bars=[bar, bar],
@@ -162,6 +166,7 @@ def GenerateExample3():
 
     return song
 
+
 ALL_EXAMPLES = [
     GenerateExample1,
     GenerateExample2,
@@ -170,7 +175,7 @@ ALL_EXAMPLES = [
 
 
 def RunExamples():
-    if path.exists("Examples") == False:
+    if not path.exists("Examples"):
         mkdir("Examples")
     print("Generating Examples in folder Examples")
     for id_example in range(len(ALL_EXAMPLES)):

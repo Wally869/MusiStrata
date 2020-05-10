@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
-from typing import Union, List
+from .PrimitiveClassesUtils import Record, Library
+
+from typing import Union, List, Dict
 
 # List taken from: https://github.com/mobyvb/midi-converter/blob/master/lib/instruments.json
 RAW_INSTRUMENTS = [
@@ -139,74 +141,38 @@ INSTRUMENT_NAME_TO_SIGNAL = {inst["instrument"]: int(inst["hexcode"], 16) for in
 
 INSTRUMENT_NAMES = list(INSTRUMENT_NAME_TO_SIGNAL.keys())
 
-@dataclass
-class Instrument:
-    Signal: int
-    Family: str
-    Name: str
+# modifying a supposed const but I guess it's ok
+for elemid in range(len(RAW_INSTRUMENTS)):
+    for pairKeys in [["hexcode", "Signal"], ["family", "Family"], ["instrument", "Name"]]:
+        RAW_INSTRUMENTS[elemid][pairKeys[1]] = RAW_INSTRUMENTS[elemid][pairKeys[0]]
+        del RAW_INSTRUMENTS[elemid][pairKeys[0]]
+
+    RAW_INSTRUMENTS[elemid]["Signal"] = int(RAW_INSTRUMENTS[elemid]["Signal"], 16)
 
 
-class InstrumentsLibrary(object):
-    Instruments = [
-        Instrument(
-            Signal=int(inst["hexcode"], 16),
-            Family=inst["family"],
-            Name=inst["instrument"]
-        ) for inst in RAW_INSTRUMENTS
-    ]
+class InstrumentsLibraryClass(Library):
+    BaseName: str = "InstrumentsLibrary"
+    Records: List[Record] = None
 
-    @classmethod
-    def GetFromValueInField(cls, field: str, value: Union[str, int]):
-        if type(value) == str:
-            value = "'" + value + "'"
-        found = eval(
-            "list(filter(lambda x: x.{} == {}, cls.Instruments))".format(field, value)
-        )
+    def GetSignalFromInstrumentName(self, instrument: str) -> int:
+        return self.GetFromValueInField("Name", instrument)[0].Signal
 
-        if len(found) == 0:
-            print("InstrumentsLibrary - KeyError: {} not found in {}. Returning default value. \n".format(value, field))
-            found = [cls.Instruments[0]]
-        return found
+    def GetInstrumentNameFromSignal(self, signal: int) -> str:
+        return self.GetFromValueInField("Signal", signal)[0].Name
 
-    @classmethod
-    def GetSignalFromInstrument(cls, instrument: str) -> int:
-        return cls.GetFromValueInField("Name", instrument)[0].Signal
+    def GetFamilyFromSignal(self, signal: int) -> str:
+        return self.GetFromValueInField("Signal", signal)[0].Family
 
-    @classmethod
-    def GetInstrumentFromSignal(cls, signal: int) -> str:
-        return cls.GetFromValueInField("Signal", signal)[0].Name
+    def GetFamilyFromInstrumentName(self, instrument: str) -> str:
+        return self.GetFromValueInField("Name", instrument)[0].Family
 
-    @classmethod
-    def GetFamilyFromSignal(cls, signal: int) -> str:
-        return cls.GetFromValueInField("Signal", signal)[0].Family
 
-    @classmethod
-    def GetFamilyFromInstrument(cls, instrument: str) -> str:
-        return cls.GetFromValueInField("Name", instrument)[0].Family
-
+InstrumentsLibrary = InstrumentsLibraryClass(RAW_INSTRUMENTS)
 
 
 # unnecessary, but keeping a function for current backward compatibility
 def GetSignalFromInstrument(instrument: str) -> int:
     print("DEPRECATION WARNING: GetSignalFromInstrument has been deprecated.")
-    print("Use InstrumentsLibrary.GetSignalFromInstrument directly instead")
-    return InstrumentsLibrary.GetSignalFromInstrument(instrument)
+    print("Use Instruments.GetSignalFromInstrumentName directly instead")
+    return InstrumentsLibrary.GetSignalFromInstrumentName(instrument)
 
-
-'''
-def GetSignalFromInstrument(instrument: str) -> int:
-    outSignal = 0
-    try:
-        outSignal = INSTRUMENT_NAME_TO_SIGNAL[instrument]
-    except KeyError:
-        print("Invalid instrument provided. " + instrument + " is not in the list of allowed instruments")
-        print("Please Check Instruments.INSTRUMENT_NAMES for allowed instruments")
-        print("Defaulting to Acoustic Grand Piano (signal 0 of General Midi)")
-        print()
-    return outSignal
-'''
-
-
-
-def GetInstrumentFromSignal(signal: int) -> str:
-    outInstrument = "Acoustic Grand Piano"

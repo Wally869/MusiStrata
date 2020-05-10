@@ -5,11 +5,13 @@ from enum import Enum
 class ExtendedEnum(Enum):
     @classmethod
     def GetAllElements(cls):
-        return [c for c in cls]
+        # return [c for c in cls]
+        return list(cls._member_map_.values())
 
     @classmethod
     def GetAllNames(cls):
-        return [c.name for c in cls]
+        # return [c.name for c in cls]
+        return cls._member_names_
 
     @classmethod
     def GetAllValues(cls):
@@ -17,10 +19,11 @@ class ExtendedEnum(Enum):
 
     @classmethod
     def GetElementFromName(cls, name: str):
-        for c in cls:
-            if c.name == name:
-                return c
-        raise KeyError("Element not in Enum.")
+        # raise KeyError("Element not in Enum.")
+        try:
+            return cls._member_map_[name]
+        except KeyError:
+            raise KeyError("Element not in Enum")
 
     @classmethod
     def GetElementFromValue(cls, value):

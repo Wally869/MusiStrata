@@ -238,9 +238,14 @@ class Note(object):
 
         return NotImplemented
 
+    @classmethod
+    def FromHeight(cls, height: int) -> Note:
+        octave = height // 12
+        name = NoteNames.GetElementFromValue(height - octave * 12).name
+        return Note(Name=name, Octave=octave - 1)
+
 
 def CreateNoteFromHeight(height: int) -> Note:
-    octave = height // 12
-    name = NoteNames.GetElementFromValue(height - octave * 12).name
-
-    return Note(Name=name, Octave=octave - 1)
+    print("DEPRECATION WARNING: CreateNoteFromHeight has been deprecated.")
+    print("Use Note.FromHeight instead. \n")
+    return Note.FromHeight(height)

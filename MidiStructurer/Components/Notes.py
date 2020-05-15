@@ -72,23 +72,25 @@ class Note(object):
         if Octave < 0:
             raise ValueError("Octave must be a non-negative integer.")
 
-        self.__Name = NoteNames[Name]
-        self.__Octave = Octave
+        self._Name = NoteNames[Name]
+        self._Octave = Octave
 
     @property
     def Name(self) -> NoteNames:
-        return self.__Name
+        return self._Name
 
     @Name.setter
     def Name(self, newName: str) -> None:
         try:
-            self.__Name = NoteNames[newName]
+            self._Name = NoteNames[newName]
+        except TypeError:
+            raise TypeError("'{}' is not a valid note name. Expected type is str.")
         except KeyError:
             raise KeyError("'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(newName))
 
     @property
     def Octave(self) -> int:
-        return self.__Octave
+        return self._Octave
 
     @Octave.setter
     def Octave(self, newOctave: int) -> None:
@@ -96,8 +98,8 @@ class Note(object):
             raise TypeError("Octave must be a non-negative integer.")
         # Separating value checking from type checking
         if newOctave < 0:
-            raise TypeError("Octave must be a non-negative integer.")
-        self.__Octave = newOctave
+            raise ValueError("Octave must be a non-negative integer.")
+        self._Octave = newOctave
 
     def __str__(self) -> str:
         return "Note({})".format(self.Name.name + str(self.Octave))
@@ -173,6 +175,11 @@ class Note(object):
         return newNote
 
     def ComputeHeight(self) -> int:
+        print("DEPRECATION WARNING - Use Height property instead of ComputeHeight property")
+        return self.Height
+
+    @property
+    def Height(self) -> int:
         return (self.Octave + 1) * 12 + self.Name.value
 
     def ComputeFrequency(self) -> float:
@@ -187,17 +194,25 @@ class Note(object):
         return 16.35 * (2 ** self.Octave) * (2 ** (1 / 12)) ** self.Name.value
 
     @property
-    def Frequency(self):
+    def Frequency(self) -> float:
         return 16.35 * (2 ** self.Octave) * (2 ** (1 / 12)) ** self.Name.value
 
     # Return distance between this note and another in term of semitones
     def ComputeTonalDistance(self, other) -> int:
+        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
+        return GetTonalDistance(other)
+
+    def GetTonalDistance(self, other) -> int:
         if self.__class__ is other.__class__:
             return self.ComputeHeight() - other.ComputeHeight()
         return NotImplemented
 
     # Returning a positive tonal distance
     def ComputeRootedTonalDistance(self, other) -> int:
+        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
+        return self.GetRootedTonalDistance(other)
+
+    def GetRootedTonalDistance(self, other) -> int:
         if self.__class__ is other.__class__:
             return max(
                 self.ComputeHeight() - other.ComputeHeight(),

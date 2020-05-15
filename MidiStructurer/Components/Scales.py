@@ -108,9 +108,17 @@ class ScaleSpecs(object):
 
     # Implementing circle of fifths here
     def FindNeighbouringScales(self) -> List[ScaleSpecs]:
+        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
+        return self.GetNeighbouringScales()
+
+    def GetNeighbouringScales(self) -> List[ScaleSpecs]:
         return self.FindSameTypeNeighbours() + [self.FindDifferentTypeNeighbour()]
 
     def FindSameTypeNeighbours(self) -> List[ScaleSpecs]:
+        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
+        return self.GetSameTypeNeighbours()
+
+    def GetSameTypeNeighbours(self) -> List[ScaleSpecs]:
         # Minors and Majors have the same neighbours, but differentiating anyway
         if self.Type == "Major":
             neighboursRefNotes = MAJOR_NEIGHBOURS[self.RefNote]
@@ -125,6 +133,10 @@ class ScaleSpecs(object):
         ]
 
     def FindDifferentTypeNeighbour(self) -> ScaleSpecs:
+        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
+        return self.GetDifferentTypeNeighbour()
+
+    def GetDifferentTypeNeighbour(self) -> ScaleSpecs:
         if self.Type == "Major":
             return self.FindMinorFromMajorByRefNote(self.RefNote)
         else:
@@ -132,6 +144,11 @@ class ScaleSpecs(object):
 
     @staticmethod
     def FindMinorFromMajorByRefNote(refNote: str) -> ScaleSpecs:
+        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
+        return ScaleSpecs.GetMinorFromMajorByRefNote(refNote)
+
+    @staticmethod
+    def GetMinorFromMajorByRefNote(refNote: str) -> ScaleSpecs:
         return ScaleSpecs(
             RefNote=MINOR_FROM_MAJOR[refNote],
             ScaleType="Minor"
@@ -139,6 +156,11 @@ class ScaleSpecs(object):
 
     @staticmethod
     def FindMajorFromMinorByRefNote(refNote: str) -> ScaleSpecs:
+        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
+        return ScaleSpecs.GetMajorFromMinorByRefNote(refNote)
+
+    @staticmethod
+    def GetMajorFromMinorByRefNote(refNote: str) -> ScaleSpecs:
         keys = list(MINOR_FROM_MAJOR.keys())
         for k in keys:
             if MINOR_FROM_MAJOR[k] == refNote:

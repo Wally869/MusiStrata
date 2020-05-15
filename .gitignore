@@ -1,0 +1,8 @@
+.idea
+build
+dist
+MidiStructurer.egg-info
+files.txt
+MidiStructurer/.idea
+MidiStructurer/__pycache__
+MidiStructurer/Components/__pycache__

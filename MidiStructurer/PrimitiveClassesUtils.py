@@ -23,6 +23,7 @@ class Record(object):
 class Library(object):
     BaseName: str = "Library"
     Records: List[Record] = None
+    _Fields: List[str] = None
 
     def __init__(self, rawData: List[Dict], nameLibrary: str = None):
         if nameLibrary is not None:
@@ -36,6 +37,7 @@ class Library(object):
                 Record(**elem)
             )
         self.Records = records
+        self._Fields = list(rawData[0].keys())
 
     def __str__(self):
         return str("{}({} Records)".format(self.Name, len(self.Records)))
@@ -56,3 +58,13 @@ class Library(object):
 
     def __len__(self):
         return len(self.Records)
+
+    def __getitem__(self, idRecord: int):
+        return self.Records[idRecord]
+
+    @property
+    def Fields(self):
+        return self._Fields
+
+    def GetRecordsFields(self):
+        return self._Fields

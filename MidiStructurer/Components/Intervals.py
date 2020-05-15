@@ -194,7 +194,7 @@ class BaseInterval(object):
 # will do that once I am more sure of what to do
 class Interval(object):
     def __init__(self, IntervalNumber: int = -1, Quality: string = "", Intervals: List[Interval] = []):
-        if IntervalNumber == 1 and Quality == -1 and Intervals == []:
+        if IntervalNumber == -1 and Quality == "" and Intervals == []:
             raise ValueError("Interval: No empty constructor defined")
         self.Intervals = Intervals
         if IntervalNumber != -1:

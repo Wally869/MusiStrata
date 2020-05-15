@@ -201,4 +201,5 @@ class ChordsLibraryClass(Library):
         records = self.GetFromValueInField("Attribute", attributeValue)
         return [r.Chord for r in records]
 
+
 ChordsLibrary = ChordsLibraryClass(RAW_CHORDS)

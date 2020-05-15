@@ -383,8 +383,12 @@ class Interval(object):
 
 
 # same as Instruments and Drums?
+# could be nice to easily access diatonic and chromatic intervals, and filter on interval number
 class IntervalsLibrary(object):
-    pass
+    BaseName: str = "IntervalsLibrary"
+    Records: List[Record] = None
+
+
 
 
 CHROMATIC_AND_DIATONIC_INTERVALS = [Interval(*spec[:2]) for spec in MINOR_MAJOR_PERFECT_INTERVALS]
@@ -392,3 +396,5 @@ PERTURBED_INTERVALS = [Interval(*spec[:2]) for spec in
                        (AUGMENTED_DIMINISHED_INTERVALS + DOUBLY_AUGMENTED_DIMINISHED_INTERVALS)]
 ALL_INTERVALS = [Interval(*spec[:2]) for spec in ALL_INTERVALS_RAW]
 ALL_INTERVALS.sort(key=lambda x: x.TonalDistance)
+
+

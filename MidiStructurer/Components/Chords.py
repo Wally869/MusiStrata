@@ -187,5 +187,9 @@ class ChordsLibraryClass(Library):
         records = self.GetFromValueInField("Attribute", attributeValue)
         return [r.Chord for r in records]
 
+    def GetChordFromName(self, nameChord: str):
+        record = self.GetFromValueInField("Name", nameChord)
+        return record[0].Chord
+
 
 ChordsLibrary = ChordsLibraryClass(RAW_CHORDS)

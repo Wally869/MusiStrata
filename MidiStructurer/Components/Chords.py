@@ -3,41 +3,19 @@ from __future__ import annotations
 from .Notes import *
 from .Intervals import *
 
+from ..PrimitiveClassesUtils import *
+
+
 # Using good old wikipedia as starting point
 # https://en.wikipedia.org/wiki/Chord_(music)
 
 
-dychordsIntervals = [
-    [interval] for interval in list(
-        filter(
-            lambda x: x.TonalDistance > 0, ALL_INTERVALS
-        )
-    )
-]
-
-trichordsIntervals = []
-for interval0 in ALL_INTERVALS:
-    for interval1 in ALL_INTERVALS:
-        if interval1 > interval0:
-            trichordsIntervals.append(
-                [interval0, interval1]
-            )
-
-quadchordsIntervals = []
-for interval0 in ALL_INTERVALS:
-    for interval1 in ALL_INTERVALS:
-        for interval2 in ALL_INTERVALS:
-            if interval0 < interval1 < interval2:
-                quadchordsIntervals.append(
-                    [interval0, interval1, interval2]
-                )
-
-
 # How do I define a chord? How many intervals it has, how many dissonants, how many consonants
-# how many disturbed... lotsa params I guess
 class Chord(object):
     def __init__(self, chordIntervals: List[Interval]):
         self.Intervals = chordIntervals
+
+        # rewrite to get all these parameters out, and into the library fields?
         self.Size = len(chordIntervals) + 1
 
         consonancesTypes = [interval.GetConsonanceType() for interval in chordIntervals]
@@ -125,16 +103,102 @@ class ChordsList(object):
         return self.Chords[item]
 
 
-ALL_CHORDS = ChordsList()
+# using this, and a different approach I guess
+# actually this nice: https://en.wikibooks.org/wiki/Music_Theory/Complete_List_of_Chord_Patterns
+CHORD_TYPES = [
+    "Major", "Minor", "Diminished", "MajorSeventh", "MinorSeventh", "DominantSeventh",
+    "Suspended", "Augmented", "Extended"
+]
+
+RAW_CHORDS = []
+
+MAJOR_CHORDS = [
+    {
+        "Name": "Major Triad",
+        "Type": "Major",
+        "Attribute": "Triad",
+        "Intervals": [Interval(1, "Perfect"), Interval(3, "Major"), Interval(5, "Perfect")]
+    },
+    {
+        "Name": "Major Seventh",
+        "Type": "Major",
+        "Attribute": "Seventh",
+        "Intervals": [Interval(1, "Perfect"), Interval(3, "Major"), Interval(5, "Perfect"), Interval(7, "Major")]
+    }
+]
+
+DOMINANT_CHORDS = [
+    {
+        "Name": "Dominant Seventh",
+        "Type": "Dominant",
+        "Attribute": "Seventh",
+        "Intervals": [Interval(1, "Perfect"), Interval(3, "Major"), Interval(5, "Perfect"), Interval(7, "Minor")]
+    }
+]
+
+MINOR_CHORDS = [
+    {
+        "Name": "Minor Triad",
+        "Type": "Minor",
+        "Attribute": "Triad",
+        "Intervals": [Interval(1, "Perfect"), Interval(3, "Minor"), Interval(5, "Perfect")]
+    },
+    {
+        "Name": "Minor Seventh",
+        "Type": "Minor",
+        "Attribute": "Seventh",
+        "Intervals": [Interval(1, "Perfect"), Interval(3, "Minor"), Interval(5, "Perfect"), Interval(7, "Major")]
+    }
+]
+
+DIMINISHED_CHORDS = [
+    {
+        "Name": "Diminished Triad",
+        "Type": "Diminished",
+        "Attribute": "Triad",
+        "Intervals": [Interval(1, "Perfect"), Interval(3, "Minor"), Interval(5, "Diminished")]
+    },
+    {
+        "Name": "Diminished Seventh",
+        "Type": "Diminished",
+        "Attribute": "Seventh",
+        "Intervals": [Interval(1, "Perfect"), Interval(3, "Minor"), Interval(5, "Diminished"),
+                      Interval(7, "Diminished")]
+    }
+]
+
+AUGMENTED_CHORDS = [
+    {
+        "Name": "Augmented Triad",
+        "Type": "Augmented",
+        "Attribute": "Triad",
+        "Intervals": [Interval(1, "Perfect"), Interval(3, "Major"), Interval(5, "Augmented")]
+    },
+    {
+        "Name": "Augmented Seventh",
+        "Type": "Augmented",
+        "Attribute": "Seventh",
+        "Intervals": [Interval(1, "Perfect"), Interval(3, "Major"), Interval(5, "Augmented"), Interval(7, "Augmented")]
+    }
+]
+
+RAW_CHORDS = MAJOR_CHORDS + MINOR_CHORDS + DOMINANT_CHORDS + DIMINISHED_CHORDS + AUGMENTED_CHORDS
+
+for c in RAW_CHORDS:
+    c["Chord"] = Chord(c["Intervals"])
+    del c["Intervals"]
 
 
-# Use this function to load all chords from defined at start of file
-def LoadAllChords():
-    global ALL_CHORDS
-    ALL_CHORDS.Chords = [
-        Chord(intervals)
-        for intervals
-        in dychordsIntervals + trichordsIntervals + quadchordsIntervals
-    ]
+class ChordsLibraryClass(Library):
+    BaseName: str = "ChordsLibrary"
+    Records: List[Record] = None
 
-# LoadAllChords()
+    def GetChordsFromType(self, typeValue: str):
+        records = self.GetFromValueInField("Type", typeValue)
+        return [r.Chord for r in records]
+
+    def GetChordsFromAttribute(self, attributeValue: str):
+        records = self.GetFromValueInField("Attribute", attributeValue)
+        return [r.Chord for r in records]
+
+ChordsLibrary = ChordsLibraryClass(RAW_CHORDS)

@@ -101,6 +101,9 @@ class Note(object):
             raise ValueError("Octave must be a non-negative integer.")
         self._Octave = newOctave
 
+    def __hash__(self):
+        return self.Height
+
     def __str__(self) -> str:
         return "Note({})".format(self.Name.name + str(self.Octave))
 
@@ -200,7 +203,7 @@ class Note(object):
     # Return distance between this note and another in term of semitones
     def ComputeTonalDistance(self, other) -> int:
         print("DEPRECATION WARNING - Use method starting in GET for Note methods")
-        return GetTonalDistance(other)
+        return self.GetTonalDistance(other)
 
     def GetTonalDistance(self, other) -> int:
         if self.__class__ is other.__class__:

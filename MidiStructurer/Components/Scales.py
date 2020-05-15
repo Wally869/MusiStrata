@@ -235,10 +235,4 @@ def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: Union[int, float],
 
 
 def FilterOutRepeatedNotes(notes: List[Note]):
-    outNotes = []
-    outNotesHeight = []
-    for n in notes:
-        if n.ComputeHeight() not in outNotesHeight:
-            outNotes.append(n)
-            outNotesHeight.append(n.ComputeHeight())
-    return outNotes
+    return list(set(notes))

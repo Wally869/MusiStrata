@@ -49,42 +49,28 @@ class Chord(object):
     def __len__(self):
         return len(self.Intervals)
 
-    def GenerateFromRootNote(self, rootNote: Note, rootInOutput: bool = True) -> Tuple[List[Note], List[Error]]:
+    def InvertIntervals(self, inversion: int = 0):
+        inverted = self.Intervals
+        for _ in range(inversion):
+            inverted = inverted[1:] + [Interval(Intervals=[Interval(8, "Perfect"), inverted[0]])]
+        return inverted
+
+    def __call__(self, rootNote: UnionNote, inversion: int = 0, fromRoot: bool = True) -> Tuple[List[Note], List[Error]]:
         if type(rootNote) != Note:
             raise TypeError("Input must be of type Note.")
+        currIntervals = self.InvertIntervals(inversion)
         outNotes = []
-        if rootInOutput:
-            outNotes.append(rootNote)
         errors = []
-        for interval in self.Intervals:
-            currNote, err = rootNote + interval
+        for interval in currIntervals:
+            if fromRoot:
+                currNote, err = rootNote + interval
+            else:
+                currNote, err = rootNote + interval
+                if len(outNotes) > 0:
+                    currNote, err = outNotes[-1] + interval
             outNotes.append(currNote)
             errors.append(err)
         return outNotes, errors
-
-    def GenerateConsecutively(self, rootNote: Note, rootInOutput: bool = True) -> Tuple[List[Note], List[Error]]:
-        if type(rootNote) != Note:
-            raise TypeError("Input must be of type Note.")
-        outNotes = []
-        if rootInOutput:
-            outNotes.append(rootNote)
-        errors = []
-        currNote = rootNote
-        for interval in self.Intervals:
-            currNote, err = currNote + interval
-            outNotes.append(currNote)
-            errors.append(err)
-        return outNotes, errors
-
-    def __call__(self, rootNote: UnionNote, fromRoot: bool = True,
-                 rootInOutput: bool = True, excludeErrors: bool = False) -> List[Note]:
-        if fromRoot:
-            notes, err = self.GenerateFromRootNote(rootNote, rootInOutput)
-        else:
-            notes, err = self.GenerateConsecutively(rootNote, rootInOutput)
-        if excludeErrors:
-            return notes
-        return notes, err
 
 
 # I'd like to avoid loading all chords are runtime, but I think list does not work with global?

@@ -192,10 +192,17 @@ class BaseInterval(object):
 # Can rework interval as a specific case of CompoundInterval where len(self.Intervals) == 1?
 # would be much much better
 # will do that once I am more sure of what to do
+### LAST problem: checking equality between stuff like Interval(8, "Perfect") and Interval([Interval(8, "Perfect"), Interval(1, "Perfect")])
 class Interval(object):
     def __init__(self, IntervalNumber: int = -1, Quality: string = "", Intervals: List[Interval] = []):
         if IntervalNumber == -1 and Quality == "" and Intervals == []:
             raise ValueError("Interval: No empty constructor defined")
+        if type(IntervalNumber) == list:
+            raise TypeError("Invalid Arguments. IntervalNumber should be an int. \n Use NamedParameters when creating an interval from other Intervals")
+        if len(Intervals) >= 2:
+            # second part of check is not really needed
+            if Intervals[-1] == Interval(1, "Perfect") and Intervals[-2] == Interval(8, "Perfect"):
+                Intervals = Intervals[:-1]
         self.Intervals = Intervals
         if IntervalNumber != -1:
             if Quality != "":

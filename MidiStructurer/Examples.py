@@ -145,7 +145,7 @@ def GenerateExample3():
 
     mainScale = ScaleSpecs("Cs", "Minor")
     # Get scales neighbouring the mainScale
-    allowedScales = mainScale.FindNeighbouringScales()
+    allowedScales = mainScale.GetNeighbouringScales()
 
     for b in bars:
         currScale = choice(allowedScales)

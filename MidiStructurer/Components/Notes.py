@@ -121,22 +121,22 @@ class Note(object):
 
     def __ge__(self, other) -> bool:
         if self.__class__ is other.__class__:
-            return self.ComputeHeight() >= other.ComputeHeight()
+            return self.Height >= other.Height
         return NotImplemented
 
     def __gt__(self, other) -> bool:
         if self.__class__ is other.__class__:
-            return self.ComputeHeight() > other.ComputeHeight()
+            return self.Height > other.Height
         return NotImplemented
 
     def __le__(self, other) -> bool:
         if self.__class__ is other.__class__:
-            return self.ComputeHeight() <= other.ComputeHeight()
+            return self.Height <= other.Height
         return NotImplemented
 
     def __lt__(self, other) -> bool:
         if self.__class__ is other.__class__:
-            return self.ComputeHeight() < other.ComputeHeight()
+            return self.Height < other.Height
         return NotImplemented
 
     def __add__(self, other: Union[Interval, int]) -> Union[List[Note, None], List[Note, ValueError], Note]:
@@ -156,7 +156,7 @@ class Note(object):
 
     def __sub__(self, other: Union[int, Note]) -> Union[int, Note]:
         if self.__class__ is other.__class__:
-            return self.ComputeTonalDistance(other)
+            return self.GetTonalDistance(other)
         elif type(other) == int:
             if other < 0:
                 return self.__add__(abs(other))
@@ -177,49 +177,27 @@ class Note(object):
         newNote.Octave += octaveDiff
         return newNote
 
-    def ComputeHeight(self) -> int:
-        print("DEPRECATION WARNING - Use Height property instead of ComputeHeight property")
-        return self.Height
-
     @property
     def Height(self) -> int:
         return (self.Octave + 1) * 12 + self.Name.value
 
-    def ComputeFrequency(self) -> float:
-        print("DEPRECATION WARNING - Use Frequency property instead of ComputeFrequency property")
-        """
-        # Using this as reference: https://pages.mtu.edu/~suits/notefreqs.html
-        baseFreq = 16.35
-        # Frequency doubles at each octave, so using power of 12
-        freq = baseFreq * (2 ** note.Octave) * (2 ** (1 / 12)) ** note.Name.value
-        return freq
-        """
-        return 16.35 * (2 ** self.Octave) * (2 ** (1 / 12)) ** self.Name.value
-
     @property
     def Frequency(self) -> float:
+        # Using this as reference: https://pages.mtu.edu/~suits/notefreqs.html
         return 16.35 * (2 ** self.Octave) * (2 ** (1 / 12)) ** self.Name.value
 
     # Return distance between this note and another in term of semitones
-    def ComputeTonalDistance(self, other) -> int:
-        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
-        return self.GetTonalDistance(other)
-
     def GetTonalDistance(self, other) -> int:
         if self.__class__ is other.__class__:
-            return self.ComputeHeight() - other.ComputeHeight()
+            return self.Height - other.Height
         return NotImplemented
 
     # Returning a positive tonal distance
-    def ComputeRootedTonalDistance(self, other) -> int:
-        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
-        return self.GetRootedTonalDistance(other)
-
     def GetRootedTonalDistance(self, other) -> int:
         if self.__class__ is other.__class__:
             return max(
-                self.ComputeHeight() - other.ComputeHeight(),
-                other.ComputeHeight() - self.ComputeHeight()
+                self.Height - other.Height,
+                other.Height - self.Height
             )
         return NotImplemented
 
@@ -261,9 +239,3 @@ class Note(object):
         octave = height // 12
         name = NoteNames.GetElementFromValue(height - octave * 12).name
         return Note(Name=name, Octave=octave - 1)
-
-
-def CreateNoteFromHeight(height: int) -> Note:
-    print("DEPRECATION WARNING: CreateNoteFromHeight has been deprecated.")
-    print("Use Note.FromHeight instead. \n")
-    return Note.FromHeight(height)

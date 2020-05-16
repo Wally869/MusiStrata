@@ -87,7 +87,7 @@ class NoteOff:
 def CreateEventsStructs(soundEvent, baseTime, velocity) -> Tuple:
     # here using the Note struct defined in Structs.py
     # will have to rewrite all this BS btw, this is getting fucked up
-    noteHeight = soundEvent.Note.ComputeHeight()
+    noteHeight = soundEvent.Note.Height
     noteOnObject = NoteOn(baseTime, noteHeight, velocity)
     deltaTime = soundEvent.Duration * TICKS_PER_BEAT
     noteOffObject = NoteOff(baseTime + deltaTime, noteHeight)

@@ -20,6 +20,7 @@ class Record(object):
         return self.__str__()
 
 
+# Might take queries implementation from generator db to allow more subsetting abilities
 class Library(object):
     BaseName: str = "Library"
     Records: List[Record] = None

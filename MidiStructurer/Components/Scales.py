@@ -107,16 +107,8 @@ class ScaleSpecs(object):
         return [n.Name for n in self.GetScaleNotes(mode=mode)]
 
     # Implementing circle of fifths here
-    def FindNeighbouringScales(self) -> List[ScaleSpecs]:
-        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
-        return self.GetNeighbouringScales()
-
     def GetNeighbouringScales(self) -> List[ScaleSpecs]:
-        return self.FindSameTypeNeighbours() + [self.FindDifferentTypeNeighbour()]
-
-    def FindSameTypeNeighbours(self) -> List[ScaleSpecs]:
-        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
-        return self.GetSameTypeNeighbours()
+        return self.GetSameTypeNeighbours() + [self.GetDifferentTypeNeighbour()]
 
     def GetSameTypeNeighbours(self) -> List[ScaleSpecs]:
         # Minors and Majors have the same neighbours, but differentiating anyway
@@ -132,20 +124,11 @@ class ScaleSpecs(object):
             ) for refNote in neighboursRefNotes
         ]
 
-    def FindDifferentTypeNeighbour(self) -> ScaleSpecs:
-        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
-        return self.GetDifferentTypeNeighbour()
-
     def GetDifferentTypeNeighbour(self) -> ScaleSpecs:
         if self.Type == "Major":
-            return self.FindMinorFromMajorByRefNote(self.RefNote)
+            return self.GetMinorFromMajorByRefNote(self.RefNote)
         else:
-            return self.FindMajorFromMinorByRefNote(self.RefNote)
-
-    @staticmethod
-    def FindMinorFromMajorByRefNote(refNote: str) -> ScaleSpecs:
-        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
-        return ScaleSpecs.GetMinorFromMajorByRefNote(refNote)
+            return self.GetMajorFromMinorByRefNote(self.RefNote)
 
     @staticmethod
     def GetMinorFromMajorByRefNote(refNote: str) -> ScaleSpecs:
@@ -153,11 +136,6 @@ class ScaleSpecs(object):
             RefNote=MINOR_FROM_MAJOR[refNote],
             ScaleType="Minor"
         )
-
-    @staticmethod
-    def FindMajorFromMinorByRefNote(refNote: str) -> ScaleSpecs:
-        print("DEPRECATION WARNING - Use method starting in GET for Note methods")
-        return ScaleSpecs.GetMajorFromMinorByRefNote(refNote)
 
     @staticmethod
     def GetMajorFromMinorByRefNote(refNote: str) -> ScaleSpecs:
@@ -202,7 +180,7 @@ def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: Union[int, float],
         return ExtendScaleNotes(scaleNotes, intExtensionFactor, singleDirection, direction)
 
     # ensure scaleNotes are sorted in ascending order
-    scaleNotes = sorted(scaleNotes, key=lambda x: x.ComputeHeight())
+    scaleNotes = sorted(scaleNotes, key=lambda x: x.Height)
 
     directions = ["+", "-"]
     # Get number of elements
@@ -230,7 +208,7 @@ def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: Union[int, float],
             nbOctaves += 1
 
     # sort again and get rid of repeated notes
-    outScaleNotes = sorted(outScaleNotes, key=lambda x: x.ComputeHeight())
+    outScaleNotes = sorted(outScaleNotes, key=lambda x: x.Height)
     return FilterOutRepeatedNotes(outScaleNotes)
 
 

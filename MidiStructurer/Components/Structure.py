@@ -40,6 +40,24 @@ class Bar:
     def __repr__(self):
         return str(self)
 
+    def __add__(self, other):
+        if self.__class__ is other.__class__:
+            return Bar(
+                SoundEvents=self.SoundEvents + other.SoundEvents
+            )
+        elif type(other) == SoundEvent:
+            return Bar(
+                SoundEvents=self.SoundEvents + [other]
+            )
+        raise NotImplementedError()
+
+    def __radd__(self, other):
+        if type(other) == SoundEvent:
+            return Bar(
+                SoundEvents=self.SoundEvents + [other]
+            )
+        raise NotImplementedError()
+
 
 @dataclass
 class Track:

@@ -75,10 +75,10 @@ As such a Note object has methods to return its height, aka its note for a midi 
 Remark: the height computation is what allows all comparisons, and tonal distance computations. 
 
 ```python
->> Note("C", 5).ComputeHeight()
+>> Note("C", 5).Height
 72
 
->> Note("C", 5).ComputeFrequency()
+>> Note("C", 5).Frequency
 523.2
 
 # This means it is also possible to create a note from its height
@@ -126,15 +126,15 @@ The ScaleSpecs class also implements methods to find neighboring scales accordin
 
 ```python
 # Find all neighbouring scales of the same type (Major or Minor)
->> sc.FindSameTypeNeighbours()
+>> sc.GetSameTypeNeighbours()
 [ScaleSpecs(D-Major), ScaleSpecs(E-Major)]
 
 # can also find the neighbouring minor from a major scale, and vice versa
->> sc.FindDifferentTypeNeighbour()
+>> sc.GetDifferentTypeNeighbour()
 ScaleSpecs(Fs-Minor)
 
 # Get all neighbours
->> sc.FindNeighbouringScales()
+>> sc.GetNeighbouringScales()
 [ScaleSpecs(D-Major), ScaleSpecs(E-Major), ScaleSpecs(Fs-Minor)]
 ```
 
@@ -216,9 +216,9 @@ True
 >> Note("F", 4) - n
 -7
 # Use the method ComputeRootedTonalDistance to ensure positive value is returned
->> n.ComputeRootedTonalDistance(Note("F", 4))
+>> n.GetRootedTonalDistance(Note("F", 4))
 7
->> Note("F", 4).ComputeRootedTonalDistance(n)
+>> Note("F", 4).GetRootedTonalDistance(n)
 7
 
 # It is also possible to get an Interval object describing the distance between 2 notes

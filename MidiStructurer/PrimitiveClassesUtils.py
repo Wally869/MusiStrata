@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List
+from typing import List, Dict
 
 
 # placeholder for readability. Or can be used?
@@ -20,7 +20,6 @@ class Record(object):
         return self.__str__()
 
 
-# Might take queries implementation from generator db to allow more subsetting abilities
 class Library(object):
     BaseName: str = "Library"
     Records: List[Record] = None
@@ -69,3 +68,19 @@ class Library(object):
 
     def GetRecordsFields(self):
         return self._Fields
+
+    def GetFromFilters(self, filters: List[str]):
+        """
+        filters must be in the form (field, operator, value) as strings
+        """
+        strQuery = ""
+        for id, fil in enumerate(filters):
+            strQuery += "x.{} {} {}".format(*fil)
+            if id < len(filters) - 1:
+                strQuery += " and "
+        return list(
+            filter(
+                lambda x: eval(strQuery),
+                self.Records
+            )
+        )

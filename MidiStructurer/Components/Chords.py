@@ -55,7 +55,10 @@ class Chord(object):
             inverted = inverted[1:] + [Interval(Intervals=[Interval(8, "Perfect"), inverted[0]])]
         return inverted
 
-    def __call__(self, rootNote: UnionNote, inversion: int = 0, fromRoot: bool = True) -> Tuple[List[Note], List[Error]]:
+    # change __call__ to generating alternate chord, and add __radd__ with note?
+    # just create new methods for now
+    def __call__(self, rootNote: UnionNote, inversion: int = 0, fromRoot: bool = True) -> Tuple[
+        List[Note], List[Error]]:
         if type(rootNote) != Note:
             raise TypeError("Input must be of type Note.")
         currIntervals = self.InvertIntervals(inversion)
@@ -71,6 +74,21 @@ class Chord(object):
             outNotes.append(currNote)
             errors.append(err)
         return outNotes, errors
+
+    def Invert(self, inversions: int = 1):
+        invertedIntervals = self.InvertIntervals(inversions)
+        return Chord(invertedIntervals)
+
+    def __radd__(self, other):
+        if type(other) == Note:
+            outNotes = []
+            errors = []
+            for interval in self.Intervals:
+                currNote, err = other + interval
+                outNotes.append(currNote)
+                errors.append(err)
+            return outNotes, errors
+        raise NotImplementedError()
 
 
 # I'd like to avoid loading all chords are runtime, but I think list does not work with global?

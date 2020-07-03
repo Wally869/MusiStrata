@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List, Tuple
 
 from .Notes import *
 from .Intervals import *
@@ -57,7 +58,7 @@ class Chord(object):
 
     # change __call__ to generating alternate chord, and add __radd__ with note?
     # just create new methods for now
-    def __call__(self, rootNote: UnionNote, inversion: int = 0, fromRoot: bool = True) -> Tuple[
+    def __call__(self, rootNote: Note, inversion: int = 0, fromRoot: bool = True) -> Tuple[
         List[Note], List[Error]]:
         if type(rootNote) != Note:
             raise TypeError("Input must be of type Note.")
@@ -89,22 +90,6 @@ class Chord(object):
                 errors.append(err)
             return outNotes, errors
         raise NotImplementedError()
-
-
-# I'd like to avoid loading all chords are runtime, but I think list does not work with global?
-# so using class emulating list
-class ChordsList(object):
-    def __init__(self):
-        self.Chords = []
-
-    def __repr__(self):
-        return self.Chords.__repr__()
-
-    def __len__(self):
-        return len(self.Chords)
-
-    def __getitem__(self, item):
-        return self.Chords[item]
 
 
 # using this, and a different approach I guess

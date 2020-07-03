@@ -84,3 +84,6 @@ class Library(object):
                 self.Records
             )
         )
+
+    def GetAllValuesFromField(self, field: str):
+        return [rec[field] for rec in self.Records]

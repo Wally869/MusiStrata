@@ -1,8 +1,8 @@
 from __future__ import annotations
+from typing import List, Union
 
 from .Notes import NoteNames, Note, ALL_NOTES
 
-from typing import List
 from enum import Enum
 from copy import deepcopy
 
@@ -166,7 +166,7 @@ class ScaleSpecs(object):
 
 
 def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: Union[int, float],
-                     singleDirection: bool = False, direction: str = "+"):
+                     singleDirection: bool = False, direction: str = "+") -> List[Note]:
     """
     Extend a list of note by a given factor by transposing them by N octaves.
     2 methods depending on type of extension factor:
@@ -212,5 +212,5 @@ def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: Union[int, float],
     return FilterOutRepeatedNotes(outScaleNotes)
 
 
-def FilterOutRepeatedNotes(notes: List[Note]):
+def FilterOutRepeatedNotes(notes: List[Note]) -> List[Note]:
     return list(set(notes))

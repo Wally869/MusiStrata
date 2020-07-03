@@ -139,7 +139,7 @@ class Note(object):
             return self.Height < other.Height
         return NotImplemented
 
-    def __add__(self, other: Union[Interval, int]) -> Union[List[Note, None], List[Note, ValueError], Note]:
+    def __add__(self, other: int) -> Note:
         if type(other) == int:
             # error if other is negative. Fixing this
             if other < 0:

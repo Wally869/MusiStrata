@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .Components import *
+from .Components import Note, Bar
 import soundcard as sc
 import numpy as np
 from scipy import signal
@@ -30,16 +30,6 @@ def PlayBar(bar: Bar, nbBeatsInBar: int = 4, sampleRate: int = 10000, tempo: int
         output[idStartSound:idEndSound] += 0.25 * np.sin(deltaTimes[idStartSound:idEndSound] * 2 * np.pi * se.Note.Frequency)
     DEFAULT_SPEAKER.play(output, sampleRate)
 
-def PlayBars(bars: List[Bar], nbBeatsInBar: float = 4.0, sampleRate: int = 10000, tempo: int = 60):
-    deltaTimes = np.arange(int(sampleRate * nbBeatsInBar * len(bars) * 60 / tempo)) / sampleRate
-    output = np.zeros(len(deltaTimes))
-    for idB, b in enumerate(bars):
-        for se in b.SoundEvents:
-            idStartSound = int(idB * nbBeatsInBar * sampleRate * 60/tempo + se.Beat * sampleRate * 60/tempo)
-            idEndSound = int(idStartSound + (se.Duration * sampleRate) * 60/tempo) - 1
-            output[idStartSound:idEndSound] += 0.25 * np.sin(deltaTimes[idStartSound:idEndSound] * 2 * np.pi * se.Note.Frequency)
-    DEFAULT_SPEAKER.play(output, sampleRate)
-
 def SaveBarsToSineArray(bars: List[Bar], nbBeatsInBar: float = 4.0, sampleRate: int = 10000, tempo: int = 60):
     deltaTimes = np.arange(int(sampleRate * nbBeatsInBar * len(bars) * 60 / tempo)) / sampleRate
     output = np.zeros(len(deltaTimes))
@@ -49,3 +39,7 @@ def SaveBarsToSineArray(bars: List[Bar], nbBeatsInBar: float = 4.0, sampleRate: 
             idEndSound = int(idStartSound + (se.Duration * sampleRate) * 60/tempo) - 1
             output[idStartSound:idEndSound] += 0.25 * np.sin(deltaTimes[idStartSound:idEndSound] * 2 * np.pi * se.Note.Frequency)
     return output, sampleRate
+
+def PlayBars(bars: List[Bar], nbBeatsInBar: float = 4.0, sampleRate: int = 10000, tempo: int = 60):
+    arr, _ = SaveBarsToSineArray(bars, nbBeatsInBar, sampleRate, tempo)
+    DEFAULT_SPEAKER.play(arr, sampleRate)

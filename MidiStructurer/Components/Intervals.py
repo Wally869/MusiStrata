@@ -188,11 +188,6 @@ class BaseInterval(object):
         return outIntervals
 
 
-# Handling the case where interval > octave
-# Can rework interval as a specific case of CompoundInterval where len(self.Intervals) == 1?
-# would be much much better
-# will do that once I am more sure of what to do
-### LAST problem: checking equality between stuff like Interval(8, "Perfect") and Interval([Interval(8, "Perfect"), Interval(1, "Perfect")])
 class Interval(object):
     def __init__(self, IntervalNumber: int = -1, Quality: string = "", Intervals: List[Interval] = []):
         if IntervalNumber == -1 and Quality == "" and Intervals == []:

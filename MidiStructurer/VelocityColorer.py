@@ -96,11 +96,30 @@ specsStandard = {
         "Secondary": 2.0
     },
     "BeatMultipliers": {
-        "Primary": 1.1,
-        "Secondary": 1.0,
-        "Default": 0.9,
+        "Primary": 1.2,
+        "Secondary": 1.1,
+        "Default": 1.0,
     }
 }
 
-
 StandardColorer = VelocityColorer(specsStandard)
+
+class ColorerLibraryClass(Library):
+    BaseName: str = "ColorerLibrary"
+    Records: List[Record] = None
+
+    def GetColorerFromName(self, nameColorer: str = "Standard") -> str:
+        return self.GetFromValueInField("Name", nameColorer)[0].Colorer
+
+    def Get(self, nameColorer: str = "Standard") -> str:
+        return self.GetFromValueInField("Name", nameColorer)[0].Colorer
+
+    @property
+    def Standard(self):
+        return self.Get("Standard")
+
+
+ColorerLibrary = ColorerLibraryClass([{
+    "Name": "Standard",
+    "Colorer": StandardColorer
+}])

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
+from typing import Union, List, Dict
 
 from .PrimitiveClassesUtils import Record, Library
 
-from typing import Union, List, Dict
 
 # List taken from: https://github.com/mobyvb/midi-converter/blob/master/lib/instruments.json
 RAW_INSTRUMENTS = [

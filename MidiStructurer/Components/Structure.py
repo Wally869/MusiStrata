@@ -18,6 +18,7 @@ class SoundEvent:
     Beat: float = 0.0
     Duration: float = 1.0
     Note: Note = Note()
+    Velocity: int = 60
 
 
 def GenerateSoundEventsFromListNotes(beat: float, duration: float, notes: List[Note]):
@@ -64,7 +65,6 @@ class Track:
     Name: str = "Untitled"
     Instrument: str = ""
     Bars: list = field(default_factory=list)
-    Velocity: int = 60
     IsDrumsTrack: bool = False
 
     def __str__(self):

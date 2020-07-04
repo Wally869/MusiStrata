@@ -26,8 +26,6 @@ def ConvertSong(song: Song, outfile: str) -> mido.MidiFile:
         track = mido.MidiTrack()
         track.append(tempoMessage)
 
-        currVelocity = trackData.Velocity
-
         if trackData.IsDrumsTrack:
             realIdChannel = 9
         else:
@@ -42,7 +40,7 @@ def ConvertSong(song: Song, outfile: str) -> mido.MidiFile:
                 )
             )
 
-        prepped = PrepTrack(trackData, currVelocity, song.BeatsPerBar)
+        prepped = PrepTrack(trackData, song.BeatsPerBar)
         messages = EventsToMido(prepped, realIdChannel)
         for m in messages:
             track.append(m)
@@ -107,7 +105,7 @@ def ConvertNoteStructToMidoMessage(noteStruct, deltaTime, channelId) -> mido.Mes
     return outMessage
 
 
-def PrepTrack(track: Track, velocity: int, nbBeatsPerBar: int) -> List:
+def PrepTrack(track: Track, nbBeatsPerBar: int) -> List:
     events = []
     startTick = 50
 
@@ -118,7 +116,7 @@ def PrepTrack(track: Track, velocity: int, nbBeatsPerBar: int) -> List:
             noteon, noteoff = CreateEventsStructs(
                 soundEvent,
                 timeBar + soundEvent.Beat * TICKS_PER_BEAT,
-                velocity
+                soundEvent.Velocity
             )
             events += [noteon, noteoff]
 

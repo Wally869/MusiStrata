@@ -43,7 +43,8 @@ def GenerateExample1():
     track = Track(
         Name="Main",
         Instrument="Vibraphone",
-        Bars=[bar]
+        Bars=[bar],
+        BankUsed=1
     )
 
     song = Song(

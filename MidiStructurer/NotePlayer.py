@@ -40,6 +40,6 @@ def SaveBarsToSineArray(bars: List[Bar], nbBeatsInBar: float = 4.0, sampleRate: 
             output[idStartSound:idEndSound] += 0.25 * np.sin(deltaTimes[idStartSound:idEndSound] * 2 * np.pi * se.Note.Frequency)
     return output, sampleRate
 
-def PlayBars(bars: List[Bar], nbBeatsInBar: float = 4.0, sampleRate: int = 10000, tempo: int = 60):
+def PlayBars(bars: List[Bar], nbBeatsInBar: float = 4.0, tempo: int = 60, sampleRate: int = 10000):
     arr, _ = SaveBarsToSineArray(bars, nbBeatsInBar, sampleRate, tempo)
     DEFAULT_SPEAKER.play(arr, sampleRate)

@@ -74,6 +74,8 @@ class ScaleModes(ExtendedEnum):
 class ScaleSpecs(object):
     def __init__(self, RefNote: str = "A", ScaleType: str = "Major"):
         self.RefNote = RefNote
+        if (type(ScaleType) != str):
+            raise TypeError("In ScaleSpecs constructor: ScaleType argument must be a string")
         self.Type = ScaleType
 
     def __str__(self):

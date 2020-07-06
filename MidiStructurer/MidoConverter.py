@@ -26,13 +26,31 @@ def ConvertSong(song: Song, outfile: str) -> mido.MidiFile:
         track = mido.MidiTrack()
         track.append(tempoMessage)
 
+        # need to add alternative bank support for drums track. what value needs to be passed?
         if trackData.IsDrumsTrack:
             realIdChannel = 9
+
         else:
-            signal = GetSignalFromInstrument(trackData.Instrument)
+            if type(trackData.Instrument) == str:
+                signal = GetSignalFromInstrument(trackData.Instrument)
+            elif type(trackData.Instrument) == int:
+                signal = trackData.Instrument
+            else:
+                raise TypeError("In MidoConverter.ConvertSong: Track Instrument can only be a string name of instrument or an int")
             if idChannel == 9:
                 idChannel += 1
             realIdChannel = idChannel
+
+            track.append(
+                mido.Message(
+                    "control_change", control=0, value=trackData.BankUsed, channel=realIdChannel, time=0
+                )
+            )
+            track.append(
+                mido.Message(
+                    "control_change", control=32, value=trackData.BankUsed, channel=realIdChannel, time=0
+                )
+            )
 
             track.append(
                 mido.Message(

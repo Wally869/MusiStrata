@@ -66,6 +66,7 @@ class Track:
     Instrument: str = ""
     Bars: list = field(default_factory=list)
     IsDrumsTrack: bool = False
+    BankUsed: int = 0
 
     def __str__(self):
         if self.IsDrumsTrack:

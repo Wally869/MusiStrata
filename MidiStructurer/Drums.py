@@ -1,8 +1,8 @@
 from dataclasses import dataclass
+from typing import List, Tuple, Dict, Union
 
 from .PrimitiveClassesUtils import Record, Library
 
-from typing import List, Union
 
 # List taken from https://github.com/ianjennings/midi-wtf/blob/master/index.js
 RAW_DRUMS = {

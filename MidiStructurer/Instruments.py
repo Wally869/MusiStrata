@@ -1,5 +1,7 @@
+from __future__ import annotations
+from typing import List, Tuple, Dict, Union
+
 from dataclasses import dataclass
-from typing import Union, List, Dict
 
 from .PrimitiveClassesUtils import Record, Library
 

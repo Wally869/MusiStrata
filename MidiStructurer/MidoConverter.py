@@ -1,17 +1,23 @@
 from __future__ import annotations
+from typing import List, Tuple, Dict, Union
 
 import mido
-from typing import List, Tuple
 from copy import deepcopy
 
 from .Components import *
 from .Instruments import GetSignalFromInstrument
 
+
+# TYPESTRIPPER - TYPE ALIASES
+midoMidiFile = mido.MidiFile
+midoMessage = mido.Message
+
+
 # as default, 480 ticks per beat
 TICKS_PER_BEAT = 480
 
 
-def ConvertSong(song: Song, outfile: str) -> mido.MidiFile:
+def ConvertSong(song: Song, outfile: str) -> midoMidiFile:
     outMidoSong = mido.MidiFile(type=1)
 
     # create tempo message here. Maybe put this message in specific channel?
@@ -110,7 +116,7 @@ def CreateEventsStructs(soundEvent, baseTime, velocity) -> Tuple:
     return noteOnObject, noteOffObject
 
 
-def ConvertNoteStructToMidoMessage(noteStruct, deltaTime, channelId) -> mido.Message:
+def ConvertNoteStructToMidoMessage(noteStruct, deltaTime, channelId) -> midoMessage:
     # Note Off is a special case of Note On, with 0 velocity
     # So don't even need to make a difference?
     outMessage = mido.Message(
@@ -150,7 +156,7 @@ def PrepTrack(track: Track, nbBeatsPerBar: int) -> List:
     return events
 
 
-def EventsToMido(events, channelId) -> List[mido.Message]:
+def EventsToMido(events, channelId) -> List[midoMessage]:
     # sort by time
     events.sort(key=lambda x: x.Time, reverse=False)
 

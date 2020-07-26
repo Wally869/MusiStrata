@@ -1,10 +1,10 @@
 from __future__ import annotations
+from typing import List, Tuple, Dict, Union
 
 from .utils import LoopingOrderedEnum, OrderedEnum
 
 from copy import deepcopy
 
-from typing import List, Dict, Union
 
 ALL_NOTES = [
     "A", "As", "B", "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs"

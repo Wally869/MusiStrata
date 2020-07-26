@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Union
 
 from .Notes import *
 from .Intervals import *
@@ -58,8 +58,7 @@ class Chord(object):
 
     # change __call__ to generating alternate chord, and add __radd__ with note?
     # just create new methods for now
-    def __call__(self, rootNote: Note, inversion: int = 0, fromRoot: bool = True) -> Tuple[
-        List[Note], List[Error]]:
+    def __call__(self, rootNote: Note, inversion: int = 0, fromRoot: bool = True) -> Tuple[List[Note], List[Error]]:
         if type(rootNote) != Note:
             raise TypeError("Input must be of type Note.")
         currIntervals = self.InvertIntervals(inversion)

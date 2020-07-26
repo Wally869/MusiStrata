@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List, Tuple, Dict, Union
 
 from .Notes import *
 
@@ -189,7 +190,7 @@ class BaseInterval(object):
 
 
 class Interval(object):
-    def __init__(self, IntervalNumber: int = -1, Quality: string = "", Intervals: List[Interval] = []):
+    def __init__(self, IntervalNumber: int = -1, Quality: str = "", Intervals: List[Interval] = []):
         if IntervalNumber == -1 and Quality == "" and Intervals == []:
             raise ValueError("Interval: No empty constructor defined")
         if type(IntervalNumber) == list:

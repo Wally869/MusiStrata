@@ -1,5 +1,4 @@
-from __future__ import annotations
-from typing import List, Tuple, Dict, Union
+
 
 from .utils import LoopingOrderedEnum, OrderedEnum
 
@@ -60,7 +59,7 @@ NOTE_NAME_TO_STAFF = {
 
 
 class Note(object):
-    def __init__(self, Name: str = "A", Octave: int = 5):
+    def __init__(self, Name = "A", Octave = 5):
         # can't call methods in init?
         if Name not in ALL_NOTES:
             raise KeyError("'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(Name))
@@ -76,11 +75,11 @@ class Note(object):
         self._Octave = Octave
 
     @property
-    def Name(self) -> NoteNames:
+    def Name(self):
         return self._Name
 
     @Name.setter
-    def Name(self, newName: str) -> None:
+    def Name(self, newName):
         try:
             self._Name = NoteNames[newName]
         except TypeError:
@@ -89,11 +88,11 @@ class Note(object):
             raise KeyError("'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(newName))
 
     @property
-    def Octave(self) -> int:
+    def Octave(self):
         return self._Octave
 
     @Octave.setter
-    def Octave(self, newOctave: int) -> None:
+    def Octave(self, newOctave):
         if type(newOctave) != int:
             raise TypeError("Octave must be a non-negative integer.")
         # Separating value checking from type checking
@@ -104,13 +103,13 @@ class Note(object):
     def __hash__(self):
         return self.Height
 
-    def __str__(self) -> str:
+    def __str__(self):
         return "Note({})".format(self.Name.name + str(self.Octave))
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return str(self)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         if self.__class__ is not other.__class__:
             return False
         else:
@@ -119,27 +118,27 @@ class Note(object):
             else:
                 return False
 
-    def __ge__(self, other) -> bool:
+    def __ge__(self, other):
         if self.__class__ is other.__class__:
             return self.Height >= other.Height
         return NotImplemented
 
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other):
         if self.__class__ is other.__class__:
             return self.Height > other.Height
         return NotImplemented
 
-    def __le__(self, other) -> bool:
+    def __le__(self, other):
         if self.__class__ is other.__class__:
             return self.Height <= other.Height
         return NotImplemented
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other):
         if self.__class__ is other.__class__:
             return self.Height < other.Height
         return NotImplemented
 
-    def __add__(self, other: int) -> Note:
+    def __add__(self, other):
         if type(other) == int:
             # error if other is negative. Fixing this
             if other < 0:
@@ -154,7 +153,7 @@ class Note(object):
         else:
             return NotImplemented
 
-    def __sub__(self, other: Union[int, Note]) -> Union[int, Note]:
+    def __sub__(self, other):
         if self.__class__ is other.__class__:
             return self.GetTonalDistance(other)
         elif type(other) == int:
@@ -172,28 +171,28 @@ class Note(object):
 
     # Added this to expand scales. Can also use Note + 12 for octave difference
     # but I thought additional method would be nice
-    def NewFromOctaveDifference(self, octaveDiff: int) -> Note:
+    def NewFromOctaveDifference(self, octaveDiff):
         newNote = deepcopy(self)
         newNote.Octave += octaveDiff
         return newNote
 
     @property
-    def Height(self) -> int:
+    def Height(self):
         return (self.Octave + 1) * 12 + self.Name.value
 
     @property
-    def Frequency(self) -> float:
+    def Frequency(self):
         # Using this as reference: https://pages.mtu.edu/~suits/notefreqs.html
         return 16.35 * (2 ** self.Octave) * (2 ** (1 / 12)) ** self.Name.value
 
     # Return distance between this note and another in term of semitones
-    def GetTonalDistance(self, other) -> int:
+    def GetTonalDistance(self, other):
         if self.__class__ is other.__class__:
             return self.Height - other.Height
         return NotImplemented
 
     # Returning a positive tonal distance
-    def GetRootedTonalDistance(self, other) -> int:
+    def GetRootedTonalDistance(self, other):
         if self.__class__ is other.__class__:
             return max(
                 self.Height - other.Height,
@@ -201,19 +200,19 @@ class Note(object):
             )
         return NotImplemented
 
-    def GetStaffPositionAsEnumElem(self) -> StaffPositions:
+    def GetStaffPositionAsEnumElem(self):
         return StaffPositions[self.GetStaffPositionAsLetter()]
 
-    def GetStaffPositionAsLetter(self) -> str:
+    def GetStaffPositionAsLetter(self):
         return NOTE_NAME_TO_STAFF[self.Name.name]
 
-    def GetStaffPositionAsInteger(self) -> int:
+    def GetStaffPositionAsInteger(self):
         return StaffPositions[
             self.GetStaffPositionAsLetter()
         ].value
 
     # This is order dependent. Self should be the root note of the chord
-    def GetIntervalNumber(self, other) -> int:
+    def GetIntervalNumber(self, other):
         if self.__class__ is other.__class__:
             staff1 = self.GetStaffPositionAsEnumElem()
             staff2 = other.GetStaffPositionAsEnumElem()
@@ -235,7 +234,7 @@ class Note(object):
         return NotImplemented
 
     @classmethod
-    def FromHeight(cls, height: int) -> Note:
+    def FromHeight(cls, height):
         octave = height // 12
         name = NoteNames.GetElementFromValue(height - octave * 12).name
         return Note(Name=name, Octave=octave - 1)

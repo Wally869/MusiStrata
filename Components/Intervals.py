@@ -1,5 +1,4 @@
-from __future__ import annotations
-from typing import List, Tuple, Dict, Union
+
 
 from .Notes import *
 
@@ -57,18 +56,18 @@ ALL_INTERVALS = []
 # Need to perform check on input arguments. Done in findtonaldistancefromotherspecs
 # Here, can add checks to see if consonance, dissonance, perfect/imperfect?
 class BaseInterval(object):
-    def __init__(self, IntervalNumber: int, Quality: str):  # , TonalDistance: int):
+    def __init__(self, IntervalNumber, Quality):  # , TonalDistance):
         self.IntervalNumber = IntervalNumber
         self.Quality = Quality
         self.TonalDistance = self.FindTonalDistanceFromNumberAndQuality(IntervalNumber, Quality)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return "Interval({}-{}--{} semitones)".format(self.IntervalNumber, self.Quality, self.TonalDistance)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return self.__str__()
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         if self.__class__ is other.__class__:
             if self.IntervalNumber == other.IntervalNumber:
                 if self.Quality == other.Quality:
@@ -80,22 +79,22 @@ class BaseInterval(object):
 
     # Added mathematical comparisons for easier computation of chords and potential subsetting
     # Purely based on tonal distance?
-    def __ge__(self, other) -> bool:
+    def __ge__(self, other):
         if self.__class__ is other.__class__:
             return self.TonalDistance >= other.TonalDistance
         return NotImplemented
 
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other):
         if self.__class__ is other.__class__:
             return self.TonalDistance > other.TonalDistance
         return NotImplemented
 
-    def __le__(self, other) -> bool:
+    def __le__(self, other):
         if self.__class__ is other.__class__:
             return self.TonalDistance <= other.TonalDistance
         return NotImplemented
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other):
         if self.__class__ is other.__class__:
             return self.TonalDistance < other.TonalDistance
         return NotImplemented
@@ -143,7 +142,7 @@ class BaseInterval(object):
         return "{}{}".format(qualityString, self.IntervalNumber)
 
     @staticmethod
-    def FindTonalDistanceFromNumberAndQuality(intervalNumber: int, quality: str) -> int:
+    def FindTonalDistanceFromNumberAndQuality(intervalNumber, quality):
         # This function gets us the tonal distance, but also ensures that correct parameters have been input
         for elem in ALL_INTERVALS_RAW:
             if elem[0] == intervalNumber:
@@ -154,7 +153,7 @@ class BaseInterval(object):
                        "is not a valid combination for an interval.".format(intervalNumber, quality))
 
     @classmethod
-    def FindQualityFromNumberAndDistance(cls, intervalNumber: int, tonalDistance: int) -> str:
+    def FindQualityFromNumberAndDistance(cls, intervalNumber, tonalDistance):
         # Need to implement Augmented and Diminished intervals
         # function, or use bigger all_intervals_raw?
         for interval in ALL_INTERVALS:
@@ -162,9 +161,9 @@ class BaseInterval(object):
                 return interval.Quality
         return None
 
-    def GetConsonanceType(self) -> str:
+    def GetConsonanceType(self):
         # https://en.wikipedia.org/wiki/Consonance_and_dissonance#Consonance
-        # perfect consonances: unisons, octaves, perfect fourths, perfect fifths
+        # perfect consonances, octaves, perfect fourths, perfect fifths
         # imperfect consonances: major 2nd, minor 7th, major 3rd, minor sixths, minor 3rd, major sixth
         if self.Quality == "Perfect":
             return "PerfectConsonance"
@@ -178,7 +177,7 @@ class BaseInterval(object):
         return "Dissonance"
 
     @classmethod
-    def GetValidIntervals(cls, rootNote: Note, listIntervals: List[Interval] = []):
+    def GetValidIntervals(cls, rootNote, listIntervals = []):
         if listIntervals == []:
             listIntervals = ALL_INTERVALS
         outIntervals = []
@@ -190,7 +189,7 @@ class BaseInterval(object):
 
 
 class Interval(object):
-    def __init__(self, IntervalNumber: int = -1, Quality: str = "", Intervals: List[Interval] = []):
+    def __init__(self, IntervalNumber = -1, Quality = "", Intervals = []):
         if IntervalNumber == -1 and Quality == "" and Intervals == []:
             raise ValueError("Interval: No empty constructor defined")
         if type(IntervalNumber) == list:
@@ -208,33 +207,33 @@ class Interval(object):
 
     # Properties exposing the sublying properties of the last interval in self.Intervals
     @property
-    def TonalDistance(self) -> int:
+    def TonalDistance(self):
         # return (len(self.Intervals) - 1) * 12 + self.Intervals[-1].TonalDistance
         return self.Intervals[-1].TonalDistance
 
     @property
-    def Quality(self) -> str:
+    def Quality(self):
         return self.Intervals[-1].Quality
 
     @property
-    def IntervalNumber(self) -> int:
+    def IntervalNumber(self):
         return self.Intervals[-1].IntervalNumber
 
-    def __len__(self) -> int:
+    def __len__(self):
         return len(self.Intervals)
 
-    def __getitem__(self, id: int) -> Interval:
+    def __getitem__(self, id):
         return self.Intervals[id]
 
-    def __str__(self) -> str:
+    def __str__(self):
         if len(self) == 1:
             return self[-1].__str__()
         return "Interval({} Octaves + {})".format(len(self.Intervals) - 1, self.Intervals[-1])
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return self.__str__()
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         if self.__class__ is other.__class__:
             selfBase = self[-1]
             otherBase = other[-1]
@@ -249,7 +248,7 @@ class Interval(object):
     # Added mathematical comparisons for easier computation of chords and potential subsetting
     # Purely based on tonal distance
     # Might have to change eq to use only tonal distance?
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other):
         if self.__class__ is other.__class__:
             # if 2 compound intervals
             if len(self) > len(other):
@@ -263,7 +262,7 @@ class Interval(object):
                     return True
         return NotImplemented
 
-    def __ge__(self, other) -> bool:
+    def __ge__(self, other):
         if self.__class__ is other.__class__:
             # if 2 compound intervals
             if self > other:
@@ -274,12 +273,12 @@ class Interval(object):
                 return False
         return NotImplemented
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other):
         if self.__class__ is other.__class__:
             return not self >= other
         return NotImplemented
 
-    def __le__(self, other) -> bool:
+    def __le__(self, other):
         if self.__class__ is other.__class__:
             if self < other:
                 return True
@@ -289,7 +288,7 @@ class Interval(object):
                 return False
         return NotImplemented
 
-    def __radd__(self, other) -> Tuple[Note, ValueError]:
+    def __radd__(self, other):
         # Have to assume other is Note, want to avoid circular import but seems rough
         # maybe can rewrite so that intervals stuff happens here and not in note?
         # seems more logical: intervals are based on notes, and not reverse
@@ -312,7 +311,7 @@ class Interval(object):
             return newNote, err
         return NotImplemented
 
-    def __rsub__(self, other) -> Tuple[Note, ValueError]:
+    def __rsub__(self, other):
         if type(other) == Note:
             newNote = other
             for baseInterval in self.Intervals:
@@ -329,24 +328,24 @@ class Interval(object):
             return newNote, err
         return NotImplemented
 
-    def ShortStr(self) -> str:
+    def ShortStr(self):
         return self[-1].ShortStr()
 
-    def GetConsonanceType(self) -> str:
+    def GetConsonanceType(self):
         return self[-1].GetConsonanceType()
 
     @staticmethod
-    def FindTonalDistanceFromNumberAndQuality(intervalNumber: int, quality: str) -> int:
+    def FindTonalDistanceFromNumberAndQuality(intervalNumber, quality):
         # This function gets us the tonal distance, but also ensures that correct parameters have been input
         return BaseInterval.FindTonalDistanceFromNumberAndQuality(intervalNumber, quality)
 
     @classmethod
-    def FindQualityFromNumberAndDistance(cls, intervalNumber: int, tonalDistance: int) -> str:
+    def FindQualityFromNumberAndDistance(cls, intervalNumber, tonalDistance):
         # Need to implement Augmented and Diminished intervals
         return BaseInterval.FindQualityFromNumberAndDistance(intervalNumber, tonalDistance)
 
     @classmethod
-    def FromNotes(cls, note0: Note, note1: Note) -> Interval:
+    def FromNotes(cls, note0, note1):
         intervals = []
         if note0 > note1:
             note0, note1 = note1, note0
@@ -364,7 +363,7 @@ class Interval(object):
         return Interval(Intervals=intervals)
 
     @classmethod
-    def GetValidIntervals(cls, rootNote: Note, listIntervals: List[Interval] = [], toHigher: Bool = True):
+    def GetValidIntervals(cls, rootNote, listIntervals = [], toHigher = True):
         if listIntervals == []:
             listIntervals = ALL_INTERVALS
         outIntervals = []
@@ -381,8 +380,8 @@ class Interval(object):
 # same as Instruments and Drums?
 # could be nice to easily access diatonic and chromatic intervals, and filter on interval number
 class IntervalsLibrary(object):
-    BaseName: str = "IntervalsLibrary"
-    Records: List[Record] = None
+    BaseName = "IntervalsLibrary"
+    Records = None
 
 
 

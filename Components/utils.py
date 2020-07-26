@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Tuple, Dict, Union
+
 
 # Can do some work to extend enums?
 class ExtendedEnum(Enum):
@@ -18,7 +18,7 @@ class ExtendedEnum(Enum):
         return [c.value for c in cls]
 
     @classmethod
-    def GetElementFromName(cls, name: str):
+    def GetElementFromName(cls, name):
         # raise KeyError("Element not in Enum.")
         try:
             return cls._member_map_[name]
@@ -69,7 +69,7 @@ class OrderedEnum(ExtendedEnum):
 
 
 class LoopingOrderedEnum(OrderedEnum):
-    def __add__(self, other: int):
+    def __add__(self, other):
         if type(other) != int:
             return NotImplemented
 

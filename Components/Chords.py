@@ -1,5 +1,4 @@
-from __future__ import annotations
-from typing import List, Tuple, Dict, Union
+
 
 from .Notes import *
 from .Intervals import *
@@ -13,7 +12,7 @@ from ..PrimitiveClassesUtils import *
 
 # How do I define a chord? How many intervals it has, how many dissonants, how many consonants
 class Chord(object):
-    def __init__(self, chordIntervals: List[Interval]):
+    def __init__(self, chordIntervals):
         self.Intervals = chordIntervals
 
         # rewrite to get all these parameters out, and into the library fields?
@@ -50,7 +49,7 @@ class Chord(object):
     def __len__(self):
         return len(self.Intervals)
 
-    def InvertIntervals(self, inversion: int = 0):
+    def InvertIntervals(self, inversion = 0):
         inverted = self.Intervals
         for _ in range(inversion):
             inverted = inverted[1:] + [Interval(Intervals=[Interval(8, "Perfect"), inverted[0]])]
@@ -58,7 +57,7 @@ class Chord(object):
 
     # change __call__ to generating alternate chord, and add __radd__ with note?
     # just create new methods for now
-    def __call__(self, rootNote: Note, inversion: int = 0, fromRoot: bool = True) -> Tuple[List[Note], List[Error]]:
+    def __call__(self, rootNote, inversion = 0, fromRoot = True):
         if type(rootNote) != Note:
             raise TypeError("Input must be of type Note.")
         currIntervals = self.InvertIntervals(inversion)
@@ -75,7 +74,7 @@ class Chord(object):
             errors.append(err)
         return outNotes, errors
 
-    def Invert(self, inversions: int = 1):
+    def Invert(self, inversions = 1):
         invertedIntervals = self.InvertIntervals(inversions)
         return Chord(invertedIntervals)
 
@@ -178,18 +177,18 @@ for c in RAW_CHORDS:
 
 
 class ChordsLibraryClass(Library):
-    BaseName: str = "ChordsLibrary"
-    Records: List[Record] = None
+    BaseName = "ChordsLibrary"
+    Records = None
 
-    def GetChordsFromType(self, typeValue: str):
+    def GetChordsFromType(self, typeValue):
         records = self.GetFromValueInField("Type", typeValue)
         return [r.Chord for r in records]
 
-    def GetChordsFromAttribute(self, attributeValue: str):
+    def GetChordsFromAttribute(self, attributeValue):
         records = self.GetFromValueInField("Attribute", attributeValue)
         return [r.Chord for r in records]
 
-    def GetChordFromName(self, nameChord: str):
+    def GetChordFromName(self, nameChord):
         record = self.GetFromValueInField("Name", nameChord)
         return record[0].Chord
 

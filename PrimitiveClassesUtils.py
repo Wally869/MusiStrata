@@ -1,5 +1,4 @@
-from __future__ import annotations
-from typing import List, Tuple, Dict, Union
+
 
 
 # placeholder for readability. Or can be used?
@@ -20,11 +19,11 @@ class Record(object):
 
 
 class Library(object):
-    BaseName: str = "Library"
-    Records: List[Record] = None
-    _Fields: List[str] = None
+    BaseName = "Library"
+    Records = None
+    _Fields = None
 
-    def __init__(self, rawData: List[Dict], nameLibrary: str = None):
+    def __init__(self, rawData, nameLibrary = None):
         if nameLibrary is not None:
             self.Name = nameLibrary
         else:
@@ -44,7 +43,7 @@ class Library(object):
     def __repr__(self):
         return self.__str__()
 
-    def GetFromValueInField(self, field: str, value: Union[str, int]) -> List[Record]:
+    def GetFromValueInField(self, field, value):
         if type(value) == str:
             value = "'" + value + "'"
         found = eval(
@@ -58,7 +57,7 @@ class Library(object):
     def __len__(self):
         return len(self.Records)
 
-    def __getitem__(self, idRecord: int):
+    def __getitem__(self, idRecord):
         return self.Records[idRecord]
 
     @property
@@ -68,7 +67,7 @@ class Library(object):
     def GetRecordsFields(self):
         return self._Fields
 
-    def GetFromFilters(self, filters: List[str]):
+    def GetFromFilters(self, filters):
         """
         filters must be in the form (field, operator, value) as strings
         """
@@ -84,5 +83,5 @@ class Library(object):
             )
         )
 
-    def GetAllValuesFromField(self, field: str):
+    def GetAllValuesFromField(self, field):
         return [rec[field] for rec in self.Records]

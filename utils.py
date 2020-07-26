@@ -1,10 +1,9 @@
-from __future__ import annotations
-from typing import List, Tuple, Dict, Union
+
 
 from random import choice
 
 
-def ComputeLengthSong(nbBeatsPerBar: int, nbBars: int, tempo: int):
+def ComputeLengthSong(nbBeatsPerBar, nbBars, tempo):
     """
     Outputs song length in seconds
     """
@@ -14,7 +13,7 @@ def ComputeLengthSong(nbBeatsPerBar: int, nbBars: int, tempo: int):
 
 # Instead of iterating, could find from closed form equation
 # I'll do it later I guess
-def FindListNbBarsFromConstraints(nbBeatsPerBar: int, tempo: int, minLenSong: float, maxLenSong: float) -> List[int]:
+def FindListNbBarsFromConstraints(nbBeatsPerBar, tempo, minLenSong, maxLenSong):
     """
     minLenSong and maxLenSong in seconds
     """
@@ -31,5 +30,5 @@ def FindListNbBarsFromConstraints(nbBeatsPerBar: int, tempo: int, minLenSong: fl
     return possibilities
 
 
-def FindRandomNbBarsFromConstraints(nbBeatsPerBar: int, tempo: int, minLenSong: float, maxLenSong: float):
+def FindRandomNbBarsFromConstraints(nbBeatsPerBar, tempo, minLenSong, maxLenSong):
     return choice(FindListNbBarsFromConstraints(nbBeatsPerBar, tempo, minLenSong, maxLenSong))

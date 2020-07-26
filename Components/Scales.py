@@ -1,5 +1,4 @@
-from __future__ import annotations
-from typing import List, Tuple, Dict, Union
+
 
 from .Notes import NoteNames, Note, ALL_NOTES
 
@@ -72,7 +71,7 @@ class ScaleModes(ExtendedEnum):
 
 
 class ScaleSpecs(object):
-    def __init__(self, RefNote: str = "A", ScaleType: str = "Major"):
+    def __init__(self, RefNote = "A", ScaleType = "Major"):
         self.RefNote = RefNote
         if (type(ScaleType) != str):
             raise TypeError("In ScaleSpecs constructor: ScaleType argument must be a string")
@@ -84,7 +83,7 @@ class ScaleSpecs(object):
     def __repr__(self):
         return str(self)
 
-    def GetScaleNotes(self, referenceOctave: int = 5, mode: str = "Ionian") -> List[Note]:
+    def GetScaleNotes(self, referenceOctave = 5, mode = "Ionian"):
         # Get tone succession for the scale type
         tonesSuccession = TONES_SUCCESSION[self.Type]
 
@@ -105,14 +104,14 @@ class ScaleSpecs(object):
 
         return scaleNotes
 
-    def GetScaleNotesNames(self, mode: str = "Ionian") -> List[str]:
+    def GetScaleNotesNames(self, mode = "Ionian"):
         return [n.Name for n in self.GetScaleNotes(mode=mode)]
 
     # Implementing circle of fifths here
-    def GetNeighbouringScales(self) -> List[ScaleSpecs]:
+    def GetNeighbouringScales(self):
         return self.GetSameTypeNeighbours() + [self.GetDifferentTypeNeighbour()]
 
-    def GetSameTypeNeighbours(self) -> List[ScaleSpecs]:
+    def GetSameTypeNeighbours(self):
         # Minors and Majors have the same neighbours, but differentiating anyway
         if self.Type == "Major":
             neighboursRefNotes = MAJOR_NEIGHBOURS[self.RefNote]
@@ -126,28 +125,28 @@ class ScaleSpecs(object):
             ) for refNote in neighboursRefNotes
         ]
 
-    def GetDifferentTypeNeighbour(self) -> ScaleSpecs:
+    def GetDifferentTypeNeighbour(self):
         if self.Type == "Major":
             return self.GetMinorFromMajorByRefNote(self.RefNote)
         else:
             return self.GetMajorFromMinorByRefNote(self.RefNote)
 
     @staticmethod
-    def GetMinorFromMajorByRefNote(refNote: str) -> ScaleSpecs:
+    def GetMinorFromMajorByRefNote(refNote):
         return ScaleSpecs(
             RefNote=MINOR_FROM_MAJOR[refNote],
             ScaleType="Minor"
         )
 
     @staticmethod
-    def GetMajorFromMinorByRefNote(refNote: str) -> ScaleSpecs:
+    def GetMajorFromMinorByRefNote(refNote):
         keys = list(MINOR_FROM_MAJOR.keys())
         for k in keys:
             if MINOR_FROM_MAJOR[k] == refNote:
                 return ScaleSpecs(RefNote=k, ScaleType="Major")
         return KeyError
 
-    def GetPentatonicScaleNotes(self, referenceOctave: int = 5, mode: str = "Ionian") -> List[Note]:
+    def GetPentatonicScaleNotes(self, referenceOctave = 5, mode = "Ionian"):
         # Make use of GetScaleNotes method
         allScaleNotes = self.GetScaleNotes(
             referenceOctave=referenceOctave,
@@ -167,8 +166,8 @@ class ScaleSpecs(object):
         return pentatonicScaleNotes[:5]
 
 
-def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: Union[int, float],
-                     singleDirection: bool = False, direction: str = "+") -> List[Note]:
+def ExtendScaleNotes(scaleNotes, extensionFactor,
+                     singleDirection = False, direction = "+"):
     """
     Extend a list of note by a given factor by transposing them by N octaves.
     2 methods depending on type of extension factor:
@@ -214,5 +213,5 @@ def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: Union[int, float],
     return FilterOutRepeatedNotes(outScaleNotes)
 
 
-def FilterOutRepeatedNotes(notes: List[Note]) -> List[Note]:
+def FilterOutRepeatedNotes(notes):
     return list(set(notes))

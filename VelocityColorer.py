@@ -1,5 +1,4 @@
-from __future__ import annotations
-from typing import List, Tuple, Dict, Union
+
 
 from .Components import *
 from .PrimitiveClassesUtils import Record, Library
@@ -24,7 +23,7 @@ class VelocityColorer(object):
     }
     """
 
-    def __init__(self, specs: Dict):
+    def __init__(self, specs):
         # Dicts are mutable so DO NOT SET THEM as cls property
         self.BeatsValueToBeatsClassified = {}
         self.DrumsInstruments = {}
@@ -32,7 +31,7 @@ class VelocityColorer(object):
         self.BeatMultipliers = specs["BeatMultipliers"]
         self.SetBeatsDecomposition(specs["BeatsDecomposition"])
 
-    def SetBeatsDecomposition(self, beatsDecomposition: Dict) -> None:
+    def SetBeatsDecomposition(self, beatsDecomposition):
         """
             beatsDecomposition in the specs json to be input maps keys to arrays of beats, to make it easy
             to specify new presets for the user.
@@ -55,7 +54,7 @@ class VelocityColorer(object):
             val = beatsDecomposition[key]
             self.BeatsValueToBeatsClassified[val] = key
 
-    def CheckMultiplierForBeat(self, beat: float) -> int:
+    def CheckMultiplierForBeat(self, beat):
         """
         get the multiplier to be associated with a given beat
         """
@@ -66,7 +65,7 @@ class VelocityColorer(object):
 
         return outMultiplier
 
-    def PrepareBar(self, inputBar: Bar, refVelocity: int = 60) -> Bar:
+    def PrepareBar(self, inputBar, refVelocity = 60):
         newBar = Bar()
         for se in inputBar.SoundEvents:
             newSoundEvent = deepcopy(se)
@@ -75,7 +74,7 @@ class VelocityColorer(object):
 
         return newBar
 
-    def PrepareTrack(self, track: Track, refVelocity: int = 60) -> None:
+    def PrepareTrack(self, track, refVelocity = 60):
         """
         Set drums instruments to notes, depending on beat
         """
@@ -106,13 +105,13 @@ specsStandard = {
 StandardColorer = VelocityColorer(specsStandard)
 
 class ColorerLibraryClass(Library):
-    BaseName: str = "ColorerLibrary"
-    Records: List[Record] = None
+    BaseName = "ColorerLibrary"
+    Records = None
 
-    def GetColorerFromName(self, nameColorer: str = "Standard") -> str:
+    def GetColorerFromName(self, nameColorer = "Standard"):
         return self.GetFromValueInField("Name", nameColorer)[0].Colorer
 
-    def Get(self, nameColorer: str = "Standard") -> str:
+    def Get(self, nameColorer = "Standard"):
         return self.GetFromValueInField("Name", nameColorer)[0].Colorer
 
     @property

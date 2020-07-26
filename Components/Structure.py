@@ -1,5 +1,4 @@
-from __future__ import annotations
-from typing import List, Tuple, Dict, Union
+
 
 """
 Dataclasses to represent song components
@@ -16,13 +15,13 @@ from copy import deepcopy
 
 @dataclass
 class SoundEvent:
-    Beat: float = 0.0
-    Duration: float = 1.0
-    Note: Note = Note()
-    Velocity: int = 60
+    Beat = 0.0
+    Duration = 1.0
+    Note = Note()
+    Velocity = 60
 
 
-def GenerateSoundEventsFromListNotes(beat: float, duration: float, notes: List[Note]):
+def GenerateSoundEventsFromListNotes(beat, duration, notes):
     return [
         SoundEvent(
             Beat=beat,
@@ -34,7 +33,7 @@ def GenerateSoundEventsFromListNotes(beat: float, duration: float, notes: List[N
 
 @dataclass
 class Bar:
-    SoundEvents: list = field(default_factory=list)
+    SoundEvents = field(default_factory=list)
 
     def __str__(self):
         return "Bar({} SoundEvents)".format(len(self.SoundEvents))
@@ -63,11 +62,11 @@ class Bar:
 
 @dataclass
 class Track:
-    Name: str = "Untitled"
-    Instrument: str = ""
-    Bars: list = field(default_factory=list)
-    IsDrumsTrack: bool = False
-    BankUsed: int = 0
+    Name = "Untitled"
+    Instrument = ""
+    Bars = field(default_factory=list)
+    IsDrumsTrack = False
+    BankUsed = 0
 
     def __str__(self):
         if self.IsDrumsTrack:
@@ -82,7 +81,7 @@ class Track:
 
     # Adding an __add__ overload to allow concatenating bars in a simple way
     # this is to make easier to generate sections and then appending them
-    def __add__(self, other: Track) -> Track:
+    def __add__(self, other):
         if self.__class__ is other.__class__:
             outTrack = deepcopy(self)
             outTrack.Bars = outTrack.Bars + other.Bars
@@ -94,16 +93,16 @@ class Track:
 """
 @dataclass
 class SongSegment:
-    ScaleSegment: ScaleSpecs = ScaleSpecs()
-    Bars: list = field(default_factory=list)
+    ScaleSegment = ScaleSpecs()
+    Bars = field(default_factory=list)
 """
 
 
 # Do I really need a timesignature? For my implementation, beats per bar is enough?
 @dataclass
 class TimeSignature:
-    BeatsPerBar: int = 4
-    BeatUnit: int = 4
+    BeatsPerBar = 4
+    BeatUnit = 4
 
     def __str__(self):
         return "TimeSignature(BeatsPerBar={}, BeatUnit={})".format(self.BeatsPerBar, self.BeatUnit)
@@ -114,16 +113,16 @@ class TimeSignature:
 
 @dataclass
 class Song:
-    Tempo: int = 80
-    BeatsPerBar: int = 4
-    Tracks: list = field(default_factory=list)
+    Tempo = 80
+    BeatsPerBar = 4
+    Tracks = field(default_factory=list)
 
     def __str__(self):
         return "Song(Tempo={}, BeatsPerBar={}, {} Tracks)".format(self.Tempo, self.BeatsPerBar, len(self.Tracks))
 
 
 # Structure Creators
-def GenerateBarFromRhythmicPreset(rhythmicPreset: List[Dict[str, Union[float, int]]]) -> Bar:
+def GenerateBarFromRhythmicPreset(rhythmicPreset):
     """
     :param rhythmicPreset: {
         "Beat": float,

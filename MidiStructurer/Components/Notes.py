@@ -1,22 +1,22 @@
 from __future__ import annotations
 from typing import List, Tuple, Dict, Union
 
-from .utils import LoopingOrderedEnum, OrderedEnum
-
-from copy import deepcopy
-
+from .EnumManager import EnumManager_Ordered_Looping
 
 ALL_NOTES = [
-    "A", "As", "B", "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs"
+    "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"
 ]
 
 ALL_STAFF_POSITIONS = [
-    "A", "B", "C", "D", "E", "F", "G"
+    "C", "D", "E", "F", "G", "A", "B"
 ]
 
 
 # Values give the distance between notes in term of halftones
 # s denotes a Sharp
+"""
+#### DEPRECATED, was relying on enum type
+
 class NoteNames(LoopingOrderedEnum):
     C = 0
     Cs = 1
@@ -31,7 +31,6 @@ class NoteNames(LoopingOrderedEnum):
     As = 10
     B = 11
 
-
 class StaffPositions(LoopingOrderedEnum):
     C = 0
     D = 1
@@ -40,6 +39,19 @@ class StaffPositions(LoopingOrderedEnum):
     G = 4
     A = 5
     B = 6
+"""
+
+class NoteNames(EnumManager_Ordered_Looping):
+    KeyValuesMap={ALL_NOTES[i]: i for i in range(len(ALL_NOTES))}
+    KeyList=ALL_NOTES
+    ValuesList=[i for i in range(len(ALL_NOTES))]
+
+
+class StaffPositions(EnumManager_Ordered_Looping):
+    KeyValuesMap={ALL_STAFF_POSITIONS[i]: i for i in range(len(ALL_STAFF_POSITIONS))}
+    KeyList=ALL_STAFF_POSITIONS
+    ValuesList=[i for i in range(len(ALL_STAFF_POSITIONS))]
+
 
 
 # A note with a sharp is considered to belong to higher staff
@@ -72,7 +84,7 @@ class Note(object):
         if Octave < 0:
             raise ValueError("Octave must be a non-negative integer.")
 
-        self._Name = NoteNames[Name]
+        self._Name = NoteNames(Name)
         self._Octave = Octave
 
     @property
@@ -82,7 +94,7 @@ class Note(object):
     @Name.setter
     def Name(self, newName: str) -> None:
         try:
-            self._Name = NoteNames[newName]
+            self._Name = NoteNames(newName)
         except TypeError:
             raise TypeError("'{}' is not a valid note name. Expected type is str.")
         except KeyError:
@@ -173,7 +185,7 @@ class Note(object):
     # Added this to expand scales. Can also use Note + 12 for octave difference
     # but I thought additional method would be nice
     def NewFromOctaveDifference(self, octaveDiff: int) -> Note:
-        newNote = deepcopy(self)
+        newNote = self + 0
         newNote.Octave += octaveDiff
         return newNote
 
@@ -202,15 +214,15 @@ class Note(object):
         return NotImplemented
 
     def GetStaffPositionAsEnumElem(self) -> StaffPositions:
-        return StaffPositions[self.GetStaffPositionAsLetter()]
+        return StaffPositions(self.GetStaffPositionAsLetter())
 
     def GetStaffPositionAsLetter(self) -> str:
         return NOTE_NAME_TO_STAFF[self.Name.name]
 
     def GetStaffPositionAsInteger(self) -> int:
-        return StaffPositions[
+        return StaffPositions(
             self.GetStaffPositionAsLetter()
-        ].value
+        ).value
 
     # This is order dependent. Self should be the root note of the chord
     def GetIntervalNumber(self, other) -> int:
@@ -218,7 +230,7 @@ class Note(object):
             staff1 = self.GetStaffPositionAsEnumElem()
             staff2 = other.GetStaffPositionAsEnumElem()
 
-            outValue = staff2 - staff1
+            outValue = staff2.value - staff1.value
 
             # lowest note is root of chord and therefore the base for interval calculation
             # Incrementing by one so that it makes sense (a A - B chord is a second, but this return 1)
@@ -237,5 +249,12 @@ class Note(object):
     @classmethod
     def FromHeight(cls, height: int) -> Note:
         octave = height // 12
-        name = NoteNames.GetElementFromValue(height - octave * 12).name
+        name = NoteNames("A").GetElementFromValue(height - octave * 12).name
         return Note(Name=name, Octave=octave - 1)
+
+    # TRANSCRYPT: Wrapping methods to use this library in the browser
+    def add(self, other):
+        return self + other
+
+    def sub(self, other):
+        return self - other

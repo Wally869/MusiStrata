@@ -1,5 +1,8 @@
-from enum import Enum
 from typing import List, Tuple, Dict, Union
+
+
+from enum import Enum
+
 
 # Can do some work to extend enums?
 class ExtendedEnum(Enum):

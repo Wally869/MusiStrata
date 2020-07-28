@@ -3,6 +3,9 @@ from typing import List, Tuple, Dict, Union
 
 from .EnumManager import EnumManager_Ordered_Looping
 
+
+# Values give the distance between notes in term of halftones
+# s denotes a Sharp
 ALL_NOTES = [
     "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"
 ]
@@ -11,35 +14,6 @@ ALL_STAFF_POSITIONS = [
     "C", "D", "E", "F", "G", "A", "B"
 ]
 
-
-# Values give the distance between notes in term of halftones
-# s denotes a Sharp
-"""
-#### DEPRECATED, was relying on enum type
-
-class NoteNames(LoopingOrderedEnum):
-    C = 0
-    Cs = 1
-    D = 2
-    Ds = 3
-    E = 4
-    F = 5
-    Fs = 6
-    G = 7
-    Gs = 8
-    A = 9
-    As = 10
-    B = 11
-
-class StaffPositions(LoopingOrderedEnum):
-    C = 0
-    D = 1
-    E = 2
-    F = 3
-    G = 4
-    A = 5
-    B = 6
-"""
 
 class NoteNames(EnumManager_Ordered_Looping):
     KeyValuesMap={ALL_NOTES[i]: i for i in range(len(ALL_NOTES))}
@@ -51,7 +25,6 @@ class StaffPositions(EnumManager_Ordered_Looping):
     KeyValuesMap={ALL_STAFF_POSITIONS[i]: i for i in range(len(ALL_STAFF_POSITIONS))}
     KeyList=ALL_STAFF_POSITIONS
     ValuesList=[i for i in range(len(ALL_STAFF_POSITIONS))]
-
 
 
 # A note with a sharp is considered to belong to higher staff

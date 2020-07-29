@@ -1,5 +1,3 @@
-
-
 # Creating pseudo enum that work with Transcrypt
 
 """
@@ -14,6 +12,7 @@ class test(EnumManager_Ordered_Looping):
 
 """
 
+
 class EnumElement(object):
     def __init__(self, name, value):
         self.name = name
@@ -24,10 +23,12 @@ class EnumManager(object):
     KeyValuesMap = None
     KeyList = None
     ValuesList = None
+
     def __init__(self, name):
         self.name = name
+
     def __str__(self):
-        return "<{} - name: {}, value: {}>".format(self.__class__, self.name, self.value) 
+        return "<{} - name: {}, value: {}>".format(self.__class__, self.name, self.value)
 
     def __repr__(self):
         return str(self)
@@ -48,7 +49,7 @@ class EnumManager_Ordered(EnumManager):
         if self.__class__ is other.__class__:
             return self.value >= other.value
         return NotImplemented
-        
+
     def __gt__(self, other):
         if self.__class__ is other.__class__:
             return self.value > other.value
@@ -82,7 +83,7 @@ class EnumManager_Ordered_Looping(EnumManager_Ordered):
             newValue -= len(self.KeyList)
             deltaRange += 1
         return self.__class__(self.KeyList[newValue]), deltaRange
-    
+
     def __sub__(self, other):
         if other < 0:
             return self + other
@@ -92,4 +93,3 @@ class EnumManager_Ordered_Looping(EnumManager_Ordered):
             newValue += len(self.KeyList)
             deltaRange -= 1
         return self.__class__(self.KeyList[newValue]), deltaRange
-

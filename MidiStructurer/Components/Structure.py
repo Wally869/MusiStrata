@@ -1,17 +1,17 @@
 from __future__ import annotations
 from typing import List, Tuple, Dict, Union
 
-"""
-Dataclasses to represent song components
-
-
-"""
-
 from dataclasses import dataclass, field
 
 from .Notes import *
 
-from copy import deepcopy
+
+"""
+Dataclasses to represent song components
+"""
+
+# TypeStripper preprocessing tag below, do not remove
+#NoTypeStripping
 
 
 @dataclass
@@ -84,7 +84,7 @@ class Track:
     # this is to make easier to generate sections and then appending them
     def __add__(self, other: Track) -> Track:
         if self.__class__ is other.__class__:
-            outTrack = deepcopy(self)
+            outTrack = self
             outTrack.Bars = outTrack.Bars + other.Bars
             return outTrack
         else:

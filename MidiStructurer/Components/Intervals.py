@@ -183,10 +183,42 @@ class BaseInterval(object):
             listIntervals = ALL_INTERVALS
         outIntervals = []
         for interval in listIntervals:
-            _, err = rootNote + interval
+            _, err = interval.add(rootNote)
             if err is None:
                 outIntervals.append(interval)
         return outIntervals
+
+    # TRANSCRYPT: Wrapping methods to use this library in the browser
+    # Mathematical Operations on Notes, with enforced order
+    def add(self, other):
+        if type(other) == Note:
+            # Return Note, None if no error
+            # else return Note, ValueError
+            newNote = other + self.TonalDistance
+            generatedInterval = Interval.FromNotes(other, newNote)
+            if generatedInterval == self:
+                return newNote, None
+            else:
+                return newNote, ValueError(
+                    "Invalid from given starting note. "
+                    "Target: {}, Generated: {}".format(
+                        self, generatedInterval))
+        return NotImplemented
+
+    def sub(self, other):
+        if type(other) == Note:
+            # Return Note, None if no error
+            # else return Note, ValueError
+            newNote = other - self.TonalDistance
+            generatedInterval = Interval.FromNotes(other, newNote)
+            if generatedInterval == self:
+                return newNote, None
+            else:
+                return newNote, ValueError(
+                    "Invalid from given starting note. "
+                    "Target: {}, Generated: {}".format(
+                        self, generatedInterval))
+        return NotImplemented
 
 
 class Interval(object):
@@ -377,6 +409,36 @@ class Interval(object):
                 outIntervals.append(interval)
         return outIntervals
 
+    # TRANSCRYPT: Wrapping methods to use this library in the browser
+    def add(self, other):
+        if type(other) == Note:
+            # Return Note, None if no error
+            # else return Note, ValueError
+            newNote = other + self.TonalDistance
+            generatedInterval = Interval.FromNotes(other, newNote)
+            if generatedInterval == self:
+                return newNote, None
+            else:
+                return newNote, ValueError(
+                    "Invalid from given starting note. "
+                    "Target: {}, Generated: {}".format(
+                        self, generatedInterval))
+        return NotImplemented
+
+    def sub(self, other):
+        if type(other) == Note:
+            # Return Note, None if no error
+            # else return Note, ValueError
+            newNote = other - self.TonalDistance
+            generatedInterval = Interval.FromNotes(other, newNote)
+            if generatedInterval == self:
+                return newNote, None
+            else:
+                return newNote, ValueError(
+                    "Invalid from given starting note. "
+                    "Target: {}, Generated: {}".format(
+                        self, generatedInterval))
+        return NotImplemented
 
 # same as Instruments and Drums?
 # could be nice to easily access diatonic and chromatic intervals, and filter on interval number

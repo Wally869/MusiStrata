@@ -3,10 +3,9 @@ from typing import List, Tuple, Dict, Union
 
 from .Notes import NoteNames, Note, ALL_NOTES
 
-from enum import Enum
-from copy import deepcopy
 
-from .utils import ExtendedEnum
+# from .utils import ExtendedEnum
+from .EnumManager import EnumManager_Ordered
 
 TONES_SUCCESSION = {
     "Major": [
@@ -54,21 +53,13 @@ MINOR_FROM_MAJOR = {
     "F": "D"
 }
 
-
-class ScaleTypes(Enum):
-    Major = 0
-    Minor = 1
-    MinorMelodic = 2
+ALL_SCALE_MODES = ["Ionian", "Dorian", "Phrygian", "Lydian", "Mixolydian", "Aeolian", "Locrian"]
 
 
-class ScaleModes(ExtendedEnum):
-    Ionian = 0
-    Dorian = 1
-    Phrygian = 2
-    Lydian = 3
-    Mixolydian = 4
-    Aeolian = 5
-    Locrian = 6
+class ScaleModes(EnumManager_Ordered):
+    KeyValuesMap = {ALL_SCALE_MODES[i]: i for i in range(len(ALL_SCALE_MODES))}
+    KeyList = ALL_SCALE_MODES
+    ValuesList = [i for i in range(len(ALL_SCALE_MODES))]
 
 
 class ScaleSpecs(object):
@@ -94,7 +85,7 @@ class ScaleSpecs(object):
         )
 
         # Reorganize tones_succession according to ScaleModes value (in different mode, tones_succession changes)
-        tonesSuccession = tonesSuccession[ScaleModes[mode].value:] + tonesSuccession[:ScaleModes[mode].value]
+        tonesSuccession = tonesSuccession[ScaleModes(mode).value:] + tonesSuccession[:ScaleModes(mode).value]
 
         # Create the reference note for the scale wanted and get notes
         scaleNotes = [refNote]
@@ -189,7 +180,7 @@ def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: Union[int, float],
     if singleDirection:
         directions = [direction]
 
-    outScaleNotes = deepcopy(scaleNotes)
+    outScaleNotes = [n for n in scaleNotes]
     for currDirection in directions:
         addedElements = 0
         refNotes = scaleNotes

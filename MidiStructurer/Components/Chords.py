@@ -90,6 +90,35 @@ class Chord(object):
             return outNotes, errors
         raise NotImplementedError()
 
+    # TRANSCRYPT: Wrapping methods to use this library in the browser
+    def call(self, rootNote: Note, inversion: int = 0, fromRoot: bool = True) -> Tuple[List[Note], List[Error]]:
+        if type(rootNote) != Note:
+            raise TypeError("Input must be of type Note.")
+        currIntervals = self.InvertIntervals(inversion)
+        outNotes = []
+        errors = []
+        for interval in currIntervals:
+            if fromRoot:
+                currNote, err = interval.add(rootNote)
+            else:
+                currNote, err = interval.add(rootNote)
+                if len(outNotes) > 0:
+                    currNote, err = outNotes[-1].add(interval)
+            outNotes.append(currNote)
+            errors.append(err)
+        return outNotes, errors
+
+    def add(self, other):
+        if type(other) == Note:
+            outNotes = []
+            errors = []
+            for interval in self.Intervals:
+                currNote, err = interval.add(other)
+                outNotes.append(currNote)
+                errors.append(err)
+            return outNotes, errors
+        raise NotImplementedError()
+
 
 # using this, and a different approach I guess
 # actually this nice: https://en.wikibooks.org/wiki/Music_Theory/Complete_List_of_Chord_Patterns

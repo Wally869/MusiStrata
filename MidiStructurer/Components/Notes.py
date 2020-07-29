@@ -62,7 +62,7 @@ class Note(object):
 
     @property
     def Name(self) -> NoteNames:
-        return self._Name
+        return self._Name.name
 
     @Name.setter
     def Name(self, newName: str) -> None:
@@ -90,7 +90,7 @@ class Note(object):
         return self.Height
 
     def __str__(self) -> str:
-        return "Note({})".format(self.Name.name + str(self.Octave))
+        return "Note({})".format(self.Name + str(self.Octave))
 
     def __repr__(self) -> str:
         return str(self)
@@ -130,7 +130,7 @@ class Note(object):
             if other < 0:
                 return self.__sub__(abs(other))
             else:
-                outName, deltaOctave = self.Name + other
+                outName, deltaOctave = self._Name + other
 
                 return Note(
                     Name=outName.name,
@@ -146,7 +146,7 @@ class Note(object):
             if other < 0:
                 return self.__add__(abs(other))
             else:
-                outName, deltaOctave = self.Name - other
+                outName, deltaOctave = self._Name - other
 
                 return Note(
                     Name=outName.name,
@@ -164,12 +164,12 @@ class Note(object):
 
     @property
     def Height(self) -> int:
-        return (self.Octave + 1) * 12 + self.Name.value
+        return (self.Octave + 1) * 12 + self._Name.value
 
     @property
     def Frequency(self) -> float:
         # Using this as reference: https://pages.mtu.edu/~suits/notefreqs.html
-        return 16.35 * (2 ** self.Octave) * (2 ** (1 / 12)) ** self.Name.value
+        return 16.35 * (2 ** self.Octave) * (2 ** (1 / 12)) ** self._Name.value
 
     # Return distance between this note and another in term of semitones
     def GetTonalDistance(self, other) -> int:
@@ -190,7 +190,7 @@ class Note(object):
         return StaffPositions(self.GetStaffPositionAsLetter())
 
     def GetStaffPositionAsLetter(self) -> str:
-        return NOTE_NAME_TO_STAFF[self.Name.name]
+        return NOTE_NAME_TO_STAFF[self.Name]
 
     def GetStaffPositionAsInteger(self) -> int:
         return StaffPositions(
@@ -203,7 +203,10 @@ class Note(object):
             staff1 = self.GetStaffPositionAsEnumElem()
             staff2 = other.GetStaffPositionAsEnumElem()
 
-            outValue = staff2.value - staff1.value
+            outValue = 0
+            while staff1.value != staff2.value:
+                outValue += 1
+                staff1 = (staff1 + 1)[0]
 
             # lowest note is root of chord and therefore the base for interval calculation
             # Incrementing by one so that it makes sense (a A - B chord is a second, but this return 1)

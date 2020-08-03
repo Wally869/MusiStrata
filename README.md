@@ -1,22 +1,24 @@
-# MidiStructurer
+# MusiStrata
 
 ## Overview
 
-Classes and Utilities for representing Notes and performing transformations on them with the intent of creating midi files.
+MusiStrata is a pure Python library to represent and manipulate Musical Components.  
 
-In this library I strive to implement some basic concepts of Music Theory, to serve as base for a music generation package.
-This is still a WIP, but the main operations are well defined and future work will likely only be extensions.
+The idea is to be able to create Notes, translate them using Tonal Distance and Intervals, generate Chords... 
 
-This readme is a quick overview of the main functions of this library. Extended explanations can be found in the wiki (WIP).
+This readme is a quick overview of the main functions of this library. Extended explanations [can be found in the wiki.](https://wally869.github.io/MusiStrata/)
 
-See the following sections for usage documentation (WIP). 
-This library serves as base for my music generation project: https://github.com/Wally869/MidiGenerator
+
+Some of my projects using this library:
+- [MidiSplitter](https://github.com/Wally869/MidiSplitter), an algorithm that splits Midi Files per Channel into subsections which are then saved as standalone Midi Files.
+- [VisualMidi](https://github.com/Wally869/VisualMidi), a webapp to visualize and analyze Midi Files.
+
 
 ## Installing
 
 ```shell script
-git clone https://github.com/Wally869/MidiStructurer.git
-cd MidiStructurer
+git clone https://github.com/Wally869/MusiStrata.git
+cd MusiStrata
 pip install -e .
 ```
 
@@ -27,8 +29,12 @@ You can also run Examples.py, and listen to the generated samples in the Example
 
 ## Dependencies
 
-Written in python, the only dependency is Mido (https://github.com/mido/mido)
+- [Mido](https://github.com/mido/mido), to generate Midi Files
+- [Soundcard](https://github.com/bastibe/SoundCard), a cross-platform library for playing and recording sound in Python
 
+
+
+# Documentation (will be transferred to gh-pages)
 
 ## Components
 
@@ -40,7 +46,7 @@ The only allowed alterations are Sharps. An altered note can be specified by app
 
 ```python
 # Allowed note names when creating a note object
->>> MidiStructurer.Components.Notes.ALL_NOTES
+>>> MusiStrata.Components.Notes.ALL_NOTES
 ALL_NOTES = [
     "A", "As", "B", "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs"
 ]

@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import List, Tuple, Dict, Union
 
 import mido
-from copy import deepcopy
 
 from .Components import *
 from .Instruments import GetSignalFromInstrument

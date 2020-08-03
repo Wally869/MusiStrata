@@ -1,5 +1,5 @@
-from MidiStructurer.Components import *
-import MidiStructurer.MidoConverter as mc
+from MusiStrata.Components import *
+import MusiStrata.MidoConverter as mc
 
 from random import seed, choice
 from copy import deepcopy

@@ -85,16 +85,16 @@ class DrumsLibraryClass(Library):
     Records: List[Record] = None
 
     # not sure if use Drum or Drums, so using both
-    def GetDrumNameFromSignal(self, signal: int):
+    def GetDrumNameFromSignal(self, signal: int) -> str:
         return self.GetFromValueInField("Signal", signal)[0].Name
 
-    def GetSignalFromDrumName(self, drums: str):
+    def GetSignalFromDrumName(self, drums: str) -> int:
         return self.GetFromValueInField("Name", drums)[0].Signal
 
-    def GetDrumsNameFromSignal(self, signal: int):
+    def GetDrumsNameFromSignal(self, signal: int) -> str:
         return self.GetFromValueInField("Signal", signal)[0].Name
 
-    def GetSignalFromDrumsName(self, drums: str):
+    def GetSignalFromDrumsName(self, drums: str) -> int:
         return self.GetFromValueInField("Name", drums)[0].Signal
 
 

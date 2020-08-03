@@ -7,9 +7,13 @@ import numpy as np
 from scipy import signal
 
 
+# Alias for typeStripper
+npNdarray = np.ndarray
+
+
 DEFAULT_SPEAKER = sc.default_speaker()
 
-def PlayNotes(notes: Union[List[Note], Note], sampleRate: int = 10000):
+def PlayNotes(notes: Union[List[Note], Note], sampleRate: int = 10000) -> None:
     if type(notes) == Note:
         return PlayNotes([notes])
     deltaTimes = np.arange(sampleRate) / sampleRate
@@ -21,7 +25,7 @@ def PlayNotes(notes: Union[List[Note], Note], sampleRate: int = 10000):
     DEFAULT_SPEAKER.play(output, sampleRate)
 
 
-def PlayBar(bar: Bar, nbBeatsInBar: int = 4, sampleRate: int = 10000, tempo: int = 60):
+def PlayBar(bar: Bar, nbBeatsInBar: int = 4, sampleRate: int = 10000, tempo: int = 60) -> None:
     deltaTimes = np.arange(int(sampleRate * nbBeatsInBar * 60 / tempo)) / sampleRate
     output = np.zeros(len(deltaTimes))
     for se in bar.SoundEvents:
@@ -30,7 +34,7 @@ def PlayBar(bar: Bar, nbBeatsInBar: int = 4, sampleRate: int = 10000, tempo: int
         output[idStartSound:idEndSound] += 0.25 * np.sin(deltaTimes[idStartSound:idEndSound] * 2 * np.pi * se.Note.Frequency)
     DEFAULT_SPEAKER.play(output, sampleRate)
 
-def SaveBarsToSineArray(bars: List[Bar], nbBeatsInBar: float = 4.0, sampleRate: int = 10000, tempo: int = 60):
+def SaveBarsToSineArray(bars: List[Bar], nbBeatsInBar: float = 4.0, sampleRate: int = 10000, tempo: int = 60) ->  List[npNdarray, int]:
     deltaTimes = np.arange(int(sampleRate * nbBeatsInBar * len(bars) * 60 / tempo)) / sampleRate
     output = np.zeros(len(deltaTimes))
     for idB, b in enumerate(bars):
@@ -40,6 +44,6 @@ def SaveBarsToSineArray(bars: List[Bar], nbBeatsInBar: float = 4.0, sampleRate: 
             output[idStartSound:idEndSound] += 0.25 * np.sin(deltaTimes[idStartSound:idEndSound] * 2 * np.pi * se.Note.Frequency)
     return output, sampleRate
 
-def PlayBars(bars: List[Bar], nbBeatsInBar: float = 4.0, tempo: int = 60, sampleRate: int = 10000):
+def PlayBars(bars: List[Bar], nbBeatsInBar: float = 4.0, tempo: int = 60, sampleRate: int = 10000) -> None:
     arr, _ = SaveBarsToSineArray(bars, nbBeatsInBar, sampleRate, tempo)
     DEFAULT_SPEAKER.play(arr, sampleRate)

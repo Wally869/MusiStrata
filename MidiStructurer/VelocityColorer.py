@@ -69,7 +69,7 @@ class VelocityColorer(object):
     def PrepareBar(self, inputBar: Bar, refVelocity: int = 60) -> Bar:
         newBar = Bar()
         for se in inputBar.SoundEvents:
-            newSoundEvent = deepcopy(se)
+            newSoundEvent = se
             newSoundEvent.Velocity = int(refVelocity * self.BeatMultipliers[self.CheckMultiplierForBeat(se.Beat)])
             newBar.SoundEvents.append(newSoundEvent)
 

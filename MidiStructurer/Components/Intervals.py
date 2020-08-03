@@ -3,6 +3,9 @@ from typing import List, Tuple, Dict, Union
 
 from .Notes import *
 
+from ..PrimitiveClassesUtils import *
+
+
 ALL_POSSIBLE_QUALITIES = [
     "Minor", "Major", "Perfect", "Diminished", "Augmented", "DoublyDiminished", "DoublyAugmented"
 ]
@@ -396,7 +399,7 @@ class Interval(object):
         return Interval(Intervals=intervals)
 
     @classmethod
-    def GetValidIntervals(cls, rootNote: Note, listIntervals: List[Interval] = [], toHigher: Bool = True):
+    def GetValidIntervals(cls, rootNote: Note, listIntervals: List[Interval] = [], toHigher: bool = True) -> List[Interval]:
         if listIntervals == []:
             listIntervals = ALL_INTERVALS
         outIntervals = []
@@ -410,7 +413,7 @@ class Interval(object):
         return outIntervals
 
     # TRANSCRYPT: Wrapping methods to use this library in the browser
-    def add(self, other):
+    def Add(self, other) -> Union[Note, ValueError]:
         if type(other) == Note:
             # Return Note, None if no error
             # else return Note, ValueError
@@ -423,9 +426,9 @@ class Interval(object):
                     "Invalid from given starting note. "
                     "Target: {}, Generated: {}".format(
                         self, generatedInterval))
-        return NotImplemented
+        raise NotImplementedError()
 
-    def sub(self, other):
+    def Sub(self, other) -> Union[Note, ValueError]:
         if type(other) == Note:
             # Return Note, None if no error
             # else return Note, ValueError
@@ -445,8 +448,6 @@ class Interval(object):
 class IntervalsLibrary(object):
     BaseName: str = "IntervalsLibrary"
     Records: List[Record] = None
-
-
 
 
 CHROMATIC_AND_DIATONIC_INTERVALS = [Interval(*spec[:2]) for spec in MINOR_MAJOR_PERFECT_INTERVALS]

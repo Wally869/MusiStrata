@@ -229,8 +229,8 @@ class Note(object):
         return Note(Name=name, Octave=octave - 1)
 
     # TRANSCRYPT: Wrapping methods to use this library in the browser
-    def add(self, other):
+    def Add(self, other):
         return self + other
 
-    def sub(self, other):
+    def Sub(self, other):
         return self - other

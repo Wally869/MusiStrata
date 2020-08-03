@@ -58,7 +58,7 @@ class Chord(object):
 
     # change __call__ to generating alternate chord, and add __radd__ with note?
     # just create new methods for now
-    def __call__(self, rootNote: Note, inversion: int = 0, fromRoot: bool = True) -> Tuple[List[Note], List[Error]]:
+    def __call__(self, rootNote: Note, inversion: int = 0, fromRoot: bool = True) -> Tuple[List[Note], List[ValueError]]:
         if type(rootNote) != Note:
             raise TypeError("Input must be of type Note.")
         currIntervals = self.InvertIntervals(inversion)
@@ -79,7 +79,7 @@ class Chord(object):
         invertedIntervals = self.InvertIntervals(inversions)
         return Chord(invertedIntervals)
 
-    def __radd__(self, other):
+    def __radd__(self, other) -> Tuple[List[Note], List[ValueError]]:
         if type(other) == Note:
             outNotes = []
             errors = []
@@ -91,7 +91,7 @@ class Chord(object):
         raise NotImplementedError()
 
     # TRANSCRYPT: Wrapping methods to use this library in the browser
-    def call(self, rootNote: Note, inversion: int = 0, fromRoot: bool = True) -> Tuple[List[Note], List[Error]]:
+    def call(self, rootNote: Note, inversion: int = 0, fromRoot: bool = True) -> Tuple[List[Note], List[ValueError]]:
         if type(rootNote) != Note:
             raise TypeError("Input must be of type Note.")
         currIntervals = self.InvertIntervals(inversion)
@@ -108,7 +108,7 @@ class Chord(object):
             errors.append(err)
         return outNotes, errors
 
-    def add(self, other):
+    def add(self, other) -> Tuple[List[Note], List[ValueError]]:
         if type(other) == Note:
             outNotes = []
             errors = []

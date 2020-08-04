@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Notes
-parent: ScaleSpecs
+title: ScaleSpecs
+parent: Components
 nav_order: 2
 ---
 

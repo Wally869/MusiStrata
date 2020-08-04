@@ -10,61 +10,17 @@ MusiStrata is a pure Python library to represent and manipulate Musical Componen
 
 The idea is to be able to create Notes, translate them using Tonal Distance and Intervals, generate Chords... Support all operations useful in creating music algorithmically, through the use of Western Music Theory 
 
+## Implementation  
+
+MusiStrata defines Components to represent Musical Elements. There are 2 types:
+- Basic Components (Notes, Scales, Intervals and Chords) which represent Notes and potential operations that can be applied to it to generate complex sequences of Notes.
+- Structural Components (SoundEvents, Bars, Tracks and Songs) which allow us to structure our Notes into rhythmically defined sequences.
+
+
+
 ## Components
 
-### Note Class
 
-A note can be created easily, with 2 parameters: the note name, and the octave. 
-Valid Note Names are letters A to G.  
-The only allowed alterations are Sharps. An altered note can be specified by appending  's' to the note name.
-
-```python
-# Allowed note names when creating a note object
->>> MusiStrata.Components.Notes.ALL_NOTES
-ALL_NOTES = [
-    "A", "As", "B", "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs"
-]
-```
-
-Remark: the input value for Name when creating a Note is a string, but it is converted to an enum value inside the Note class.
-
-```python
-# Creating a Note. Default values are Name="A" and Octave=5
->> Note()
-Note(A5)
-
-# Can specify values
->> Note("B", 6)
-Note(B6)
-
-# Append s to Name to create a Note with a sharp
->> Note("Cs", 5)
-Note(Cs5)
-
-# The note name can be access by the .Name property. Returns NoteName enum
->> Note("C", 5).Name
-<NoteName.C: 0>
->> Note("C", 5).Name.name
-"C"
->> Note("C", 5).Name.value
-0
-```
-
-The intent of this library is to represent a song as a succession of Notes, ordered into Structural classes, to then generate a midi file, or interface with other libraries.    
-As such a Note object has methods to return its height, aka its note for a midi note_on/note_off message, as well as its frequency.  
-Remark: the height computation is what allows all comparisons, and tonal distance computations. 
-
-```python
->> Note("C", 5).Height
-72
-
->> Note("C", 5).Frequency
-523.2
-
-# This means it is also possible to create a note from its height
->> CreateNoteFromHeight(72)
-Note(C5)
-```
 
 ### ScaleSpecs Class
 

@@ -14,12 +14,19 @@ The Note Object is the most basic element of MusiStrata. It is created to repres
 Operator overloads have been defined between Notes and most other components to create new Notes.
 
 
-## Creating a Note object  
+## Creating and Using a Note object  
 
 Valid Note Names are letters A to G.  
 The only allowed alterations are Sharps. An altered note can be specified by appending  's' to the note name.
 
 ```python
+"""
+class Note(object):
+    def __init__(self,  Name: str = "A", Octave: int = 5):
+        self._Name = NoteNames(Name)   # NoteNames is a class more or less the same functions as an enum
+        self._Octave = Octave
+"""
+
 # Allowed note names when creating a note object
 >>> MusiStrata.Components.Notes.ALL_NOTES
 ALL_NOTES = [

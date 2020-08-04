@@ -77,3 +77,55 @@ Remark: the height computation is what allows all comparisons, and tonal distanc
 Note(C5)
 
 ```
+
+
+
+## Operations on Notes
+
+The __add__ and __sub__ operators of the Note Class have been overloaded to allow special operations.
+Other operations are possible and implemented through __radd__ and __rsub__ of other components.
+
+### Notes and integers    
+
+```python
+# Adding a Note and a int returns a new note, translated by a given number of semitones
+>> n + 4
+Note(E5)
+
+# Substractions are also supported
+>> (n + 4) - 4 
+Note(C5)
+
+# Changes in Octave are handled automatically
+>> n - 1
+Note(B4)
+```
+
+### Notes and Notes  
+
+```python
+# base note for all our examples
+>> n = Note("C", 5)
+Note(C5)
+
+# Notes have a Height, defined by its Name and Octave, so comparisons are supported
+>> n > n
+False
+>> n >= n 
+True
+
+# Can perform a substraction between two notes. Will return an integer representing tonal distance in semitones
+>> n - Note("F", 4)
+7
+>> Note("F", 4) - n
+-7
+
+# Use the method ComputeRootedTonalDistance to ensure positive value is returned if needed, but this is mostly for internals
+>> n.GetRootedTonalDistance(Note("F", 4))
+7
+>> Note("F", 4).GetRootedTonalDistance(n)
+7
+
+```
+
+

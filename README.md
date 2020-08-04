@@ -5,9 +5,8 @@
 MusiStrata is a pure Python library to represent and manipulate Musical Components.  
 
 The idea is to be able to create Notes, translate them using Tonal Distance and Intervals, generate Chords... 
-
-This readme is a quick overview of the main functions of this library.   
-[Extended explanations can be found in the wiki.](https://wally869.github.io/MusiStrata/)
+  
+[The Documentation is available on github pages.](https://wally869.github.io/MusiStrata/)
 
 
 Some of my projects using this library:

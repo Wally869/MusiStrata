@@ -1,1 +1,7 @@
 remote_theme: pmarsceill/just-the-docs
+
+title: Midistructurer
+description: Definition of classes and utilities to represent music and song components, as well as support for midi generation through mido
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-minimal

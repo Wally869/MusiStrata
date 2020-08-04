@@ -1,1 +1,7 @@
+remote_theme: pmarsceill/just-the-docs
+
+title: MidiStrata
+description: MusiStrata is a pure Python library to represent and manipulate Musical Components.
+google_analytics: 
+show_downloads: true
 theme: jekyll-theme-minimal

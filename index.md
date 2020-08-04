@@ -1,3 +1,9 @@
+---
+layout: default
+title: Index
+nav_order: 1
+---
+
 # MusiStrata
 
 MusiStrata is a pure Python library to represent and manipulate Musical Components.

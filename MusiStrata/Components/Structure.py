@@ -60,6 +60,11 @@ class Bar:
             )
         raise NotImplementedError()
 
+    def __mul__(self, other: Union[int, float]):
+        # Casting to int if passing a float
+        other = int(other)
+        return [self] * other
+
 
 @dataclass
 class Track:
@@ -89,6 +94,11 @@ class Track:
             return outTrack
         else:
             return NotImplemented
+
+    def Duplicate(self, duplicationFactor: Union[int, float]):
+        # duplicate bars and append them to the track
+        # casting float to int
+        self.Bars = self.Bars * duplicationFactor
 
 
 """

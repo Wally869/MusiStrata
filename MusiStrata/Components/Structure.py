@@ -95,7 +95,7 @@ class Track:
         else:
             return NotImplemented
 
-    def Duplicate(self, duplicationFactor: Union[int, float]):
+    def DuplicateBars(self, duplicationFactor: Union[int, float]):
         # duplicate bars and append them to the track
         # casting float to int
         self.Bars = self.Bars * duplicationFactor

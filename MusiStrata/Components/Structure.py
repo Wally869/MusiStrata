@@ -65,6 +65,17 @@ class Bar:
         other = int(other)
         return [self] * other
 
+    def append(self, other: Union[SoundEvent, List[SoundEvent]]):
+        if type(other) == list:
+            if type(other[0]) != SoundEvent:
+                raise TypeError("Bar Class - The append method only accepts a SoundEvent object or a list of SoundEvent objects")
+            else:
+                self.SoundEvents += other
+        elif type(other) == SoundEvent:
+            self.SoundEvents.append(other)
+        else:
+            raise TypeError("Bar Class - The append method only accepts a SoundEvent object or a list of SoundEvent objects")
+
 
 @dataclass
 class Track:
@@ -99,6 +110,17 @@ class Track:
         # duplicate bars and append them to the track
         # casting float to int
         self.Bars = self.Bars * duplicationFactor
+
+    def append(self, other: Union[Bar, List[Bar]]):
+        if type(other) == list:
+            if type(other[0]) != Bar:
+                raise TypeError("Track Class - The append method only accepts a Bar object or a list of Bar objects")
+            else:
+                self.Bars += other
+        elif type(other) == SoundEvent:
+            self.Bars.append(other)
+        else:
+            raise TypeError("Track Class - The append method only accepts a Bar object or a list of Bar objects")
 
 
 """

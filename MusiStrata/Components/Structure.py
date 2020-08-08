@@ -117,7 +117,7 @@ class Track:
                 raise TypeError("Track Class - The append method only accepts a Bar object or a list of Bar objects")
             else:
                 self.Bars += other
-        elif type(other) == SoundEvent:
+        elif type(other) == Bar:
             self.Bars.append(other)
         else:
             raise TypeError("Track Class - The append method only accepts a Bar object or a list of Bar objects")

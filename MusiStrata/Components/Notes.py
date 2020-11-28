@@ -164,7 +164,7 @@ class Note(object):
 
     @property
     def Height(self) -> int:
-        return (self.Octave + 1) * 12 + self._Name.value
+        return self.Octave * 12 + self._Name.value
 
     @property
     def Frequency(self) -> float:

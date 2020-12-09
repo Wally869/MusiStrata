@@ -3,6 +3,7 @@ from typing import List, Tuple, Dict, Union
 
 from .Notes import NoteNames, Note, ALL_NOTES
 
+from .Chords import MINOR_TRIAD, MAJOR_TRIAD, DIMINISHED_TRIAD, MINOR_SEVENTH, MAJOR_SEVENTH, DIMINISHED_SEVENTH
 
 # from .utils import ExtendedEnum
 from .EnumManager import EnumManager_Ordered
@@ -156,6 +157,25 @@ class ScaleSpecs(object):
 
         # only 5 notes in pentatonic scale
         return pentatonicScaleNotes[:5]
+
+    def GetScaleChordProgression(self):
+        if self.Type == "Major":
+            return [
+                MAJOR_TRIAD, MINOR_TRIAD, MINOR_TRIAD, MAJOR_TRIAD, MAJOR_TRIAD, MINOR_TRIAD, DIMINISHED_TRIAD
+                ]
+        else:
+            return [
+                MINOR_TRIAD, MINOR_SEVENTH, MAJOR_TRIAD, MINOR_TRIAD, MINOR_TRIAD, MAJOR_TRIAD, MAJOR_TRIAD
+            ]
+    
+    def GetScaleChordsNotes(self, referenceOctave: int = 5):
+        chords = self.GetScaleChordProgression()
+        notes = self.GetScaleNotes(referenceOctave=referenceOctave)
+        output = []
+        for idElem in range(len(chords)):
+            temp, _ = chords[idElem](notes[idElem])
+            output.append(temp)
+        return output
 
 
 def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: Union[int, float],

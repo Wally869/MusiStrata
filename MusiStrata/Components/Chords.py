@@ -224,3 +224,13 @@ class ChordsLibraryClass(Library):
 
 
 ChordsLibrary = ChordsLibraryClass(RAW_CHORDS)
+
+# common chords
+MINOR_TRIAD = ChordsLibrary.GetChordFromName("Minor Triad")
+MAJOR_TRIAD = ChordsLibrary.GetChordFromName("Major Triad")
+DIMINISHED_TRIAD = ChordsLibrary.GetChordFromName("Diminished Triad")
+
+# seventh
+MINOR_SEVENTH = ChordsLibrary.GetChordFromName("Minor Seventh")
+MAJOR_SEVENTH = ChordsLibrary.GetChordFromName("Major Seventh")
+DIMINISHED_SEVENTH = ChordsLibrary.GetChordFromName("Diminished Seventh")

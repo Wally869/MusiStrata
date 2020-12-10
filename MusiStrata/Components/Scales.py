@@ -76,6 +76,15 @@ class ScaleSpecs(object):
     def __repr__(self):
         return str(self)
 
+    def __eq__(self, other):
+        if self.__class__ is not other.__class__:
+            return False
+        else:
+            if self.RefNote == other.RefNote and self.Type == other.Type:
+                return True
+            else:
+                return False
+    
     def GetScaleNotes(self, referenceOctave: int = 5, mode: str = "Ionian") -> List[Note]:
         # Get tone succession for the scale type
         tonesSuccession = TONES_SUCCESSION[self.Type]

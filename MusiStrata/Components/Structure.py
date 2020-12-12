@@ -3,6 +3,7 @@ from typing import List, Tuple, Dict, Union
 
 from dataclasses import dataclass, field
 
+
 from .Notes import *
 
 
@@ -13,13 +14,39 @@ Dataclasses to represent song components
 # TypeStripper preprocessing tag below, do not remove
 #NoTypeStripping
 
-
 @dataclass
 class SoundEvent:
     Beat: float = 0.0
     Duration: float = 1.0
     Note: Note = Note()
     Velocity: int = 60
+
+    def ToDict(self) -> dict:
+        dictRepr = {
+            "Beat": self.Beat,
+            "Duration": self.Duration,
+            "Note": self.Note.ToDict(),
+            "Velocity": self.Velocity
+        }
+        return dictRepr
+
+    def ToJSON(self) -> str:
+        from json import dumps as _dumps
+        return _dumps(self.ToDict())
+
+    @classmethod
+    def FromDict(cls, dictRepr: dict):
+        return SoundEvent(
+            Beat=dictRepr["Beat"],
+            Duration=dictRepr["Duration"],
+            Note=Note.FromDict(dictRepr["Note"])
+        )
+
+    @classmethod
+    def FromJSON(cls, jsonData: str):
+        from json import loads as _loads
+        dictRepr = _loads(jsonData)
+        return cls.FromDict(dictRepr)
 
 
 def GenerateSoundEventsFromListNotes(beat: float, duration: float, notes: List[Note]):
@@ -31,10 +58,31 @@ def GenerateSoundEventsFromListNotes(beat: float, duration: float, notes: List[N
         ) for note in notes
     ]
 
-
 @dataclass
 class Bar:
     SoundEvents: list = field(default_factory=list)
+
+    def ToDict(self) -> dict:
+        dictRepr = {
+            "SoundEvents": [se.ToDict() for se in self.SoundEvents]
+        }
+        return dictRepr
+
+    def ToJSON(self) -> str:
+        from json import dumps as _dumps
+        return _dumps(self.ToDict())
+
+    @classmethod
+    def FromDict(cls, dictRepr: dict):
+        return Bar([
+            SoundEvent.FromDict(elem) for elem in dictRepr["SoundEvents"]
+        ])
+
+    @classmethod
+    def FromJSON(cls, jsonData: str):
+        from json import loads as _loads
+        dictRepr = _loads(jsonData)
+        return cls.FromDict(dictRepr)
 
     def __str__(self):
         return "Bar({} SoundEvents)".format(len(self.SoundEvents))
@@ -84,6 +132,36 @@ class Track:
     Bars: list = field(default_factory=list)
     IsDrumsTrack: bool = False
     BankUsed: int = 0
+
+    def ToDict(self) -> dict:
+        dictRepr = {
+            "Name": self.Name,
+            "Instrument": self.Instrument,
+            "Bars": [b.ToDict() for b in self.Bars],
+            "IsDrumsTrack": self.IsDrumsTrack,
+            "BankUsed": self.BankUsed
+        }
+        return dictRepr
+
+    def ToJSON(self) -> str:
+        from json import dumps as _dumps
+        return _dumps(self.ToDict())
+
+    @classmethod
+    def FromDict(cls, dictRepr: dict):
+        return Track(
+            Name=dictRepr["Name"],
+            Instrument=dictRepr["Instrument"],
+            Bars=[Bar.FromDict(elem) for elem in dictRepr["Bars"]],
+            IsDrumsTrack=dictRepr["IsDrumsTrack"],
+            BankUsed=dictRepr["BankUsed"]
+        )
+
+    @classmethod
+    def FromJSON(cls, jsonData: str):
+        from json import loads as _loads
+        dictRepr = _loads(jsonData)
+        return cls.FromDict(dictRepr)
 
     def __str__(self):
         if self.IsDrumsTrack:
@@ -152,6 +230,32 @@ class Song:
 
     def __str__(self):
         return "Song(Tempo={}, BeatsPerBar={}, {} Tracks)".format(self.Tempo, self.BeatsPerBar, len(self.Tracks))
+
+    def ToDict(self) -> dict:
+        dictRepr = {
+            "Tempo": self.Tempo,
+            "BeatsPerBar": self.BeatsPerBar,
+            "Tracks": [t.ToDict() for t in self.Tracks]
+        }
+        return dictRepr
+
+    def ToJSON(self) -> str:
+        from json import dumps as _dumps
+        return _dumps(self.ToDict())
+
+    @classmethod
+    def FromDict(cls, dictRepr: dict):
+        return Song(
+            Tempo=dictRepr["Tempo"],
+            BeatsPerBar=dictRepr["BeatsPerBar"],
+            Tracks=[Track.FromDict(elem) for elem in dictRepr["Tracks"]],
+        )
+
+    @classmethod
+    def FromJSON(cls, jsonData: str):
+        from json import loads as _loads
+        dictRepr = _loads(jsonData)
+        return cls.FromDict(dictRepr)
 
 
 # Structure Creators

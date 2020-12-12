@@ -3,6 +3,8 @@ from typing import List, Tuple, Dict, Union
 
 from .EnumManager import EnumManager_Ordered_Looping
 
+from dataclasses import dataclass, field
+
 
 # Values give the distance between notes in term of halftones
 # s denotes a Sharp
@@ -42,7 +44,6 @@ NOTE_NAME_TO_STAFF = {
     "G": "G",
     "Gs": "A"
 }
-
 
 class Note(object):
     def __init__(self, Name: str = "A", Octave: int = 5):
@@ -154,6 +155,38 @@ class Note(object):
                 )
         else:
             return NotImplemented
+
+    def ToDict(self):
+        dictRepr = {
+            "Name": self.Name,
+            "Octave": self.Octave
+        }
+        return dictRepr
+
+    def ToJSON(self):
+        from json import dumps as _dumps
+        dictRepr = self.ToDict()
+        return _dumps(dictRepr)
+
+    @classmethod
+    def FromDict(cls, dictRepr: dict):
+        return Note(dictRepr["Name"], dictRepr["Octave"])
+
+    @classmethod
+    def FromJSON(cls, jsonData: str):
+        from json import loads as _loads
+        dictRepr = _loads(jsonData)
+        return cls.FromDict(dictRepr)
+
+
+    """
+    def to_json(self):
+        return self.ToJSON()
+
+    @classmethod
+    def from_json(cls, jsonData: str):
+        return cls.FromJSON(jsonData)
+    """
 
     # Added this to expand scales. Can also use Note + 12 for octave difference
     # but I thought additional method would be nice

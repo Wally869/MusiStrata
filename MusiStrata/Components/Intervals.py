@@ -10,9 +10,7 @@ ALL_POSSIBLE_QUALITIES = [
     "Minor", "Major", "Perfect", "Diminished", "Augmented", "DoublyDiminished", "DoublyAugmented"
 ]
 
-# only use interval number and quality, which gives number semitones?
-# still wtf do i do with tritones
-# Just ignore it for now?
+
 # Based on wikipedia table at https://en.wikipedia.org/wiki/Interval_(music)#Main_intervals
 MINOR_MAJOR_PERFECT_INTERVALS = [
     [1, "Perfect", 0],  # Perfect Unison
@@ -281,9 +279,6 @@ class Interval(object):
         else:
             return NotImplemented
 
-    # Added mathematical comparisons for easier computation of chords and potential subsetting
-    # Purely based on tonal distance
-    # Might have to change eq to use only tonal distance?
     def __gt__(self, other) -> bool:
         if self.__class__ is other.__class__:
             # if 2 compound intervals
@@ -325,15 +320,9 @@ class Interval(object):
         return NotImplemented
 
     def __radd__(self, other) -> Tuple[Note, ValueError]:
-        # Have to assume other is Note, want to avoid circular import but seems rough
-        # maybe can rewrite so that intervals stuff happens here and not in note?
-        # seems more logical: intervals are based on notes, and not reverse
         if type(other) == Note:
             newNote = other
             for baseInterval in self.Intervals:
-                # all intervals are combination of octave and sub octave
-                # octave ALWAYS exist, so only need to keep last error
-                # Looks like error not valid because of typing? check below
                 newNote, _ = newNote + baseInterval
             generatedInterval = Interval.FromNotes(newNote, other)
             if generatedInterval == self:
@@ -413,7 +402,7 @@ class Interval(object):
         return outIntervals
 
     # TRANSCRYPT: Wrapping methods to use this library in the browser
-    def Add(self, other) -> Union[Note, ValueError]:
+    def Add(self, other) -> List[Note, ValueError]:
         if type(other) == Note:
             # Return Note, None if no error
             # else return Note, ValueError
@@ -428,7 +417,7 @@ class Interval(object):
                         self, generatedInterval))
         raise NotImplementedError()
 
-    def Sub(self, other) -> Union[Note, ValueError]:
+    def Sub(self, other) -> List[Note, ValueError]:
         if type(other) == Note:
             # Return Note, None if no error
             # else return Note, ValueError

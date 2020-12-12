@@ -178,16 +178,6 @@ class Note(object):
         dictRepr = _loads(jsonData)
         return cls.FromDict(dictRepr)
 
-
-    """
-    def to_json(self):
-        return self.ToJSON()
-
-    @classmethod
-    def from_json(cls, jsonData: str):
-        return cls.FromJSON(jsonData)
-    """
-
     # Added this to expand scales. Can also use Note + 12 for octave difference
     # but I thought additional method would be nice
     def NewFromOctaveDifference(self, octaveDiff: int) -> Note:

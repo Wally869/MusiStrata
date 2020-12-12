@@ -1,18 +1,6 @@
+
+
 # Creating pseudo enum that work with Transcrypt
-
-"""
-ALL_NOTES = [
-    "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"
-]
-
-class test(EnumManager_Ordered_Looping):
-    KeyValuesMap={ALL_NOTES[i]: i for i in range(len(ALL_NOTES))}
-    KeyList=ALL_NOTES
-    ValuesList=[i for i in range(len(ALL_NOTES))]
-
-"""
-
-
 class EnumElement(object):
     def __init__(self, name, value):
         self.name = name

@@ -201,12 +201,6 @@ class Track:
             raise TypeError("Track Class - The append method only accepts a Bar object or a list of Bar objects")
 
 
-"""
-@dataclass
-class SongSegment:
-    ScaleSegment: ScaleSpecs = ScaleSpecs()
-    Bars: list = field(default_factory=list)
-"""
 
 
 # Do I really need a timesignature? For my implementation, beats per bar is enough?
@@ -220,6 +214,7 @@ class TimeSignature:
 
     def __repr__(self):
         return self.__str__()
+
 
 
 @dataclass

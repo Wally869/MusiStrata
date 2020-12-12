@@ -18,7 +18,6 @@ def FindListNbBarsFromConstraints(nbBeatsPerBar: int, tempo: int, minLenSong: fl
     """
     minLenSong and maxLenSong in seconds
     """
-
     possibilities = []
     nbBars = 1
     while True:

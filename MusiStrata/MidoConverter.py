@@ -11,10 +11,12 @@ from .Instruments import GetSignalFromInstrument
 midoMidiFile = mido.MidiFile
 midoMessage = mido.Message
 
+# Initial starting point. Used 50 before, but this causes some slight 
+# misalignment when opening the midi file in FL Studio
+START_TICK = 0
 
 # as default, 480 ticks per beat
 TICKS_PER_BEAT = 480
-
 
 def ConvertSong(song: Song, outfile: str) -> midoMidiFile:
     outMidoSong = mido.MidiFile(type=1)
@@ -107,7 +109,6 @@ class NoteOff:
 
 def CreateEventsStructs(soundEvent, baseTime, velocity) -> Tuple:
     # here using the Note struct defined in Structs.py
-    # will have to rewrite all this BS btw, this is getting fucked up
     noteHeight = soundEvent.Note.Height
     noteOnObject = NoteOn(baseTime, noteHeight, velocity)
     deltaTime = soundEvent.Duration * TICKS_PER_BEAT
@@ -130,7 +131,7 @@ def ConvertNoteStructToMidoMessage(noteStruct, deltaTime, channelId) -> midoMess
 
 def PrepTrack(track: Track, nbBeatsPerBar: int) -> List:
     events = []
-    startTick = 50
+    startTick = START_TICK
 
     for id_bar in range(len(track.Bars)):
         timeBar = int(startTick + id_bar * nbBeatsPerBar * TICKS_PER_BEAT)

@@ -167,19 +167,19 @@ class ScaleSpecs(object):
         # only 5 notes in pentatonic scale
         return pentatonicScaleNotes[:5]
 
-    def GetScaleChordProgression(self):
-        if self.Type == "Major":
-            return [
-                MAJOR_TRIAD, MINOR_TRIAD, MINOR_TRIAD, MAJOR_TRIAD, MAJOR_TRIAD, MINOR_TRIAD, DIMINISHED_TRIAD
-                ]
-        else:
-            return [
+    def GetScaleChordsProgression(self, mode="Ionian"):
+        progression = [
+            MAJOR_TRIAD, MINOR_TRIAD, MINOR_TRIAD, MAJOR_TRIAD, MAJOR_TRIAD, MINOR_TRIAD, DIMINISHED_TRIAD
+        ]
+        if self.Type == "Minor":
+            progression = [
                 MINOR_TRIAD, MINOR_SEVENTH, MAJOR_TRIAD, MINOR_TRIAD, MINOR_TRIAD, MAJOR_TRIAD, MAJOR_TRIAD
             ]
+        return progression[ScaleModes(mode).value:] + progression[:ScaleModes(mode).value]
     
-    def GetScaleChordsNotes(self, referenceOctave: int = 5):
-        chords = self.GetScaleChordProgression()
-        notes = self.GetScaleNotes(referenceOctave=referenceOctave)
+    def GetScaleChordsNotes(self, referenceOctave: int = 5, mode="Ionian"):
+        chords = self.GetScaleChordProgression(mode=mode)
+        notes = self.GetScaleNotes(referenceOctave=referenceOctave, mode=mode)
         output = []
         for idElem in range(len(chords)):
             temp, _ = chords[idElem](notes[idElem])

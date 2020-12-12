@@ -229,9 +229,47 @@ class Interval(object):
         if type(IntervalNumber) == list:
             raise TypeError("Invalid Arguments. IntervalNumber should be an int. \n Use NamedParameters when creating an interval from other Intervals")
         if len(Intervals) >= 2:
-            # second part of check is not really needed
-            if Intervals[-1] == Interval(1, "Perfect") and Intervals[-2] == Interval(8, "Perfect"):
-                Intervals = Intervals[:-1]
+            # check the intervals given: aim to only have octaves + 1 non-octave as intervals, so need to perform checks
+            validated = []
+            disputed = []
+            for interval in Intervals:
+                if interval == Interval(1, "Perfect"):
+                    # skip the unison
+                    continue
+                elif interval == Interval(8, "Perfect"):
+                    # octave is ok
+                    validated.append(interval)
+                else:
+                    # the rest need to be reconciliated
+                    disputed.append(interval)
+            if len(disputed) == 1 or (len(validated) > 0 and len(disputed) == 0):
+                Intervals = validated + disputed
+            else:
+                # try to find nearest interval, based on number of semitones
+                tonalDistance = 0
+                for interval in disputed:
+                    tonalDistance += interval.TonalDistance
+                while (tonalDistance > 12):
+                    validated.append(Interval(8, "Perfect"))
+                    tonalDistance -= 12
+                # iterate on minor/major/perfect intervals
+                foundMatch = False
+                for elem in MINOR_MAJOR_PERFECT_INTERVALS:
+                    # tonal distance is 3rd elem (so 2 in 0-indexed)
+                    # if found match, add to validated
+                    if elem[2] == tonalDistance:
+                        validated.append(Interval(IntervalNumber=elem[0], Quality=elem[1]))
+                        foundMatch = True
+                        break
+                # else, this means the Interval is a tritone
+                if foundMatch == False:
+                    validated.append(Interval(IntervalNumber=5, Quality="Diminished"))
+                # set intervals
+                Intervals = validated
+            # last check: in case if is empty, or if only unison were given as inputs (so were pruned)
+            if len(validated) == 0:
+                validated.append(Interval(1, "Perfect"))
+        
         self.Intervals = Intervals
         if IntervalNumber != -1:
             if Quality != "":

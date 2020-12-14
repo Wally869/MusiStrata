@@ -178,7 +178,7 @@ class ScaleSpecs(object):
         return progression[ScaleModes(mode).value:] + progression[:ScaleModes(mode).value]
     
     def GetScaleChordsNotes(self, referenceOctave: int = 5, mode="Ionian"):
-        chords = self.GetScaleChordProgression(mode=mode)
+        chords = self.GetScaleChordsProgression(mode=mode)
         notes = self.GetScaleNotes(referenceOctave=referenceOctave, mode=mode)
         output = []
         for idElem in range(len(chords)):

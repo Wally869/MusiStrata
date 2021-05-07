@@ -173,7 +173,7 @@ class ScaleSpecs(object):
         ]
         if self.Type == "Minor":
             progression = [
-                MINOR_TRIAD, MINOR_SEVENTH, MAJOR_TRIAD, MINOR_TRIAD, MINOR_TRIAD, MAJOR_TRIAD, MAJOR_TRIAD
+                MINOR_TRIAD, DIMINISHED_TRIAD, MAJOR_TRIAD, MINOR_TRIAD, MINOR_TRIAD, MAJOR_TRIAD, MAJOR_TRIAD
             ]
         return progression[ScaleModes(mode).value:] + progression[:ScaleModes(mode).value]
     

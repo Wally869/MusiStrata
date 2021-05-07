@@ -1,0 +1,17 @@
+README.md
+setup.py
+MusiStrata/Drums.py
+MusiStrata/Examples.py
+MusiStrata/Instruments.py
+MusiStrata/MidoConverter.py
+MusiStrata/NotePlayer.py
+MusiStrata/PrimitiveClassesUtils.py
+MusiStrata/VelocityColorer.py
+MusiStrata/__init__.py
+MusiStrata/utils.py
+MusiStrata.egg-info/PKG-INFO
+MusiStrata.egg-info/SOURCES.txt
+MusiStrata.egg-info/dependency_links.txt
+MusiStrata.egg-info/not-zip-safe
+MusiStrata.egg-info/requires.txt
+MusiStrata.egg-info/top_level.txt

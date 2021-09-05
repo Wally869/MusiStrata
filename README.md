@@ -12,7 +12,7 @@ The idea is to be able to create Notes, translate them using Tonal Distance and 
 Some of my projects using this library:
 - [MidiSplitter](https://github.com/Wally869/MidiSplitter), an algorithm that splits Midi Files per Channel into subsections which are then saved as standalone Midi Files.
 - [VisualMidi](https://github.com/Wally869/VisualMidi), a webapp to visualize and analyze Midi Files.
-
+- [MusiStrataRenderer](https://github.com/Wally869/MusistrataRenderer), an interface to render Musistrata files using a variety of sources for sounds (soundfont, samples and synthesizer).   
 
 ## Installing
 

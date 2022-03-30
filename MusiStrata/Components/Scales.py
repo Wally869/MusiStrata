@@ -5,6 +5,10 @@ from .Notes import NoteNames, Note, ALL_NOTES
 
 from .Chords import MINOR_TRIAD, MAJOR_TRIAD, DIMINISHED_TRIAD, MINOR_SEVENTH, MAJOR_SEVENTH, DIMINISHED_SEVENTH
 
+def FilterOutRepeatedNotes(notes: List[Note]) -> List[Note]:
+    return list(set(notes))
+
+
 # from .utils import ExtendedEnum
 from .EnumManager import EnumManager_Ordered
 
@@ -187,6 +191,9 @@ class ScaleSpecs(object):
         return output
 
 
+Scale = ScaleSpecs
+
+
 def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: Union[int, float],
                      singleDirection: bool = False, direction: str = "+") -> List[Note]:
     """
@@ -234,5 +241,3 @@ def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: Union[int, float],
     return FilterOutRepeatedNotes(outScaleNotes)
 
 
-def FilterOutRepeatedNotes(notes: List[Note]) -> List[Note]:
-    return list(set(notes))

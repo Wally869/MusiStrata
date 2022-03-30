@@ -12,7 +12,7 @@ class EnumManager(object):
     KeyList = None
     ValuesList = None
 
-    def __init__(self, name):
+    def __init__(self, name):  #, **kwargs):
         self.name = name
 
     def __str__(self):

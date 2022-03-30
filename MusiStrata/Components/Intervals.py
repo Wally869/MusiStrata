@@ -5,6 +5,15 @@ from .Notes import *
 
 from ..PrimitiveClassesUtils import *
 
+"""
+from .EnumManager import EnumManager_Ordered
+
+class NoteNames(EnumManager_Ordered):
+    KeyValuesMap={ALL_NOTES[i]: i for i in range(len(ALL_NOTES))}
+    KeyList=ALL_NOTES
+    ValuesList=[i for i in range(len(ALL_NOTES))]
+"""
+
 
 ALL_POSSIBLE_QUALITIES = [
     "Minor", "Major", "Perfect", "Diminished", "Augmented", "DoublyDiminished", "DoublyAugmented"

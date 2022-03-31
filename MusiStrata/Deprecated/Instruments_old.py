@@ -3,7 +3,7 @@ from typing import List, Tuple, Dict, Union
 
 from dataclasses import dataclass
 
-from .PrimitiveClassesUtils import Record, Library
+from .Utils.PrimitiveClassesUtils import Record, Library
 
 
 # List taken from: https://github.com/mobyvb/midi-converter/blob/master/lib/instruments.json

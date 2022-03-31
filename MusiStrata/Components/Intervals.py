@@ -3,7 +3,8 @@ from typing import List, Tuple, Dict, Union
 
 from .Notes import *
 
-from ..PrimitiveClassesUtils import *
+from MusiStrata.Utils import Record, Library
+
 
 """
 from .EnumManager import EnumManager_Ordered
@@ -18,6 +19,29 @@ class NoteNames(EnumManager_Ordered):
 ALL_POSSIBLE_QUALITIES = [
     "Minor", "Major", "Perfect", "Diminished", "Augmented", "DoublyDiminished", "DoublyAugmented"
 ]
+
+from enum import Enum
+
+class IntervalQualities(Enum):
+    Minor = "Minor"
+    Major = "Major"
+    Perfect = "Perfect"
+    Diminished = "Diminished"
+    Augmented = "Augmented"
+    DoublyDiminished = "Doubly Diminished"
+    DoublyAugmented = "Doubly Augmented"
+    
+    @classmethod
+    def FromStr(cls, name: str):
+        for member in cls._member_names_:
+            if name == member:
+                return cls._member_map_[name]
+        if name == "Doubly Diminished": 
+            return IntervalQualities.DoublyDiminished
+        elif name == "Doubly Augmented":
+            return IntervalQualities.Minor
+        else:
+            raise KeyError("Unknown Interval Quality - key: {}".format(name))
 
 
 # Based on wikipedia table at https://en.wikipedia.org/wiki/Interval_(music)#Main_intervals

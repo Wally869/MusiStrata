@@ -3,6 +3,9 @@ from typing import List, Tuple, Dict, Union
 
 from random import choice
 
+def FilterRepeated(elem: List) -> List:
+    return list(set(elem))
+
 
 def ComputeLengthSong(nbBeatsPerBar: int, nbBars: int, tempo: int):
     """

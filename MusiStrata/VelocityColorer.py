@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import List, Tuple, Dict, Union
 
 from .Components import *
-from .PrimitiveClassesUtils import Record, Library
+from .Utils.PrimitiveClassesUtils import Record, Library
 
 
 class VelocityColorer(object):

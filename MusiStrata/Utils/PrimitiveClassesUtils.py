@@ -38,6 +38,18 @@ class Library(object):
         self.Records = records
         self._Fields = list(rawData[0].keys())
 
+    def __iter__(self):
+        self._id_iter = 0
+        return self
+
+    def __next__(self) -> Record:
+        if self._id_iter < len(self.Records):
+            outval = self.Records[self._id_iter]
+            self._id_iter += 1
+            return outval
+        else:
+            raise StopIteration
+
     def __str__(self):
         return str("{}({} Records)".format(self.Name, len(self.Records)))
 

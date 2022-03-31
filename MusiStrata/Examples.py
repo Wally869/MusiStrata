@@ -1,5 +1,5 @@
 from MusiStrata.Components import *
-import MusiStrata.MidoConverter as mc
+from MusiStrata.Rendering import Render, RenderFormats
 
 from random import seed, choice
 from copy import deepcopy
@@ -92,7 +92,7 @@ def GenerateExample2():
         [note1, note2, note3]
     )
 
-    mainScale = ScaleSpecs("Cs", "Minor")
+    mainScale = Scale("Cs", "Minor")
     # Get the notes in this scale
     allowedNotes = mainScale.GetScaleNotes()
     for e in bar.SoundEvents:
@@ -144,7 +144,7 @@ def GenerateExample3():
 
     bars = [deepcopy(bar) for i in range(6)]
 
-    mainScale = ScaleSpecs("Cs", "Minor")
+    mainScale = Scale("Cs", "Minor")
     # Get scales neighbouring the mainScale
     allowedScales = mainScale.GetNeighbouringScales()
 
@@ -181,7 +181,7 @@ def RunExamples():
     print("Generating Examples in folder Examples")
     for id_example in range(len(ALL_EXAMPLES)):
         currSong = ALL_EXAMPLES[id_example]()
-        mc.ConvertSong(currSong, "Examples/example-" + str(id_example + 1) + ".mid")
+        Render(currSong, "Examples/example-" + str(id_example + 1) + ".mid", RenderFormats.MIDI)
     print("Done")
 
 

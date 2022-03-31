@@ -4,7 +4,7 @@ from typing import List, Tuple, Dict, Union
 from .Notes import *
 from .Intervals import *
 
-from ..PrimitiveClassesUtils import *
+from MusiStrata.Utils import Record, Library
 
 
 # Using good old wikipedia as starting point
@@ -56,6 +56,27 @@ class Chord(object):
             inverted = inverted[1:] + [Interval(Intervals=[Interval(8, "Perfect"), inverted[0]])]
         return inverted
 
+    def CheckValidFromNote(self, rootNote: Note) -> bool:
+        _, errors = self(rootNote)
+        for err in errors:
+            if err is not None:
+                return False
+        return True
+
+    def callme(self, rootNote: Note, indices: List[Tuple(int, int)]) -> Tuple[List[Note], List[ValueError]]:
+        """
+            Get notes composing Chord, starting from rootNote and returns those specified by indices.  
+            Indices works by specifying 2 values: the index in the chord, and the octave shift compared to the base note.  
+            Octave shift can be negative
+        """
+        chordNotes, errors = self(rootNote)
+        outNotes = []
+        outErrors = []
+        for elem in indices:
+            outNotes.append(chordNotes[elem[0]] + elem[1] * 12)
+            outErrors.append(errors[elem[0]])
+        return (outNotes, outErrors)
+
     # change __call__ to generating alternate chord, and add __radd__ with note?
     # just create new methods for now
     def __call__(self, rootNote: Note, inversion: int = 0, fromRoot: bool = True) -> Tuple[List[Note], List[ValueError]]:
@@ -88,6 +109,8 @@ class Chord(object):
                 outNotes.append(currNote)
                 errors.append(err)
             return outNotes, errors
+        elif type(other) == Interval:
+            return Interval(Intervals=[self, other])
         raise NotImplementedError()
 
     # TRANSCRYPT: Wrapping methods to use this library in the browser
@@ -117,6 +140,8 @@ class Chord(object):
                 outNotes.append(currNote)
                 errors.append(err)
             return outNotes, errors
+        elif type(other) == Interval:
+            return Interval(Intervals=[self, other])
         raise NotImplementedError()
 
 

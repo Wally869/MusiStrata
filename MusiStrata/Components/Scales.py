@@ -5,9 +5,7 @@ from .Notes import NoteNames, Note, ALL_NOTES
 
 from .Chords import MINOR_TRIAD, MAJOR_TRIAD, DIMINISHED_TRIAD, MINOR_SEVENTH, MAJOR_SEVENTH, DIMINISHED_SEVENTH
 
-def FilterOutRepeatedNotes(notes: List[Note]) -> List[Note]:
-    return list(set(notes))
-
+from MusiStrata.Utils import FilterRepeated as FilterOutRepeatedNotes
 
 # from .utils import ExtendedEnum
 from .EnumManager import EnumManager_Ordered
@@ -67,15 +65,15 @@ class ScaleModes(EnumManager_Ordered):
     ValuesList = [i for i in range(len(ALL_SCALE_MODES))]
 
 
-class ScaleSpecs(object):
+class Scale(object):
     def __init__(self, RefNote: str = "A", ScaleType: str = "Major"):
         self.RefNote = RefNote
         if (type(ScaleType) != str):
-            raise TypeError("In ScaleSpecs constructor: ScaleType argument must be a string")
+            raise TypeError("In Scale constructor: ScaleType argument must be a string")
         self.Type = ScaleType
 
     def __str__(self):
-        return "ScaleSpecs({})".format(self.RefNote + "-" + self.Type)
+        return "Scale({})".format(self.RefNote + "-" + self.Type)
 
     def __repr__(self):
         return str(self)
@@ -114,10 +112,10 @@ class ScaleSpecs(object):
         return [n.Name for n in self.GetScaleNotes(mode=mode)]
 
     # Implementing circle of fifths here
-    def GetNeighbouringScales(self) -> List[ScaleSpecs]:
+    def GetNeighbouringScales(self) -> List[Scale]:
         return self.GetSameTypeNeighbours() + [self.GetDifferentTypeNeighbour()]
 
-    def GetSameTypeNeighbours(self) -> List[ScaleSpecs]:
+    def GetSameTypeNeighbours(self) -> List[Scale]:
         # Minors and Majors have the same neighbours, but differentiating anyway
         if self.Type == "Major":
             neighboursRefNotes = MAJOR_NEIGHBOURS[self.RefNote]
@@ -125,31 +123,31 @@ class ScaleSpecs(object):
             neighboursRefNotes = MINOR_NEIGHBOURS[self.RefNote]
 
         return [
-            ScaleSpecs(
+            Scale(
                 RefNote=refNote,
                 ScaleType=self.Type
             ) for refNote in neighboursRefNotes
         ]
 
-    def GetDifferentTypeNeighbour(self) -> ScaleSpecs:
+    def GetDifferentTypeNeighbour(self) -> Scale:
         if self.Type == "Major":
             return self.GetMinorFromMajorByRefNote(self.RefNote)
         else:
             return self.GetMajorFromMinorByRefNote(self.RefNote)
 
     @staticmethod
-    def GetMinorFromMajorByRefNote(refNote: str) -> ScaleSpecs:
-        return ScaleSpecs(
+    def GetMinorFromMajorByRefNote(refNote: str) -> Scale:
+        return Scale(
             RefNote=MINOR_FROM_MAJOR[refNote],
             ScaleType="Minor"
         )
 
     @staticmethod
-    def GetMajorFromMinorByRefNote(refNote: str) -> ScaleSpecs:
+    def GetMajorFromMinorByRefNote(refNote: str) -> Scale:
         keys = list(MINOR_FROM_MAJOR.keys())
         for k in keys:
             if MINOR_FROM_MAJOR[k] == refNote:
-                return ScaleSpecs(RefNote=k, ScaleType="Major")
+                return Scale(RefNote=k, ScaleType="Major")
         return KeyError
 
     def GetPentatonicScaleNotes(self, referenceOctave: int = 5, mode: str = "Ionian") -> List[Note]:
@@ -190,8 +188,6 @@ class ScaleSpecs(object):
             output.append(temp)
         return output
 
-
-Scale = ScaleSpecs
 
 
 def ExtendScaleNotes(scaleNotes: List[Note], extensionFactor: Union[int, float],

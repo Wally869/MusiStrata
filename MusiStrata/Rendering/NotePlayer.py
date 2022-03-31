@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List, Tuple, Dict, Union
 
-from .Components import Note, Bar
+from MusiStrata.Components import Note, Bar
 import soundcard as sc
 import numpy as np
 from scipy import signal

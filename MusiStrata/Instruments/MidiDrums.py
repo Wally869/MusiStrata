@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Tuple, Dict, Union
 
-from .PrimitiveClassesUtils import Record, Library
+from MusiStrata.Utils import Record, Library
 
 
 # List taken from https://github.com/ianjennings/midi-wtf/blob/master/index.js

@@ -3,8 +3,8 @@ from typing import List, Tuple, Dict, Union
 
 import mido
 
-from .Components import *
-from .Instruments import GetSignalFromInstrument
+from MusiStrata.Components import *
+from MusiStrata.Instruments import GetSignalFromInstrument
 
 
 # TYPESTRIPPER - TYPE ALIASES

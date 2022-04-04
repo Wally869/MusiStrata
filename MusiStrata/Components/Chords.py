@@ -4,6 +4,7 @@ from typing import List, Tuple, Dict, Union
 from .Notes import *
 from .Intervals import *
 
+from MusiStrata.Enums import ChordBase, ChordExtension, IntervalQuality
 
 # How do I define a chord? How many intervals it has, how many dissonants, how many consonants
 class Chord(object):
@@ -44,6 +45,19 @@ class Chord(object):
     def __len__(self):
         return len(self.Intervals)
 
+    @classmethod
+    def FromBaseExtensions(cls, base: ChordBase, extensions: List[ChordExtension] = []) -> Chord:
+        intervals = []
+        if type(base) == str:
+            base = ChordBase.FromStr(base)
+        for elem in base.value:
+            intervals.append(Interval(*elem))
+        for extension in extensions:
+            if type(extension) == str:
+                extension = ChordExtension.FromStr(extension)
+            intervals.append(Interval(*extension.value))
+        return Chord(intervals)
+
     def CheckValidFromNote(self, rootNote: Note) -> bool:
         _, errors = self(rootNote)
         for err in errors:
@@ -57,7 +71,7 @@ class Chord(object):
         """
             Get notes composing Chord, starting from rootNote and returns those specified by indices.  
             Indices works by specifying 2 values: the index in the chord, and the octave shift compared to the base note.  
-            Octave shift can be negative
+            Octave shift can be negative.  
         """
         if type(rootNote) != Note:
             raise TypeError("Input must be of type Note.")

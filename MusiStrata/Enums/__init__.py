@@ -5,20 +5,54 @@ from MusiStrata.Utils import EnumExtensions
 
 
 class ChordBase(Enum):
-    Major = 0
-    Minor = 1
-    Diminished = 2
-    Suspended2 = 3
-    Suspended4 = 4
-    Augmented = 5
+    Major = [(1, "Perfect"), (3, "Major"), (5, "Perfect")]
+    M = [(1, "Perfect"), (3, "Major"), (5, "Perfect")]
+    Minor = [(1, "Perfect"), (3, "Minor"), (5, "Perfect")]
+    m = [(1, "Perfect"), (3, "Minor"), (5, "Perfect")]
+    Diminished = [(1, "Perfect"), (3, "Minor"), (5, "Diminished")]
+    D = [(1, "Perfect"), (3, "Minor"), (5, "Diminished")]
+    Suspended2 = [(1, "Perfect"), (2, "Major"), (5, "Perfect")]
+    sus2 = [(1, "Perfect"), (2, "Major"), (5, "Perfect")]
+    Sus2 = [(1, "Perfect"), (2, "Major"), (5, "Perfect")]
+    Suspended4 = [(1, "Perfect"), (4, "Perfect"), (5, "Perfect")]
+    sus4 = [(1, "Perfect"), (4, "Perfect"), (5, "Perfect")]
+    Sus4 = [(1, "Perfect"), (4, "Perfect"), (5, "Perfect")]
+    Augmented = [(1, "Perfect"), (3, "Major"), (5, "Augmented")]
+    Aug = [(1, "Perfect"), (3, "Major"), (5, "Augmented")]
+    aug = [(1, "Perfect"), (3, "Major"), (5, "Augmented")]
+
+    @classmethod
+    def FromStr(cls, name: str) -> "ChordBase":
+        for member in cls._member_names_:
+            if name == member:
+                return cls._member_map_[name]
 
 
 class ChordExtension(Enum):
-    SeventhMajor = 0
-    SeventhMinor = 1
-    Ninth = 2
-    Eleventh = 3
-    Thirteenth = 4
+    SeventhMajor = (7, "Major")
+    M7 = (7, "Major")
+    SeventhMinor = (7, "Minor")
+    m7 = (7, "Minor")
+    NinthMajor = (9, "Major")
+    M9 = (9, "Major")
+    NinthMinor = (9, "Minor")
+    m9 = (9, "Minor")
+    EleventhMajor = (11, "Major")
+    M11 = (11, "Major")
+    EleventhMinor = (11, "Minor")
+    m11 = (11, "Minor")
+    ThirteenthMajor = (13, "Major")
+    M13 = (13, "Major")
+    ThirteenthMinor = (13, "Minor")
+    m13 = (13, "Minor")
+
+    @classmethod
+    def FromStr(cls, name: str) -> "ChordBase":
+        for member in cls._member_names_:
+            if name == member:
+                return cls._member_map_[name]
+
+
 
 
 class StaffPosition(Enum):

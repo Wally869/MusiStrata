@@ -5,12 +5,11 @@ from random import seed, choice
 from copy import deepcopy
 from os import path, mkdir
 
-"""
-Generate a single bar, single track song with predefined note heights and durations
-"""
-
 
 def GenerateExample1():
+    """
+    Generate a single bar, single track song with predefined note heights and durations
+    """
     note1 = SoundEvent(
         Beat=0.0,
         Duration=1.0,
@@ -54,13 +53,13 @@ def GenerateExample1():
     return song
 
 
-"""
-Generate a single track, 2 bars song by repeating a pattern bar
-Note heights are set by randomly choosing among notes composing a given scale (here C# Major)
-"""
 
 
 def GenerateExample2():
+    """
+    Generate a single track, 2 bars song by repeating a pattern bar
+    Note heights are set by randomly choosing among notes composing a given scale (here C# Major)
+    """
     seed(42)
 
     note1 = SoundEvent(
@@ -111,15 +110,14 @@ def GenerateExample2():
     return song
 
 
-"""
-Generate a single track, 10 bars song. We use the same rythm for the bars, but 
-choose different scales from each bar. 
-Possible scales are selected from the Circle of Fifths, which means we select neighbour scales
-Note heights are set by randomly choosing among notes composing a given scale
-"""
-
 
 def GenerateExample3():
+    """
+    Generate a single track, 10 bars song. We use the same rythm for the bars, but 
+    choose different scales from each bar. 
+    Possible scales are selected from the Circle of Fifths, which means we select neighbour scales
+    Note heights are set by randomly choosing among notes composing a given scale
+    """
     seed(42)
 
     note1 = SoundEvent(

@@ -291,7 +291,12 @@ class Interval(object):
                 validated.append(Interval(1, IntervalQuality.Perfect))
         
         self.Intervals = Intervals
-        if IntervalNumber != -1:
+        if IntervalNumber > 8:
+            self.Intervals = [
+                Interval(8, "Perfect"),
+                Interval(IntervalNumber - 7, Quality)
+            ]
+        elif IntervalNumber != -1:
             self.Intervals = [
                 BaseInterval(IntervalNumber, Quality)
             ]

@@ -6,6 +6,7 @@ from .EnumManager import EnumManager_Ordered_Looping
 from dataclasses import dataclass, field
 
 
+
 # Values give the distance between notes in term of halftones
 # s denotes a Sharp
 ALL_NOTES = [
@@ -221,7 +222,7 @@ class Note(object):
         ).value
 
     # This is order dependent. Self should be the root note of the chord
-    def GetIntervalNumber(self, other) -> int:
+    def GetIntervalNumber(self, other: Note) -> int:
         if self.__class__ is other.__class__:
             staff1 = self.GetStaffPositionAsEnumElem()
             staff2 = other.GetStaffPositionAsEnumElem()
@@ -242,8 +243,7 @@ class Note(object):
                     outValue = 8
 
             return outValue
-
-        return NotImplemented
+        raise TypeError("Note - GetIntervalError requires Note input.")
 
     @classmethod
     def FromHeight(cls, height: int) -> Note:

@@ -12,7 +12,7 @@ class RenderFormats(Enum):
 
 def Render(song: Song, outfile: str, format: RenderFormats):
     if format == RenderFormats.MIDI:
-        from MidiRenderer import MidiRenderer
+        from .MidiRenderer import MidiRenderer
         MidiRenderer.Render(song, outfile)
     elif format == RenderFormats.LMMS:
         raise NotImplementedError("Rendering - Format Not Implemented: LMMS")

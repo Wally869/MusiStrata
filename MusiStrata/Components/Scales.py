@@ -3,7 +3,8 @@ from typing import List, Tuple, Dict, Union
 
 from .Notes import NoteNames, Note, ALL_NOTES
 
-from .Chords import MINOR_TRIAD, MAJOR_TRIAD, DIMINISHED_TRIAD, MINOR_SEVENTH, MAJOR_SEVENTH, DIMINISHED_SEVENTH
+#from MusiStrata.Data.Chords import MINOR_TRIAD, MAJOR_TRIAD, DIMINISHED_TRIAD, MINOR_SEVENTH, MAJOR_SEVENTH, DIMINISHED_SEVENTH
+#from .Chords import MINOR_TRIAD, MAJOR_TRIAD, DIMINISHED_TRIAD, MINOR_SEVENTH, MAJOR_SEVENTH, DIMINISHED_SEVENTH
 
 from MusiStrata.Utils import FilterRepeated as FilterOutRepeatedNotes
 
@@ -170,6 +171,7 @@ class Scale(object):
         return pentatonicScaleNotes[:5]
 
     def GetScaleChordsProgression(self, mode="Ionian"):
+        from MusiStrata.Data.Chords import MINOR_TRIAD, MAJOR_TRIAD, DIMINISHED_TRIAD, MINOR_SEVENTH, MAJOR_SEVENTH, DIMINISHED_SEVENTH
         progression = [
             MAJOR_TRIAD, MINOR_TRIAD, MINOR_TRIAD, MAJOR_TRIAD, MAJOR_TRIAD, MINOR_TRIAD, DIMINISHED_TRIAD
         ]

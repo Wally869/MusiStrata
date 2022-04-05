@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import List, Tuple, Dict, Union
 
+from MusiStrata.Components.Chords import Chord
+
 from .Notes import NoteNames, Note, ALL_NOTES
 
 #from MusiStrata.Data.Chords import MINOR_TRIAD, MAJOR_TRIAD, DIMINISHED_TRIAD, MINOR_SEVENTH, MAJOR_SEVENTH, DIMINISHED_SEVENTH
@@ -10,6 +12,8 @@ from MusiStrata.Utils import FilterRepeated as FilterOutRepeatedNotes
 
 # from .utils import ExtendedEnum
 from .EnumManager import EnumManager_Ordered
+
+from MusiStrata.Enums import ChordBase, ChordExtension, ScaleMode
 
 TONES_SUCCESSION = {
     "Major": [
@@ -180,7 +184,27 @@ class Scale(object):
                 MINOR_TRIAD, DIMINISHED_TRIAD, MAJOR_TRIAD, MINOR_TRIAD, MINOR_TRIAD, MAJOR_TRIAD, MAJOR_TRIAD
             ]
         return progression[ScaleModes(mode).value:] + progression[:ScaleModes(mode).value]
-    
+
+    def GetChordsProgression(self, mode: ScaleMode = Union[str, ScaleMode.Ionian], extensions: List[ChordExtension] = []):
+        if type(mode) == str:
+            mode = ScaleMode.FromStr(mode)
+        if extensions == [] or extensions is None:
+            extensions = [None for _ in range(7)]
+        while len(extensions) < 7:
+            extensions.append(None)
+        for i in range(7):
+            if type(extensions[i]) is not list:
+                extensions[i] = [extensions[i]]
+        progression_base = [
+            ChordBase.Major, ChordBase.Major, ChordBase.Minor, ChordBase.Major, ChordBase.Major, ChordBase.Minor, ChordBase.Diminished
+        ]
+        if self.Type == "Minor":
+            progression_base = [
+                ChordBase.Major, ChordBase.Diminished, ChordBase.Major, ChordBase.Minor, ChordBase.Minor, ChordBase.Major, ChordBase.Major
+            ]
+        progression_base = progression_base[ScaleModes(mode).value:] + progression_base[:ScaleModes(mode).value]
+        return [Chord.FromBaseExtensions(progression_base[i], extensions[i]) for i in range(7)]
+
     def GetScaleChordsNotes(self, referenceOctave: int = 5, mode="Ionian"):
         chords = self.GetScaleChordsProgression(mode=mode)
         notes = self.GetScaleNotes(referenceOctave=referenceOctave, mode=mode)

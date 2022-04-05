@@ -53,6 +53,8 @@ class Chord(object):
         for elem in base.value:
             intervals.append(Interval(*elem))
         for extension in extensions:
+            if extension is None:
+                continue
             if type(extension) == str:
                 extension = ChordExtension.FromStr(extension)
             intervals.append(Interval(*extension.value))

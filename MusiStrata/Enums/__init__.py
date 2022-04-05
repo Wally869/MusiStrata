@@ -51,8 +51,7 @@ class ChordExtension(Enum):
         for member in cls._member_names_:
             if name == member:
                 return cls._member_map_[name]
-
-
+        raise KeyError("ChordExtension - FromStr: {} is not a valid key", name)
 
 
 class StaffPosition(Enum):
@@ -104,13 +103,37 @@ class Mode(Enum):
 
 
 class ScaleMode(Enum):
-    Ionian = "Ionian" 
-    Dorian ="Dorian" 
-    Phrygian = "Phrygian" 
-    Lydian = "Lydian"
-    Mixolydian = "Mixolydian"
-    Aeolian = "Aeolian"
-    Locrian = "Locrian"    
+    Ionian = 0
+    Dorian = 1 
+    Phrygian = 2 
+    Lydian = 3
+    Mixolydian = 4
+    Aeolian = 5
+    Locrian = 6    
+
+    @classmethod
+    def ToString(cls) -> str:
+        if cls == ScaleMode.Ionian:
+            return "Ionian" 
+        elif cls == ScaleMode.Ionian:
+            return "Dorian" 
+        elif cls == ScaleMode.Ionian:
+            return "Phrygian" 
+        elif cls == ScaleMode.Ionian:
+            return "Lydian" 
+        elif cls == ScaleMode.Ionian:
+            return "Mixolydian" 
+        elif cls == ScaleMode.Ionian:
+            return "Aeolian" 
+        elif cls == ScaleMode.Ionian:
+            return "Locrian" 
+
+    @classmethod
+    def FromStr(cls, name: str) -> "ScaleMode":
+        for member in cls._member_names_:
+            if name == member:
+                return cls._member_map_[name]
+        raise KeyError("ScaleMode - FromStr: {} is not a valid key", name)
 
 
 class ScaleTones(Enum):

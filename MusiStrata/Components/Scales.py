@@ -13,7 +13,7 @@ from MusiStrata.Utils import FilterRepeated as FilterOutRepeatedNotes
 # from .utils import ExtendedEnum
 from .EnumManager import EnumManager_Ordered
 
-from MusiStrata.Enums import ChordBase, ChordExtension, ScaleMode
+from MusiStrata.Enums import ChordBase, ChordExtension, Mode, ScaleChordExtension, ScaleMode
 
 TONES_SUCCESSION = {
     "Major": [
@@ -87,10 +87,7 @@ class Scale(object):
         if self.__class__ is not other.__class__:
             return False
         else:
-            if self.RefNote == other.RefNote and self.Type == other.Type:
-                return True
-            else:
-                return False
+            return self.RefNote == other.RefNote and self.Type == other.Type
     
     def GetScaleNotes(self, referenceOctave: int = 5, mode: str = "Ionian") -> List[Note]:
         # Get tone succession for the scale type
@@ -117,7 +114,7 @@ class Scale(object):
         return [n.Name for n in self.GetScaleNotes(mode=mode)]
 
     # Implementing circle of fifths here
-    def GetNeighbouringScales(self) -> List[Scale]:
+    def GetNeighbourScales(self) -> List[Scale]:
         return self.GetSameTypeNeighbours() + [self.GetDifferentTypeNeighbour()]
 
     def GetSameTypeNeighbours(self) -> List[Scale]:
@@ -174,45 +171,75 @@ class Scale(object):
         # only 5 notes in pentatonic scale
         return pentatonicScaleNotes[:5]
 
-    def GetScaleChordsProgression(self, mode="Ionian"):
-        from MusiStrata.Data.Chords import MINOR_TRIAD, MAJOR_TRIAD, DIMINISHED_TRIAD, MINOR_SEVENTH, MAJOR_SEVENTH, DIMINISHED_SEVENTH
-        progression = [
-            MAJOR_TRIAD, MINOR_TRIAD, MINOR_TRIAD, MAJOR_TRIAD, MAJOR_TRIAD, MINOR_TRIAD, DIMINISHED_TRIAD
-        ]
-        if self.Type == "Minor":
-            progression = [
-                MINOR_TRIAD, DIMINISHED_TRIAD, MAJOR_TRIAD, MINOR_TRIAD, MINOR_TRIAD, MAJOR_TRIAD, MAJOR_TRIAD
-            ]
-        return progression[ScaleModes(mode).value:] + progression[:ScaleModes(mode).value]
-
-    def GetChordsProgression(self, mode: ScaleMode = Union[str, ScaleMode.Ionian], extensions: List[ChordExtension] = []):
+    def _BaseChordProgression(self, mode: Union[str, ScaleMode] = "Ionian") -> List[ChordBase]:
         if type(mode) == str:
             mode = ScaleMode.FromStr(mode)
-        if extensions == [] or extensions is None:
-            extensions = [None for _ in range(7)]
-        while len(extensions) < 7:
-            extensions.append(None)
-        for i in range(7):
-            if type(extensions[i]) is not list:
-                extensions[i] = [extensions[i]]
-        progression_base = [
+        progression = [
             ChordBase.Major, ChordBase.Major, ChordBase.Minor, ChordBase.Major, ChordBase.Major, ChordBase.Minor, ChordBase.Diminished
         ]
         if self.Type == "Minor":
-            progression_base = [
+            progression = [
                 ChordBase.Major, ChordBase.Diminished, ChordBase.Major, ChordBase.Minor, ChordBase.Minor, ChordBase.Major, ChordBase.Major
             ]
-        progression_base = progression_base[ScaleModes(mode).value:] + progression_base[:ScaleModes(mode).value]
-        return [Chord.FromBaseExtensions(progression_base[i], extensions[i]) for i in range(7)]
+        return progression[mode.value:] + progression[:mode.value]
 
-    def GetScaleChordsNotes(self, referenceOctave: int = 5, mode="Ionian"):
-        chords = self.GetScaleChordsProgression(mode=mode)
+    def _ChordExtension(self, extension: ScaleChordExtension) -> ChordExtension:
+        """
+            https://musiccrashcourses.com/lessons/intervals_maj_min.html#:~:text=Intervals%20in%20Major%20Scales,to%20the%20scale%20degree%20numbers.
+        """
+        if self.Type == "Major":
+            return self._ChordExtensionMajor(extension)
+        elif self.Type == "Minor":
+            return self._ChordExtensionMinor(extension)
+
+    def _ChordExtensionMajor(self, extension: ScaleChordExtension) -> ChordExtension:
+        if extension == ScaleChordExtension.Seventh:
+            return ChordExtension.M7
+        elif extension == ScaleChordExtension.Ninth:
+            return ChordExtension.M9
+        elif extension == ScaleChordExtension.Eleventh:
+            return ChordExtension.P11
+        elif extension == ScaleChordExtension.Thirteenth:
+            return ChordExtension.M13
+
+    def _ChordExtensionMinor(self, extension: ScaleChordExtension) -> ChordExtension:
+        if extension == ScaleChordExtension.Seventh:
+            return ChordExtension.m7
+        elif extension == ScaleChordExtension.Ninth:
+            return ChordExtension.M9
+        elif extension == ScaleChordExtension.Eleventh:
+            return ChordExtension.P11
+        elif extension == ScaleChordExtension.Thirteenth:
+            return ChordExtension.m13
+
+    def GetSingleChord(self, tone: int, extensions: List[Union[ChordExtension, ScaleChordExtension]] = [], mode: Union[str, ScaleMode] = ScaleMode.Ionian) -> Chord:
+        while tone >= 8:
+            tone -= 8
+        if type(mode) == str:
+            mode = ScaleMode.FromStr(mode)
+        chordBase = self._BaseChordProgression(mode)[tone]
+        chordExtensions = [(lambda x: x if type(x) == ChordExtension else self._ChordExtension(x))(ext) for ext in extensions]
+        return Chord.FromBaseExtensions(chordBase, chordExtensions)
+
+    def GetChords(self, extensions: List[List[Union[ChordExtension, ScaleChordExtension]]] = [], mode: Union[str, ScaleMode] = ScaleMode.Ionian) -> List[Chord]:
+        while len(extensions) < 7:
+            extensions.append([])
+        return [self.GetSingleChord2(tone, extensions[tone], mode) for tone in range(7)]
+
+    def GetChordsNotes(self, referenceOctave: int = 5, extensions: List[List[Union[ChordExtension, ScaleChordExtension]]] = [], mode: Union[str, ScaleMode] = ScaleMode.Ionian):
+        chords = self.GetChords(extensions=extensions, mode=mode)
         notes = self.GetScaleNotes(referenceOctave=referenceOctave, mode=mode)
         output = []
         for idElem in range(len(chords)):
             temp, _ = chords[idElem](notes[idElem])
             output.append(temp)
         return output
+
+    def GetSingleChordNotes(self, refTone: int, refOctave: int, chordExtensions: List[ChordExtension] = [], indices: List[Tuple[int]] = None, mode="Ionian") -> List[Note]:
+        baseNote = self.GetScaleNotes(referenceOctave=refOctave, mode=mode)[refTone]
+        chord = self.GetSingleChord(refTone, chordExtensions, mode)
+        notes, _ = chord(baseNote, indices)
+        return notes
 
 
 

@@ -28,6 +28,25 @@ class ChordBase(Enum):
                 return cls._member_map_[name]
 
 
+class ScaleChordExtension(Enum):
+    Seventh = 7
+    Ninth = 9
+    Eleventh = 11
+    Thirteenth = 13
+
+    @classmethod
+    def FromStr(cls, name: str) -> "ChordBase":
+        for member in cls._member_names_:
+            if name == member:
+                return cls._member_map_[name]
+        raise KeyError("ScaleChordExtension - FromStr: {} is not a valid key", name)
+
+    @classmethod
+    def FromInt(cls, val: int) -> "ScaleChordExtension":
+        if val == 7:
+            return 
+
+
 class ChordExtension(Enum):
     SeventhMajor = (7, "Major")
     M7 = (7, "Major")
@@ -37,17 +56,17 @@ class ChordExtension(Enum):
     M9 = (9, "Major")
     NinthMinor = (9, "Minor")
     m9 = (9, "Minor")
-    EleventhMajor = (11, "Major")
-    M11 = (11, "Major")
-    EleventhMinor = (11, "Minor")
-    m11 = (11, "Minor")
+    EleventhPerfect = (11, "Perfect")
+    P11 = (11, "Perfect")
+    EleventhDiminished = (11, "Diminished")
+    D11 = (11, "Diminished")
     ThirteenthMajor = (13, "Major")
-    M13 = (13, "Major")
+    M13 = (13, "Perfect")
     ThirteenthMinor = (13, "Minor")
     m13 = (13, "Minor")
 
     @classmethod
-    def FromStr(cls, name: str) -> "ChordBase":
+    def FromStr(cls, name: str) -> "ChordExtension":
         for member in cls._member_names_:
             if name == member:
                 return cls._member_map_[name]

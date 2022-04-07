@@ -8,24 +8,6 @@ from MusiStrata.Utils import Record, Library
 
 from MusiStrata.Enums import IntervalQuality
 
-"""
-from .EnumManager import EnumManager_Ordered
-
-class NoteNames(EnumManager_Ordered):
-    KeyValuesMap={ALL_NOTES[i]: i for i in range(len(ALL_NOTES))}
-    KeyList=ALL_NOTES
-    ValuesList=[i for i in range(len(ALL_NOTES))]
-"""
-
-ALL_POSSIBLE_QUALITIES = [
-    "Minor",
-    "Major",
-    "Perfect",
-    "Diminished",
-    "Augmented",
-    "DoublyDiminished",
-    "DoublyAugmented",
-]
 
 
 # Based on wikipedia table at https://en.wikipedia.org/wiki/Interval_(music)#Main_intervals
@@ -74,15 +56,12 @@ ALL_INTERVALS = []
 
 
 # Need to perform check on input arguments. Done in findtonaldistancefromotherspecs
-# Here, can add checks to see if consonance, dissonance, perfect/imperfect?
 class BaseInterval(object):
     def __init__(
         self, IntervalNumber: int, Quality: IntervalQuality
     ):  # , TonalDistance: int):
-        if type(Quality) is str:
-            Quality = IntervalQuality.FromStr(Quality)
         self.IntervalNumber = IntervalNumber
-        self.Quality = Quality
+        self.Quality = Quality = IntervalQuality.SafeFromStr(Quality)
         self.TonalDistance = self.FindTonalDistanceFromNumberAndQuality(
             IntervalNumber, Quality
         )
@@ -173,13 +152,11 @@ class BaseInterval(object):
     def FindTonalDistanceFromNumberAndQuality(
         intervalNumber: int, quality: IntervalQuality
     ) -> int:
-        if type(quality) is str:
-            quality = IntervalQuality.FromStr(quality)
+        quality = IntervalQuality.SafeFromStr(quality)
         # This function gets us the tonal distance, but also ensures that correct parameters have been input
         for elem in ALL_INTERVALS_RAW:
             if elem[0] == intervalNumber:
-                if type(elem[1]) is str:
-                    elem[1] = IntervalQuality.FromStr(elem[1])
+                elem[1] = IntervalQuality.SafeFromStr(elem[1])
                 if elem[1] == quality:
                     return elem[2]
 
@@ -204,21 +181,6 @@ class BaseInterval(object):
                 return interval.Quality
         return None
 
-    def GetConsonanceType(self) -> str:
-        # https://en.wikipedia.org/wiki/Consonance_and_dissonance#Consonance
-        # perfect consonances: unisons, octaves, perfect fourths, perfect fifths
-        # imperfect consonances: major 2nd, minor 7th, major 3rd, minor sixths, minor 3rd, major sixth
-        if self.Quality == IntervalQuality.Perfect:
-            return "PerfectConsonance"
-        specs = [self.Quality, self.IntervalNumber]
-        if self.Quality == IntervalQuality.Major:
-            if self.IntervalNumber in [2, 3, 6]:
-                return "ImperfectConsonance"
-        elif self.Quality == IntervalQuality.Minor:
-            if self.IntervalNumber in [7, 6, 3]:
-                return "ImperfectConsonance"
-        return "Dissonance"
-
     @classmethod
     def GetValidIntervals(cls, rootNote: Note, listIntervals: List[Interval] = []):
         if listIntervals == []:
@@ -232,35 +194,11 @@ class BaseInterval(object):
 
     # TRANSCRYPT: Wrapping methods to use this library in the browser
     # Mathematical Operations on Notes, with enforced order
-    def add(self, other):
-        if type(other) == Note:
-            # Return Note, None if no error
-            # else return Note, ValueError
-            newNote = other + self.TonalDistance
-            generatedInterval = Interval.FromNotes(other, newNote)
-            if generatedInterval == self:
-                return newNote, None
-            else:
-                return newNote, ValueError(
-                    "Invalid from given starting note. "
-                    "Target: {}, Generated: {}".format(self, generatedInterval)
-                )
-        return NotImplemented
+    def Add(self, other):
+        return self.__radd__(other)
 
-    def sub(self, other):
-        if type(other) == Note:
-            # Return Note, None if no error
-            # else return Note, ValueError
-            newNote = other - self.TonalDistance
-            generatedInterval = Interval.FromNotes(other, newNote)
-            if generatedInterval == self:
-                return newNote, None
-            else:
-                return newNote, ValueError(
-                    "Invalid from given starting note. "
-                    "Target: {}, Generated: {}".format(self, generatedInterval)
-                )
-        return NotImplemented
+    def Sub(self, other):
+        return self.__rsub__(other)
 
 
 class Interval(object):
@@ -309,7 +247,7 @@ class Interval(object):
                         validated.append(
                             Interval(
                                 IntervalNumber=elem[0],
-                                Quality=IntervalQuality.FromStr(elem[1]),
+                                Quality=IntervalQuality.SafeFromStr(elem[1]),
                             )
                         )
                         foundMatch = True
@@ -453,9 +391,6 @@ class Interval(object):
     def ShortStr(self) -> str:
         return self[-1].ShortStr()
 
-    def GetConsonanceType(self) -> str:
-        return self[-1].GetConsonanceType()
-
     @staticmethod
     def FindTonalDistanceFromNumberAndQuality(intervalNumber: int, quality: str) -> int:
         # This function gets us the tonal distance, but also ensures that correct parameters have been input
@@ -508,35 +443,10 @@ class Interval(object):
 
     # TRANSCRYPT: Wrapping methods to use this library in the browser
     def Add(self, other) -> List[Note, ValueError]:
-        if type(other) == Note:
-            # Return Note, None if no error
-            # else return Note, ValueError
-            newNote = other + self.TonalDistance
-            generatedInterval = Interval.FromNotes(other, newNote)
-            if generatedInterval == self:
-                return newNote, None
-            else:
-                return newNote, ValueError(
-                    "Invalid from given starting note. "
-                    "Target: {}, Generated: {}".format(self, generatedInterval)
-                )
-        raise NotImplementedError()
+        return self.__radd__(other)
 
     def Sub(self, other) -> List[Note, ValueError]:
-        if type(other) == Note:
-            # Return Note, None if no error
-            # else return Note, ValueError
-            newNote = other - self.TonalDistance
-            generatedInterval = Interval.FromNotes(other, newNote)
-            if generatedInterval == self:
-                return newNote, None
-            else:
-                return newNote, ValueError(
-                    "Invalid from given starting note. "
-                    "Target: {}, Generated: {}".format(self, generatedInterval)
-                )
-        return NotImplemented
-
+        return self.__rsub__(other)
 
 # same as Instruments and Drums?
 # could be nice to easily access diatonic and chromatic intervals, and filter on interval number

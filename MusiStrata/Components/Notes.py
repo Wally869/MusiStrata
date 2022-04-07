@@ -1,57 +1,15 @@
 from __future__ import annotations
 from typing import List, Tuple, Dict, Union
 
-from .EnumManager import EnumManager_Ordered_Looping
+from MusiStrata.Enums import NoteNames, StaffPositions
 
 from dataclasses import dataclass, field
 
 
-# Values give the distance between notes in term of halftones
-# s denotes a Sharp
-ALL_NOTES = ["C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"]
-
-ALL_STAFF_POSITIONS = ["C", "D", "E", "F", "G", "A", "B"]
-
-
-class NoteNames(EnumManager_Ordered_Looping):
-    KeyValuesMap = {ALL_NOTES[i]: i for i in range(len(ALL_NOTES))}
-    KeyList = ALL_NOTES
-    ValuesList = [i for i in range(len(ALL_NOTES))]
-
-
-class StaffPositions(EnumManager_Ordered_Looping):
-    KeyValuesMap = {ALL_STAFF_POSITIONS[i]: i for i in range(len(ALL_STAFF_POSITIONS))}
-    KeyList = ALL_STAFF_POSITIONS
-    ValuesList = [i for i in range(len(ALL_STAFF_POSITIONS))]
-
-
-# A note with a sharp is considered to belong to higher staff
-NOTE_NAME_TO_STAFF = {
-    "A": "A",
-    "As": "B",
-    "B": "B",
-    "C": "C",
-    "Cs": "D",
-    "D": "D",
-    "Ds": "E",
-    "E": "E",
-    "F": "F",
-    "Fs": "G",
-    "G": "G",
-    "Gs": "A",
-}
-
-
 class Note(object):
     def __init__(self, Name: str = "A", Octave: int = 5):
-        # can't call methods in init?
-        if Name not in ALL_NOTES:
-            raise KeyError(
-                "'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(
-                    Name
-                )
-            )
-
+        Name = NoteNames.SafeFromStr(Name)
+        
         # Need to check max octave for Midi
         if type(Octave) != int:
             raise TypeError("Octave must be a non-negative integer.")
@@ -59,7 +17,7 @@ class Note(object):
         if Octave < 0:
             raise ValueError("Octave must be a non-negative integer.")
 
-        self._Name = NoteNames(Name)
+        self._Name = Name
         self._Octave = Octave
 
     @property
@@ -68,16 +26,7 @@ class Note(object):
 
     @Name.setter
     def Name(self, newName: str) -> None:
-        try:
-            self._Name = NoteNames(newName)
-        except TypeError:
-            raise TypeError("'{}' is not a valid note name. Expected type is str.")
-        except KeyError:
-            raise KeyError(
-                "'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(
-                    newName
-                )
-            )
+        self._Name = NoteNames.SafeFromStr(newName)
 
     @property
     def Octave(self) -> int:
@@ -205,10 +154,10 @@ class Note(object):
         return NotImplemented
 
     def GetStaffPositionAsEnumElem(self) -> StaffPositions:
-        return StaffPositions(self.GetStaffPositionAsLetter())
+        return self._Name.ToStaffPosition()
 
     def GetStaffPositionAsLetter(self) -> str:
-        return NOTE_NAME_TO_STAFF[self.Name]
+        return self._Name.ToStaffPosition().name
 
     def GetStaffPositionAsInteger(self) -> int:
         return StaffPositions(self.GetStaffPositionAsLetter()).value

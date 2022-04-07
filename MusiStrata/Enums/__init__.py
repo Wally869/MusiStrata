@@ -1,3 +1,4 @@
+from typing import List, Union
 from enum import Enum
 
 from MusiStrata.Utils import EnumExtensions
@@ -21,8 +22,10 @@ class ChordBase(Enum):
     aug = [(1, "Perfect"), (3, "Major"), (5, "Augmented")]
 
     @classmethod
-    def FromStr(cls, name: str) -> "ChordBase":
-        for member in cls._member_names_:
+    def SafeFromStr(cls, name: str) -> "ChordBase":
+        if name.__class__ is ChordBase:
+            return name
+        for member in cls._member_map_.keys():
             if name == member:
                 return cls._member_map_[name]
 
@@ -34,8 +37,10 @@ class ScaleChordExtension(Enum):
     Thirteenth = 13
 
     @classmethod
-    def FromStr(cls, name: str) -> "ChordBase":
-        for member in cls._member_names_:
+    def SafeFromStr(cls, name: str) -> "ScaleChordExtension":
+        if name.__class__ is ScaleChordExtension:
+            return name
+        for member in cls._member_map_.keys():
             if name == member:
                 return cls._member_map_[name]
         raise KeyError("ScaleChordExtension - FromStr: {} is not a valid key", name)
@@ -65,21 +70,23 @@ class ChordExtension(Enum):
     m13 = (13, "Minor")
 
     @classmethod
-    def FromStr(cls, name: str) -> "ChordExtension":
-        for member in cls._member_names_:
+    def SafeFromStr(cls, name: Union[str, "ChordExtension"]) -> "ChordExtension":
+        if name.__class__ is ChordExtension:
+            return name
+        for member in cls._member_map_.keys():
             if name == member:
                 return cls._member_map_[name]
         raise KeyError("ChordExtension - FromStr: {} is not a valid key", name)
 
 
-class StaffPosition(Enum):
-    A = "A"
-    B = "B"
-    C = "C"
-    D = "D"
-    E = "E"
-    F = "F"
-    G = "G"
+class StaffPositions(EnumExtensions.LoopingOrderedEnum):
+    C = 0  #"C"
+    D = 1  #"D"
+    E = 2  #"E"
+    F = 3  #"F"
+    G = 4  #"G"
+    A = 5
+    B = 6  #"B"
 
 
 class NoteNames(EnumExtensions.LoopingOrderedEnum):
@@ -96,30 +103,33 @@ class NoteNames(EnumExtensions.LoopingOrderedEnum):
     As = 10
     B = 11
 
+    @classmethod
+    def SafeFromStr(cls, name: Union[str, "NoteNames"]) -> "NoteNames":
+        if name.__class__ is NoteNames:
+            return name
+        for member in cls._member_map_.keys():
+            if name == member:
+                return cls._member_map_[name]
+        raise KeyError("NoteNames - FromStr: {} is not a valid key", name)
+
     def ToStaffPosition(self):
         if self == NoteNames.A or self == NoteNames.Gs:
-            return StaffPosition.A
+            return StaffPositions.A
         elif self == NoteNames.B or self == NoteNames.As:
-            return StaffPosition.B
+            return StaffPositions.B
         elif self == NoteNames.C:
-            return StaffPosition.C
+            return StaffPositions.C
         elif self == NoteNames.D or self == NoteNames.Cs:
-            return StaffPosition.D
+            return StaffPositions.D
         elif self == NoteNames.E or self == NoteNames.Ds:
-            return StaffPosition.E
+            return StaffPositions.E
         elif self == NoteNames.F:
-            return StaffPosition.F
+            return StaffPositions.F
         elif self == NoteNames.G or self == NoteNames.Fs:
-            return StaffPosition.G
+            return StaffPositions.G
 
 
-class Mode(Enum):
-    Major = (0,)
-    Minor = 1
-    MinorMelodic = 2
-
-
-class ScaleMode(Enum):
+class ScaleModes(Enum):
     Ionian = 0
     Dorian = 1
     Phrygian = 2
@@ -130,27 +140,44 @@ class ScaleMode(Enum):
 
     @classmethod
     def ToString(cls) -> str:
-        if cls == ScaleMode.Ionian:
+        if cls == ScaleModes.Ionian:
             return "Ionian"
-        elif cls == ScaleMode.Ionian:
+        elif cls == ScaleModes.Ionian:
             return "Dorian"
-        elif cls == ScaleMode.Ionian:
+        elif cls == ScaleModes.Ionian:
             return "Phrygian"
-        elif cls == ScaleMode.Ionian:
+        elif cls == ScaleModes.Ionian:
             return "Lydian"
-        elif cls == ScaleMode.Ionian:
+        elif cls == ScaleModes.Ionian:
             return "Mixolydian"
-        elif cls == ScaleMode.Ionian:
+        elif cls == ScaleModes.Ionian:
             return "Aeolian"
-        elif cls == ScaleMode.Ionian:
+        elif cls == ScaleModes.Ionian:
             return "Locrian"
 
     @classmethod
-    def FromStr(cls, name: str) -> "ScaleMode":
-        for member in cls._member_names_:
+    def SafeFromStr(cls, name: str) -> "ScaleModes":
+        if name.__class__ is ScaleModes:
+            return name
+        for member in cls._member_map_.keys():
             if name == member:
                 return cls._member_map_[name]
-        raise KeyError("ScaleMode - FromStr: {} is not a valid key", name)
+        raise KeyError("ScaleModes - FromStr: {} is not a valid key", name)
+
+
+class Mode(Enum):
+    Major = [1, 1, 0.5, 1, 1, 1, 0.5]
+    Minor = [1, 0.5, 1, 1, 0.5, 1, 1]
+    MinorMelodic = [1, 0.5, 1, 1, 0.5, 1.5, 0.5]
+
+    @classmethod
+    def SafeFromStr(cls, name: str) -> "Mode":
+        if name.__class__ is Mode:
+            return name
+        for member in cls._member_map_.keys():
+            if name == member:
+                return cls._member_map_[name]
+        raise KeyError("Mode - FromStr: {} is not a valid key", name)
 
 
 class ScaleTones(Enum):
@@ -169,8 +196,10 @@ class IntervalQuality(Enum):
     DoublyAugmented = "DoublyAugmented"
 
     @classmethod
-    def FromStr(cls, name: str):
-        for member in cls._member_names_:
+    def SafeFromStr(cls, name: str):
+        if name.__class__ is IntervalQuality:
+            return name
+        for member in cls._member_map_.keys():
             if name == member:
                 return cls._member_map_[name]
         if name == "Doubly Diminished":

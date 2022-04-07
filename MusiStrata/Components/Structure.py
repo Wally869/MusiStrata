@@ -139,7 +139,6 @@ class Track:
 
     def ToJSON(self) -> str:
         from json import dumps as _dumps
-
         return _dumps(self.ToDict())
 
     @classmethod

@@ -17,4 +17,6 @@ setup(
     ],
     install_requires=["mido", "soundcard"],
     zip_safe=False,
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest']
 )

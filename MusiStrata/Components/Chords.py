@@ -6,28 +6,12 @@ from .Intervals import *
 
 from MusiStrata.Enums import ChordBase, ChordExtension, IntervalQuality
 
-# How do I define a chord? How many intervals it has, how many dissonants, how many consonants
+
 class Chord(object):
     def __init__(self, chordIntervals: List[Interval]):
         self.Intervals = chordIntervals
-
         # rewrite to get all these parameters out, and into the library fields?
         self.Size = len(chordIntervals) + 1
-
-        consonancesTypes = [interval.GetConsonanceType() for interval in chordIntervals]
-        tempSumTypes = []
-        for field in ["PerfectConsonance", "ImperfectConsonance", "Dissonance"]:
-            tempSumTypes.append(
-                len(
-                    list(filter(lambda consoType: consoType == field, consonancesTypes))
-                )
-            )
-
-        (
-            self.NbPerfectConsonances,
-            self.NbImperfectConsonances,
-            self.NbDissonances,
-        ) = tempSumTypes
 
     def __str__(self):
         outStr = "Chord("
@@ -49,15 +33,11 @@ class Chord(object):
         cls, base: ChordBase, extensions: List[ChordExtension] = []
     ) -> Chord:
         intervals = []
-        if type(base) == str:
-            base = ChordBase.FromStr(base)
+        base = ChordBase.SafeFromStr(base)
         for elem in base.value:
             intervals.append(Interval(*elem))
         for extension in extensions:
-            if extension is None:
-                continue
-            if type(extension) == str:
-                extension = ChordExtension.FromStr(extension)
+            extension = ChordExtension.SafeFromStr(extension)
             intervals.append(Interval(*extension.value))
         return Chord(intervals)
 

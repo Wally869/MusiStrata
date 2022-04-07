@@ -2,30 +2,19 @@ from __future__ import annotations
 from typing import List, Tuple, Dict, Union
 
 from MusiStrata.Components.Chords import Chord
-
-from .Notes import NoteNames, Note, ALL_NOTES
-
-# from MusiStrata.Data.Chords import MINOR_TRIAD, MAJOR_TRIAD, DIMINISHED_TRIAD, MINOR_SEVENTH, MAJOR_SEVENTH, DIMINISHED_SEVENTH
-# from .Chords import MINOR_TRIAD, MAJOR_TRIAD, DIMINISHED_TRIAD, MINOR_SEVENTH, MAJOR_SEVENTH, DIMINISHED_SEVENTH
+from MusiStrata.Components.Notes import NoteNames, Note
 
 from MusiStrata.Utils import FilterRepeated as FilterOutRepeatedNotes
-
-# from .utils import ExtendedEnum
-from .EnumManager import EnumManager_Ordered
+from MusiStrata.Enums import ScaleModes, Mode
 
 from MusiStrata.Enums import (
     ChordBase,
     ChordExtension,
     Mode,
     ScaleChordExtension,
-    ScaleMode,
+    ScaleModes,
 )
 
-TONES_SUCCESSION = {
-    "Major": [1, 1, 0.5, 1, 1, 1, 0.5],
-    "Minor": [1, 0.5, 1, 1, 0.5, 1, 1],
-    "MinorMelodic": [1, 0.5, 1, 1, 0.5, 1.5, 0.5],
-}
 
 # not using flats coz of implementation restrictions
 MAJOR_NEIGHBOURS = {
@@ -61,32 +50,15 @@ MINOR_FROM_MAJOR = {
     "F": "D",
 }
 
-ALL_SCALE_MODES = [
-    "Ionian",
-    "Dorian",
-    "Phrygian",
-    "Lydian",
-    "Mixolydian",
-    "Aeolian",
-    "Locrian",
-]
-
-
-class ScaleModes(EnumManager_Ordered):
-    KeyValuesMap = {ALL_SCALE_MODES[i]: i for i in range(len(ALL_SCALE_MODES))}
-    KeyList = ALL_SCALE_MODES
-    ValuesList = [i for i in range(len(ALL_SCALE_MODES))]
 
 
 class Scale(object):
-    def __init__(self, RefNote: str = "A", ScaleType: str = "Major"):
-        self.RefNote = RefNote
-        if type(ScaleType) != str:
-            raise TypeError("In Scale constructor: ScaleType argument must be a string")
-        self.Type = ScaleType
+    def __init__(self, RefNote: Union[str, NoteNames] = "A", ScaleType: Union[str, Mode] = "Major"):
+        self.RefNote = NoteNames.SafeFromStr(RefNote)
+        self.Type = Mode.SafeFromStr(ScaleType)
 
     def __str__(self):
-        return "Scale({})".format(self.RefNote + "-" + self.Type)
+        return "Scale({})".format(self.RefNote.name + "-" + self.Type.name)
 
     def __repr__(self):
         return str(self)
@@ -101,11 +73,11 @@ class Scale(object):
         self, referenceOctave: int = 5, mode: str = "Ionian"
     ) -> List[Note]:
         # Get tone succession for the scale type
-        tonesSuccession = TONES_SUCCESSION[self.Type]
+        tonesSuccession = self.Type.value
 
         refNote = Note(Name=self.RefNote, Octave=referenceOctave)
 
-        # Reorganize tones_succession according to ScaleModes value (in different mode, tones_succession changes)
+        # Reorganize tones_succession according to ScaleModess value (in different mode, tones_succession changes)
         tonesSuccession = (
             tonesSuccession[ScaleModes(mode).value :]
             + tonesSuccession[: ScaleModes(mode).value]
@@ -127,10 +99,10 @@ class Scale(object):
 
     def GetSameTypeNeighbours(self) -> List[Scale]:
         # Minors and Majors have the same neighbours, but differentiating anyway
-        if self.Type == "Major":
-            neighboursRefNotes = MAJOR_NEIGHBOURS[self.RefNote]
+        if self.Type == Mode.Major:
+            neighboursRefNotes = MAJOR_NEIGHBOURS[self.RefNote.value]
         else:
-            neighboursRefNotes = MINOR_NEIGHBOURS[self.RefNote]
+            neighboursRefNotes = MINOR_NEIGHBOURS[self.RefNote.value]
 
         return [
             Scale(RefNote=refNote, ScaleType=self.Type)
@@ -138,7 +110,7 @@ class Scale(object):
         ]
 
     def GetDifferentTypeNeighbour(self) -> Scale:
-        if self.Type == "Major":
+        if self.Type == Mode.Major:
             return self.GetMinorFromMajorByRefNote(self.RefNote)
         else:
             return self.GetMajorFromMinorByRefNote(self.RefNote)
@@ -172,10 +144,10 @@ class Scale(object):
         return pentatonicScaleNotes[:5]
 
     def _BaseChordProgression(
-        self, mode: Union[str, ScaleMode] = "Ionian"
+        self, mode: Union[str, ScaleModes] = "Ionian"
     ) -> List[ChordBase]:
         if type(mode) == str:
-            mode = ScaleMode.FromStr(mode)
+            mode = ScaleModes.FromStr(mode)
         progression = [
             ChordBase.Major,
             ChordBase.Major,
@@ -230,12 +202,12 @@ class Scale(object):
         self,
         tone: int,
         extensions: List[Union[ChordExtension, ScaleChordExtension]] = [],
-        mode: Union[str, ScaleMode] = ScaleMode.Ionian,
+        mode: Union[str, ScaleModes] = ScaleModes.Ionian,
     ) -> Chord:
         while tone >= 8:
             tone -= 8
         if type(mode) == str:
-            mode = ScaleMode.FromStr(mode)
+            mode = ScaleModes.FromStr(mode)
         chordBase = self._BaseChordProgression(mode)[tone]
         chordExtensions = [
             (lambda x: x if type(x) == ChordExtension else self._ChordExtension(x))(ext)
@@ -246,7 +218,7 @@ class Scale(object):
     def GetChords(
         self,
         extensions: List[List[Union[ChordExtension, ScaleChordExtension]]] = [],
-        mode: Union[str, ScaleMode] = ScaleMode.Ionian,
+        mode: Union[str, ScaleModes] = ScaleModes.Ionian,
     ) -> List[Chord]:
         while len(extensions) < 7:
             extensions.append([])
@@ -256,7 +228,7 @@ class Scale(object):
         self,
         referenceOctave: int = 5,
         extensions: List[List[Union[ChordExtension, ScaleChordExtension]]] = [],
-        mode: Union[str, ScaleMode] = ScaleMode.Ionian,
+        mode: Union[str, ScaleModes] = ScaleModes.Ionian,
     ):
         chords = self.GetChords(extensions=extensions, mode=mode)
         notes = self.GetScaleNotes(referenceOctave=referenceOctave, mode=mode)

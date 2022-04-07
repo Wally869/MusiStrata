@@ -1,6 +1,6 @@
 from typing import List, Tuple, Dict, Union
 
-from MusiStrata.Components import Chord, Interval
+from MusiStrata.Interfaces.Components import IChord, IInterval
 from MusiStrata.Utils import Record, Library
 
 from MusiStrata.Enums import IntervalQuality
@@ -30,9 +30,9 @@ MAJOR_CHORDS = [
         "Type": "Major",
         "Attribute": "Triad",
         "Intervals": [
-            Interval(1, "Perfect"),
-            Interval(3, "Major"),
-            Interval(5, "Perfect"),
+            IInterval(1, "Perfect"),
+            IInterval(3, "Major"),
+            IInterval(5, "Perfect"),
         ],
     },
     {
@@ -40,10 +40,10 @@ MAJOR_CHORDS = [
         "Type": "Major",
         "Attribute": "Seventh",
         "Intervals": [
-            Interval(1, "Perfect"),
-            Interval(3, "Major"),
-            Interval(5, "Perfect"),
-            Interval(7, "Major"),
+            IInterval(1, "Perfect"),
+            IInterval(3, "Major"),
+            IInterval(5, "Perfect"),
+            IInterval(7, "Major"),
         ],
     },
 ]
@@ -54,10 +54,10 @@ DOMINANT_CHORDS = [
         "Type": "Dominant",
         "Attribute": "Seventh",
         "Intervals": [
-            Interval(1, "Perfect"),
-            Interval(3, "Major"),
-            Interval(5, "Perfect"),
-            Interval(7, "Minor"),
+            IInterval(1, "Perfect"),
+            IInterval(3, "Major"),
+            IInterval(5, "Perfect"),
+            IInterval(7, "Minor"),
         ],
     }
 ]
@@ -68,9 +68,9 @@ MINOR_CHORDS = [
         "Type": "Minor",
         "Attribute": "Triad",
         "Intervals": [
-            Interval(1, "Perfect"),
-            Interval(3, "Minor"),
-            Interval(5, "Perfect"),
+            IInterval(1, "Perfect"),
+            IInterval(3, "Minor"),
+            IInterval(5, "Perfect"),
         ],
     },
     {
@@ -78,10 +78,10 @@ MINOR_CHORDS = [
         "Type": "Minor",
         "Attribute": "Seventh",
         "Intervals": [
-            Interval(1, "Perfect"),
-            Interval(3, "Minor"),
-            Interval(5, "Perfect"),
-            Interval(7, "Major"),
+            IInterval(1, "Perfect"),
+            IInterval(3, "Minor"),
+            IInterval(5, "Perfect"),
+            IInterval(7, "Major"),
         ],
     },
 ]
@@ -92,9 +92,9 @@ DIMINISHED_CHORDS = [
         "Type": "Diminished",
         "Attribute": "Triad",
         "Intervals": [
-            Interval(1, "Perfect"),
-            Interval(3, "Minor"),
-            Interval(5, "Diminished"),
+            IInterval(1, "Perfect"),
+            IInterval(3, "Minor"),
+            IInterval(5, "Diminished"),
         ],
     },
     {
@@ -102,10 +102,10 @@ DIMINISHED_CHORDS = [
         "Type": "Diminished",
         "Attribute": "Seventh",
         "Intervals": [
-            Interval(1, "Perfect"),
-            Interval(3, "Minor"),
-            Interval(5, "Diminished"),
-            Interval(7, "Diminished"),
+            IInterval(1, "Perfect"),
+            IInterval(3, "Minor"),
+            IInterval(5, "Diminished"),
+            IInterval(7, "Diminished"),
         ],
     },
 ]
@@ -116,9 +116,9 @@ AUGMENTED_CHORDS = [
         "Type": "Augmented",
         "Attribute": "Triad",
         "Intervals": [
-            Interval(1, "Perfect"),
-            Interval(3, "Major"),
-            Interval(5, "Augmented"),
+            IInterval(1, "Perfect"),
+            IInterval(3, "Major"),
+            IInterval(5, "Augmented"),
         ],
     },
     {
@@ -126,10 +126,10 @@ AUGMENTED_CHORDS = [
         "Type": "Augmented",
         "Attribute": "Seventh",
         "Intervals": [
-            Interval(1, "Perfect"),
-            Interval(3, "Major"),
-            Interval(5, "Augmented"),
-            Interval(7, "Augmented"),
+            IInterval(1, "Perfect"),
+            IInterval(3, "Major"),
+            IInterval(5, "Augmented"),
+            IInterval(7, "Augmented"),
         ],
     },
 ]
@@ -139,7 +139,7 @@ RAW_CHORDS = (
 )
 
 for c in RAW_CHORDS:
-    c["Chord"] = Chord(c["Intervals"])
+    c["Chord"] = IChord(c["Intervals"])
     del c["Intervals"]
 
 

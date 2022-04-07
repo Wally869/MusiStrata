@@ -3,7 +3,6 @@ from typing import List, Any
 from sys import modules
 
 
-
 class BaseLocator(object):
     _Registered = {}
     _Instance = None

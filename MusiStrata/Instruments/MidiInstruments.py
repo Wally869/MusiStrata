@@ -22,7 +22,11 @@ RAW_INSTRUMENTS = [
     {"hexcode": "0x0B", "family": "Chromatic Percussion", "instrument": "Vibraphone"},
     {"hexcode": "0x0C", "family": "Chromatic Percussion", "instrument": "Marimba"},
     {"hexcode": "0x0D", "family": "Chromatic Percussion", "instrument": "Xylophone"},
-    {"hexcode": "0x0E", "family": "Chromatic Percussion", "instrument": "Tubular bells"},
+    {
+        "hexcode": "0x0E",
+        "family": "Chromatic Percussion",
+        "instrument": "Tubular bells",
+    },
     {"hexcode": "0x0F", "family": "Chromatic Percussion", "instrument": "Dulcimer"},
     {"hexcode": "0x10", "family": "Organ", "instrument": "Drawbar Organ"},
     {"hexcode": "0x11", "family": "Organ", "instrument": "Percussive Organ"},
@@ -135,17 +139,23 @@ RAW_INSTRUMENTS = [
     {"hexcode": "0x7C", "family": "Sound Effects", "instrument": "Telephone Ring"},
     {"hexcode": "0x7D", "family": "Sound Effects", "instrument": "Helicopter"},
     {"hexcode": "0x7E", "family": "Sound Effects", "instrument": "Applause"},
-    {"hexcode": "0x7F", "family": "Sound Effects", "instrument": "Gunshot"}
+    {"hexcode": "0x7F", "family": "Sound Effects", "instrument": "Gunshot"},
 ]
 
 # Create direct mapping from instrument names to signal (int)
-INSTRUMENT_NAME_TO_SIGNAL = {inst["instrument"]: int(inst["hexcode"], 16) for inst in RAW_INSTRUMENTS}
+INSTRUMENT_NAME_TO_SIGNAL = {
+    inst["instrument"]: int(inst["hexcode"], 16) for inst in RAW_INSTRUMENTS
+}
 
 INSTRUMENT_NAMES = list(INSTRUMENT_NAME_TO_SIGNAL.keys())
 
 # modifying a supposed const but I guess it's ok
 for elemid in range(len(RAW_INSTRUMENTS)):
-    for pairKeys in [["hexcode", "Signal"], ["family", "Family"], ["instrument", "Name"]]:
+    for pairKeys in [
+        ["hexcode", "Signal"],
+        ["family", "Family"],
+        ["instrument", "Name"],
+    ]:
         RAW_INSTRUMENTS[elemid][pairKeys[1]] = RAW_INSTRUMENTS[elemid][pairKeys[0]]
         del RAW_INSTRUMENTS[elemid][pairKeys[0]]
 
@@ -177,4 +187,3 @@ def GetSignalFromInstrument(instrument: str) -> int:
     print("DEPRECATION WARNING: GetSignalFromInstrument has been deprecated.")
     print("Use Instruments.GetSignalFromInstrumentName directly instead")
     return InstrumentsLibrary.GetSignalFromInstrumentName(instrument)
-

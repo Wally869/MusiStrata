@@ -12,7 +12,8 @@ Dataclasses to represent song components
 """
 
 # TypeStripper preprocessing tag below, do not remove
-#NoTypeStripping
+# NoTypeStripping
+
 
 @dataclass
 class SoundEvent:
@@ -26,12 +27,13 @@ class SoundEvent:
             "Beat": self.Beat,
             "Duration": self.Duration,
             "Note": self.Note.ToDict(),
-            "Velocity": self.Velocity
+            "Velocity": self.Velocity,
         }
         return dictRepr
 
     def ToJSON(self) -> str:
         from json import dumps as _dumps
+
         return _dumps(self.ToDict())
 
     @classmethod
@@ -39,48 +41,42 @@ class SoundEvent:
         return SoundEvent(
             Beat=dictRepr["Beat"],
             Duration=dictRepr["Duration"],
-            Note=Note.FromDict(dictRepr["Note"])
+            Note=Note.FromDict(dictRepr["Note"]),
         )
 
     @classmethod
     def FromJSON(cls, jsonData: str):
         from json import loads as _loads
+
         dictRepr = _loads(jsonData)
         return cls.FromDict(dictRepr)
 
 
 def GenerateSoundEventsFromListNotes(beat: float, duration: float, notes: List[Note]):
-    return [
-        SoundEvent(
-            Beat=beat,
-            Duration=duration,
-            Note=note
-        ) for note in notes
-    ]
+    return [SoundEvent(Beat=beat, Duration=duration, Note=note) for note in notes]
+
 
 @dataclass
 class Bar:
     SoundEvents: list = field(default_factory=list)
 
     def ToDict(self) -> dict:
-        dictRepr = {
-            "SoundEvents": [se.ToDict() for se in self.SoundEvents]
-        }
+        dictRepr = {"SoundEvents": [se.ToDict() for se in self.SoundEvents]}
         return dictRepr
 
     def ToJSON(self) -> str:
         from json import dumps as _dumps
+
         return _dumps(self.ToDict())
 
     @classmethod
     def FromDict(cls, dictRepr: dict):
-        return Bar([
-            SoundEvent.FromDict(elem) for elem in dictRepr["SoundEvents"]
-        ])
+        return Bar([SoundEvent.FromDict(elem) for elem in dictRepr["SoundEvents"]])
 
     @classmethod
     def FromJSON(cls, jsonData: str):
         from json import loads as _loads
+
         dictRepr = _loads(jsonData)
         return cls.FromDict(dictRepr)
 
@@ -92,20 +88,14 @@ class Bar:
 
     def __add__(self, other):
         if self.__class__ is other.__class__:
-            return Bar(
-                SoundEvents=self.SoundEvents + other.SoundEvents
-            )
+            return Bar(SoundEvents=self.SoundEvents + other.SoundEvents)
         elif type(other) == SoundEvent:
-            return Bar(
-                SoundEvents=self.SoundEvents + [other]
-            )
+            return Bar(SoundEvents=self.SoundEvents + [other])
         raise NotImplementedError()
 
     def __radd__(self, other):
         if type(other) == SoundEvent:
-            return Bar(
-                SoundEvents=self.SoundEvents + [other]
-            )
+            return Bar(SoundEvents=self.SoundEvents + [other])
         raise NotImplementedError()
 
     def __mul__(self, other: Union[int, float]):
@@ -116,13 +106,17 @@ class Bar:
     def append(self, other: Union[SoundEvent, List[SoundEvent]]):
         if type(other) == list:
             if type(other[0]) != SoundEvent:
-                raise TypeError("Bar Class - The append method only accepts a SoundEvent object or a list of SoundEvent objects")
+                raise TypeError(
+                    "Bar Class - The append method only accepts a SoundEvent object or a list of SoundEvent objects"
+                )
             else:
                 self.SoundEvents += other
         elif type(other) == SoundEvent:
             self.SoundEvents.append(other)
         else:
-            raise TypeError("Bar Class - The append method only accepts a SoundEvent object or a list of SoundEvent objects")
+            raise TypeError(
+                "Bar Class - The append method only accepts a SoundEvent object or a list of SoundEvent objects"
+            )
 
 
 @dataclass
@@ -139,12 +133,13 @@ class Track:
             "Instrument": self.Instrument,
             "Bars": [b.ToDict() for b in self.Bars],
             "IsDrumsTrack": self.IsDrumsTrack,
-            "BankUsed": self.BankUsed
+            "BankUsed": self.BankUsed,
         }
         return dictRepr
 
     def ToJSON(self) -> str:
         from json import dumps as _dumps
+
         return _dumps(self.ToDict())
 
     @classmethod
@@ -154,12 +149,13 @@ class Track:
             Instrument=dictRepr["Instrument"],
             Bars=[Bar.FromDict(elem) for elem in dictRepr["Bars"]],
             IsDrumsTrack=dictRepr["IsDrumsTrack"],
-            BankUsed=dictRepr["BankUsed"]
+            BankUsed=dictRepr["BankUsed"],
         )
 
     @classmethod
     def FromJSON(cls, jsonData: str):
         from json import loads as _loads
+
         dictRepr = _loads(jsonData)
         return cls.FromDict(dictRepr)
 
@@ -192,15 +188,17 @@ class Track:
     def append(self, other: Union[Bar, List[Bar]]):
         if type(other) == list:
             if type(other[0]) != Bar:
-                raise TypeError("Track Class - The append method only accepts a Bar object or a list of Bar objects")
+                raise TypeError(
+                    "Track Class - The append method only accepts a Bar object or a list of Bar objects"
+                )
             else:
                 self.Bars += other
         elif type(other) == Bar:
             self.Bars.append(other)
         else:
-            raise TypeError("Track Class - The append method only accepts a Bar object or a list of Bar objects")
-
-
+            raise TypeError(
+                "Track Class - The append method only accepts a Bar object or a list of Bar objects"
+            )
 
 
 # Do I really need a timesignature? For my implementation, beats per bar is enough?
@@ -210,11 +208,12 @@ class TimeSignature:
     BeatUnit: int = 4
 
     def __str__(self):
-        return "TimeSignature(BeatsPerBar={}, BeatUnit={})".format(self.BeatsPerBar, self.BeatUnit)
+        return "TimeSignature(BeatsPerBar={}, BeatUnit={})".format(
+            self.BeatsPerBar, self.BeatUnit
+        )
 
     def __repr__(self):
         return self.__str__()
-
 
 
 @dataclass
@@ -224,18 +223,21 @@ class Song:
     Tracks: list = field(default_factory=list)
 
     def __str__(self):
-        return "Song(Tempo={}, BeatsPerBar={}, {} Tracks)".format(self.Tempo, self.BeatsPerBar, len(self.Tracks))
+        return "Song(Tempo={}, BeatsPerBar={}, {} Tracks)".format(
+            self.Tempo, self.BeatsPerBar, len(self.Tracks)
+        )
 
     def ToDict(self) -> dict:
         dictRepr = {
             "Tempo": self.Tempo,
             "BeatsPerBar": self.BeatsPerBar,
-            "Tracks": [t.ToDict() for t in self.Tracks]
+            "Tracks": [t.ToDict() for t in self.Tracks],
         }
         return dictRepr
 
     def ToJSON(self) -> str:
         from json import dumps as _dumps
+
         return _dumps(self.ToDict())
 
     @classmethod
@@ -249,6 +251,6 @@ class Song:
     @classmethod
     def FromJSON(cls, jsonData: str):
         from json import loads as _loads
+
         dictRepr = _loads(jsonData)
         return cls.FromDict(dictRepr)
-

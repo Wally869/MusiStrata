@@ -69,13 +69,9 @@ RAW_DRUMS = {
     87: "Open Surdo",
 }
 
-DRUMS_NAME_TO_HEIGHT = {
-    v: k for k, v in RAW_DRUMS.items()
-}
+DRUMS_NAME_TO_HEIGHT = {v: k for k, v in RAW_DRUMS.items()}
 
-DRUMS_NAMES = list(
-    DRUMS_NAME_TO_HEIGHT.keys()
-)
+DRUMS_NAMES = list(DRUMS_NAME_TO_HEIGHT.keys())
 
 
 # Might want to create a base class to be inherited from

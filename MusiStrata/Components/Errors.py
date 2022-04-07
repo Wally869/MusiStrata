@@ -3,9 +3,7 @@ from dataclasses import dataclass, field
 
 from enum import Enum
 
+
 class Errors(Enum):
-    InvalidHeight = 0,
-    IntervalError = 1,
-
-
-
+    InvalidHeight = (0,)
+    IntervalError = (1,)

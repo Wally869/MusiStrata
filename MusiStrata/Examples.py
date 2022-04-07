@@ -16,7 +16,7 @@ def GenerateExample1():
         Note=Note(
             Name="A",
             Octave=5,
-        )
+        ),
     )
     note2 = SoundEvent(
         Beat=2.0,
@@ -24,7 +24,7 @@ def GenerateExample1():
         Note=Note(
             Name="C",
             Octave=5,
-        )
+        ),
     )
     note3 = SoundEvent(
         Beat=3.0,
@@ -32,27 +32,16 @@ def GenerateExample1():
         Note=Note(
             Name="D",
             Octave=5,
-        )
+        ),
     )
 
-    bar = Bar(
-        SoundEvents=[note1, note2, note3]
-    )
+    bar = Bar(SoundEvents=[note1, note2, note3])
 
-    track = Track(
-        Name="Main",
-        Instrument="Vibraphone",
-        Bars=[bar],
-        BankUsed=1
-    )
+    track = Track(Name="Main", Instrument="Vibraphone", Bars=[bar], BankUsed=1)
 
-    song = Song(
-        Tracks=[track]
-    )
+    song = Song(Tracks=[track])
 
     return song
-
-
 
 
 def GenerateExample2():
@@ -68,7 +57,7 @@ def GenerateExample2():
         Note=Note(
             Name="A",
             Octave=5,
-        )
+        ),
     )
     note2 = SoundEvent(
         Beat=2.0,
@@ -76,7 +65,7 @@ def GenerateExample2():
         Note=Note(
             Name="C",
             Octave=5,
-        )
+        ),
     )
     note3 = SoundEvent(
         Beat=3.0,
@@ -84,12 +73,10 @@ def GenerateExample2():
         Note=Note(
             Name="D",
             Octave=5,
-        )
+        ),
     )
 
-    bar = Bar(
-        [note1, note2, note3]
-    )
+    bar = Bar([note1, note2, note3])
 
     mainScale = Scale("Cs", "Minor")
     # Get the notes in this scale
@@ -97,48 +84,27 @@ def GenerateExample2():
     for e in bar.SoundEvents:
         e.Note = choice(allowedNotes)
 
-    track = Track(
-        Bars=[bar, bar],
-        Instrument="Acoustic Grand Piano"
-    )
+    track = Track(Bars=[bar, bar], Instrument="Acoustic Grand Piano")
 
-    song = Song(
-        Tempo=150,
-        Tracks=[track]
-    )
+    song = Song(Tempo=150, Tracks=[track])
 
     return song
 
 
-
 def GenerateExample3():
     """
-    Generate a single track, 10 bars song. We use the same rythm for the bars, but 
-    choose different scales from each bar. 
+    Generate a single track, 10 bars song. We use the same rythm for the bars, but
+    choose different scales from each bar.
     Possible scales are selected from the Circle of Fifths, which means we select neighbour scales
     Note heights are set by randomly choosing among notes composing a given scale
     """
     seed(42)
 
-    note1 = SoundEvent(
-        Beat=0.0,
-        Duration=1.0,
-        Note=Note(Octave=5)
-    )
-    note2 = SoundEvent(
-        Beat=2.0,
-        Duration=1.0,
-        Note=Note(Octave=5)
-    )
-    note3 = SoundEvent(
-        Beat=3.0,
-        Duration=0.5,
-        Note=Note(Octave=5)
-    )
+    note1 = SoundEvent(Beat=0.0, Duration=1.0, Note=Note(Octave=5))
+    note2 = SoundEvent(Beat=2.0, Duration=1.0, Note=Note(Octave=5))
+    note3 = SoundEvent(Beat=3.0, Duration=0.5, Note=Note(Octave=5))
 
-    bar = Bar(
-        [note1, note2, note3]
-    )
+    bar = Bar([note1, note2, note3])
 
     bars = [deepcopy(bar) for i in range(6)]
 
@@ -153,24 +119,14 @@ def GenerateExample3():
         for e in b.SoundEvents:
             e.Note = choice(allowedNotes)
 
-    track = Track(
-        Bars=bars,
-        Instrument="Acoustic Grand Piano"
-    )
+    track = Track(Bars=bars, Instrument="Acoustic Grand Piano")
 
-    song = Song(
-        Tempo=60,
-        Tracks=[track]
-    )
+    song = Song(Tempo=60, Tracks=[track])
 
     return song
 
 
-ALL_EXAMPLES = [
-    GenerateExample1,
-    GenerateExample2,
-    GenerateExample3
-]
+ALL_EXAMPLES = [GenerateExample1, GenerateExample2, GenerateExample3]
 
 
 def RunExamples():
@@ -179,7 +135,11 @@ def RunExamples():
     print("Generating Examples in folder Examples")
     for id_example in range(len(ALL_EXAMPLES)):
         currSong = ALL_EXAMPLES[id_example]()
-        Render(currSong, "Examples/example-" + str(id_example + 1) + ".mid", RenderFormats.MIDI)
+        Render(
+            currSong,
+            "Examples/example-" + str(id_example + 1) + ".mid",
+            RenderFormats.MIDI,
+        )
     print("Done")
 
 

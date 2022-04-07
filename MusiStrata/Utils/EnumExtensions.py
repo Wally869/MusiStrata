@@ -75,9 +75,7 @@ class LoopingOrderedEnum(OrderedEnum):
             return NotImplemented
 
         if other < 0:
-            return self.__sub__(
-                abs(other)
-            )
+            return self.__sub__(abs(other))
 
         nbLoops = 0
 
@@ -104,9 +102,7 @@ class LoopingOrderedEnum(OrderedEnum):
 
         elif type(other) == int:
             if other < 0:
-                return self.__add__(
-                    abs(other)
-                )
+                return self.__add__(abs(other))
 
             nbLoops = 0
             nbElements = len(self.GetAllElements())

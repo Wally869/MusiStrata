@@ -19,16 +19,15 @@ class Chord(object):
         for field in ["PerfectConsonance", "ImperfectConsonance", "Dissonance"]:
             tempSumTypes.append(
                 len(
-                    list(
-                        filter(
-                            lambda consoType: consoType == field,
-                            consonancesTypes
-                        )
-                    )
+                    list(filter(lambda consoType: consoType == field, consonancesTypes))
                 )
             )
 
-        self.NbPerfectConsonances, self.NbImperfectConsonances, self.NbDissonances = tempSumTypes
+        (
+            self.NbPerfectConsonances,
+            self.NbImperfectConsonances,
+            self.NbDissonances,
+        ) = tempSumTypes
 
     def __str__(self):
         outStr = "Chord("
@@ -46,7 +45,9 @@ class Chord(object):
         return len(self.Intervals)
 
     @classmethod
-    def FromBaseExtensions(cls, base: ChordBase, extensions: List[ChordExtension] = []) -> Chord:
+    def FromBaseExtensions(
+        cls, base: ChordBase, extensions: List[ChordExtension] = []
+    ) -> Chord:
         intervals = []
         if type(base) == str:
             base = ChordBase.FromStr(base)
@@ -69,11 +70,13 @@ class Chord(object):
 
     # change __call__ to generating alternate chord, and add __radd__ with note?
     # just create new methods for now
-    def __call__(self, rootNote: Note, indices: List[Tuple(int, int)] = None) -> Tuple[List[Note], List[ValueError]]:
+    def __call__(
+        self, rootNote: Note, indices: List[Tuple(int, int)] = None
+    ) -> Tuple[List[Note], List[ValueError]]:
         """
-            Get notes composing Chord, starting from rootNote and returns those specified by indices.  
-            Indices works by specifying 2 values: the index in the chord, and the octave shift compared to the base note.  
-            Octave shift can be negative.  
+        Get notes composing Chord, starting from rootNote and returns those specified by indices.
+        Indices works by specifying 2 values: the index in the chord, and the octave shift compared to the base note.
+        Octave shift can be negative.
         """
         if type(rootNote) != Note:
             raise TypeError("Input must be of type Note.")
@@ -102,15 +105,17 @@ class Chord(object):
             return Interval(Intervals=[self, other])
         raise NotImplementedError()
 
-    def call(self, rootNote: Note, indices: List[Tuple(int, int)]) -> Tuple[List[Note], List[ValueError]]:
+    def call(
+        self, rootNote: Note, indices: List[Tuple(int, int)]
+    ) -> Tuple[List[Note], List[ValueError]]:
         """
-            Wrapping __call__ in another function to call it in Transcrypt.   
+        Wrapping __call__ in another function to call it in Transcrypt.
         """
         return self.__call__(rootNote, indices)
 
     def add(self, other) -> Tuple[List[Note], List[ValueError]]:
         """
-            Wrapping __radd__ in another function to call it in Transcrypt.   
+        Wrapping __radd__ in another function to call it in Transcrypt.
         """
         if type(other) == Note:
             outNotes = []
@@ -123,6 +128,3 @@ class Chord(object):
         elif type(other) == Interval:
             return Interval(Intervals=[self, other])
         raise NotImplementedError()
-
-
-

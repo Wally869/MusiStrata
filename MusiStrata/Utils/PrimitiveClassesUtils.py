@@ -32,9 +32,7 @@ class Library(object):
 
         records = []
         for elem in rawData:
-            records.append(
-                Record(**elem)
-            )
+            records.append(Record(**elem))
         self.Records = records
         self._Fields = list(rawData[0].keys())
 
@@ -63,7 +61,11 @@ class Library(object):
             "list(filter(lambda x: x.{} == {}, self.Records))".format(field, value)
         )
         if len(found) == 0:
-            print("{} - KeyError: {} not found in {}. Returning default value. \n".format(self.Name, value, field))
+            print(
+                "{} - KeyError: {} not found in {}. Returning default value. \n".format(
+                    self.Name, value, field
+                )
+            )
             found = [self.Records[0]]
         return found
 
@@ -89,12 +91,7 @@ class Library(object):
             strQuery += "x.{} {} {}".format(*fil)
             if id < len(filters) - 1:
                 strQuery += " and "
-        return list(
-            filter(
-                lambda x: eval(strQuery),
-                self.Records
-            )
-        )
+        return list(filter(lambda x: eval(strQuery), self.Records))
 
     def GetAllValuesFromField(self, field: str):
         return [rec[field] for rec in self.Records]

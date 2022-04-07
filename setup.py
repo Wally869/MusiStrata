@@ -5,7 +5,16 @@ setup(
     version="1.0.0",
     url="http://github.com/Wally869/MusiStrata",
     author="Wally869",
-    packages=["MusiStrata", "MusiStrata.Interfaces", "MusiStrata.Components", "MusiStrata.Rendering", "MusiStrata.Instruments", "MusiStrata.Utils", "MusiStrata.Enums", "MusiStrata.Data"],
+    packages=[
+        "MusiStrata",
+        "MusiStrata.Interfaces",
+        "MusiStrata.Components",
+        "MusiStrata.Rendering",
+        "MusiStrata.Instruments",
+        "MusiStrata.Utils",
+        "MusiStrata.Enums",
+        "MusiStrata.Data",
+    ],
     install_requires=["mido", "soundcard"],
-    zip_safe=False
+    zip_safe=False,
 )

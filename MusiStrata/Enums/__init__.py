@@ -1,7 +1,6 @@
-from enum import Enum 
+from enum import Enum
 
 from MusiStrata.Utils import EnumExtensions
-
 
 
 class ChordBase(Enum):
@@ -44,7 +43,7 @@ class ScaleChordExtension(Enum):
     @classmethod
     def FromInt(cls, val: int) -> "ScaleChordExtension":
         if val == 7:
-            return 
+            return
 
 
 class ChordExtension(Enum):
@@ -95,7 +94,7 @@ class NoteNames(EnumExtensions.LoopingOrderedEnum):
     Gs = 8
     A = 9
     As = 10
-    B = 11 
+    B = 11
 
     def ToStaffPosition(self):
         if self == NoteNames.A or self == NoteNames.Gs:
@@ -114,38 +113,37 @@ class NoteNames(EnumExtensions.LoopingOrderedEnum):
             return StaffPosition.G
 
 
-
 class Mode(Enum):
-    Major = 0,
+    Major = (0,)
     Minor = 1
     MinorMelodic = 2
 
 
 class ScaleMode(Enum):
     Ionian = 0
-    Dorian = 1 
-    Phrygian = 2 
+    Dorian = 1
+    Phrygian = 2
     Lydian = 3
     Mixolydian = 4
     Aeolian = 5
-    Locrian = 6    
+    Locrian = 6
 
     @classmethod
     def ToString(cls) -> str:
         if cls == ScaleMode.Ionian:
-            return "Ionian" 
+            return "Ionian"
         elif cls == ScaleMode.Ionian:
-            return "Dorian" 
+            return "Dorian"
         elif cls == ScaleMode.Ionian:
-            return "Phrygian" 
+            return "Phrygian"
         elif cls == ScaleMode.Ionian:
-            return "Lydian" 
+            return "Lydian"
         elif cls == ScaleMode.Ionian:
-            return "Mixolydian" 
+            return "Mixolydian"
         elif cls == ScaleMode.Ionian:
-            return "Aeolian" 
+            return "Aeolian"
         elif cls == ScaleMode.Ionian:
-            return "Locrian" 
+            return "Locrian"
 
     @classmethod
     def FromStr(cls, name: str) -> "ScaleMode":
@@ -161,7 +159,6 @@ class ScaleTones(Enum):
     MinorMelodic = [1, 0.5, 1, 1, 0.5, 1.5, 0.5]
 
 
-
 class IntervalQuality(Enum):
     Minor = "Minor"
     Major = "Major"
@@ -170,13 +167,13 @@ class IntervalQuality(Enum):
     Augmented = "Augmented"
     DoublyDiminished = "DoublyDiminished"
     DoublyAugmented = "DoublyAugmented"
-    
+
     @classmethod
     def FromStr(cls, name: str):
         for member in cls._member_names_:
             if name == member:
                 return cls._member_map_[name]
-        if name == "Doubly Diminished": 
+        if name == "Doubly Diminished":
             return cls.DoublyDiminished
         elif name == "Doubly Augmented":
             return cls.DoublyDiminished
@@ -186,4 +183,3 @@ class IntervalQuality(Enum):
     @classmethod
     def list(cls):
         return list(map(lambda c: c.value, cls))
-

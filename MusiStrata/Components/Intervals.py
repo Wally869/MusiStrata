@@ -3,7 +3,7 @@ from typing import List, Tuple, Dict, Union
 
 from .Notes import *
 
-#from MusiStrata.Data.Intervals import *
+# from MusiStrata.Data.Intervals import *
 from MusiStrata.Utils import Record, Library
 
 from MusiStrata.Enums import IntervalQuality
@@ -18,7 +18,13 @@ class NoteNames(EnumManager_Ordered):
 """
 
 ALL_POSSIBLE_QUALITIES = [
-    "Minor", "Major", "Perfect", "Diminished", "Augmented", "DoublyDiminished", "DoublyAugmented"
+    "Minor",
+    "Major",
+    "Perfect",
+    "Diminished",
+    "Augmented",
+    "DoublyDiminished",
+    "DoublyAugmented",
 ]
 
 
@@ -35,7 +41,7 @@ MINOR_MAJOR_PERFECT_INTERVALS = [
     [6, "Major", 9],  # Major Sixth
     [7, "Minor", 10],  # Minor Seventh
     [7, "Major", 11],  # Major Seventh
-    [8, "Perfect", 12]  # Perfect Octave
+    [8, "Perfect", 12],  # Perfect Octave
 ]
 
 AUGMENTED_DIMINISHED_INTERVALS = [
@@ -51,36 +57,40 @@ AUGMENTED_DIMINISHED_INTERVALS = [
     [7, "Diminished", 9],  # Diminished Seventh
     [6, "Augmented", 10],  # Augmented Sixth
     [8, "Diminished", 11],  # Diminished Octave
-    [7, "Augmented", 12]  # Augmented Seventh
+    [7, "Augmented", 12],  # Augmented Seventh
 ]
 
 # Will need to fill this?
-DOUBLY_AUGMENTED_DIMINISHED_INTERVALS = [
-    [3, "DoublyAugmented", 5]
-]
+DOUBLY_AUGMENTED_DIMINISHED_INTERVALS = [[3, "DoublyAugmented", 5]]
 
-ALL_INTERVALS_RAW = MINOR_MAJOR_PERFECT_INTERVALS + AUGMENTED_DIMINISHED_INTERVALS + DOUBLY_AUGMENTED_DIMINISHED_INTERVALS
+ALL_INTERVALS_RAW = (
+    MINOR_MAJOR_PERFECT_INTERVALS
+    + AUGMENTED_DIMINISHED_INTERVALS
+    + DOUBLY_AUGMENTED_DIMINISHED_INTERVALS
+)
 # Setting empty reference, filled after creating the Interval object.
 # it is used in a method of Interval so using this trick
 ALL_INTERVALS = []
 
 
-
-
-
-
 # Need to perform check on input arguments. Done in findtonaldistancefromotherspecs
 # Here, can add checks to see if consonance, dissonance, perfect/imperfect?
 class BaseInterval(object):
-    def __init__(self, IntervalNumber: int, Quality: IntervalQuality):  # , TonalDistance: int):
+    def __init__(
+        self, IntervalNumber: int, Quality: IntervalQuality
+    ):  # , TonalDistance: int):
         if type(Quality) is str:
             Quality = IntervalQuality.FromStr(Quality)
         self.IntervalNumber = IntervalNumber
         self.Quality = Quality
-        self.TonalDistance = self.FindTonalDistanceFromNumberAndQuality(IntervalNumber, Quality)
+        self.TonalDistance = self.FindTonalDistanceFromNumberAndQuality(
+            IntervalNumber, Quality
+        )
 
     def __str__(self) -> str:
-        return "Interval({}-{}--{} semitones)".format(self.IntervalNumber, self.Quality, self.TonalDistance)
+        return "Interval({}-{}--{} semitones)".format(
+            self.IntervalNumber, self.Quality, self.TonalDistance
+        )
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -129,8 +139,8 @@ class BaseInterval(object):
             else:
                 return newNote, ValueError(
                     "Invalid from given starting note. "
-                    "Target: {}, Generated: {}".format(
-                        self, generatedInterval))
+                    "Target: {}, Generated: {}".format(self, generatedInterval)
+                )
         return NotImplemented
 
     def __rsub__(self, other):
@@ -144,8 +154,8 @@ class BaseInterval(object):
             else:
                 return newNote, ValueError(
                     "Invalid from given starting note. "
-                    "Target: {}, Generated: {}".format(
-                        self, generatedInterval))
+                    "Target: {}, Generated: {}".format(self, generatedInterval)
+                )
         return NotImplemented
 
     def ShortStr(self):
@@ -160,7 +170,9 @@ class BaseInterval(object):
         return "{}{}".format(qualityString, self.IntervalNumber)
 
     @staticmethod
-    def FindTonalDistanceFromNumberAndQuality(intervalNumber: int, quality: IntervalQuality) -> int:
+    def FindTonalDistanceFromNumberAndQuality(
+        intervalNumber: int, quality: IntervalQuality
+    ) -> int:
         if type(quality) is str:
             quality = IntervalQuality.FromStr(quality)
         # This function gets us the tonal distance, but also ensures that correct parameters have been input
@@ -171,15 +183,24 @@ class BaseInterval(object):
                 if elem[1] == quality:
                     return elem[2]
 
-        raise KeyError("Wrong Inputs: (IntervalNumber: {}, Quality: {}) "
-                       "is not a valid combination for an interval.".format(intervalNumber, quality))
+        raise KeyError(
+            "Wrong Inputs: (IntervalNumber: {}, Quality: {}) "
+            "is not a valid combination for an interval.".format(
+                intervalNumber, quality
+            )
+        )
 
     @classmethod
-    def FindQualityFromNumberAndDistance(cls, intervalNumber: int, tonalDistance: int) -> str:
+    def FindQualityFromNumberAndDistance(
+        cls, intervalNumber: int, tonalDistance: int
+    ) -> str:
         # Need to implement Augmented and Diminished intervals
         # function, or use bigger all_intervals_raw?
         for interval in ALL_INTERVALS:
-            if interval.IntervalNumber == intervalNumber and interval.TonalDistance == tonalDistance:
+            if (
+                interval.IntervalNumber == intervalNumber
+                and interval.TonalDistance == tonalDistance
+            ):
                 return interval.Quality
         return None
 
@@ -222,8 +243,8 @@ class BaseInterval(object):
             else:
                 return newNote, ValueError(
                     "Invalid from given starting note. "
-                    "Target: {}, Generated: {}".format(
-                        self, generatedInterval))
+                    "Target: {}, Generated: {}".format(self, generatedInterval)
+                )
         return NotImplemented
 
     def sub(self, other):
@@ -237,17 +258,24 @@ class BaseInterval(object):
             else:
                 return newNote, ValueError(
                     "Invalid from given starting note. "
-                    "Target: {}, Generated: {}".format(
-                        self, generatedInterval))
+                    "Target: {}, Generated: {}".format(self, generatedInterval)
+                )
         return NotImplemented
 
 
 class Interval(object):
-    def __init__(self, IntervalNumber: int = -1, Quality: IntervalQuality = IntervalQuality.Major, Intervals: List[Interval] = []):
+    def __init__(
+        self,
+        IntervalNumber: int = -1,
+        Quality: IntervalQuality = IntervalQuality.Major,
+        Intervals: List[Interval] = [],
+    ):
         if IntervalNumber == -1 and Intervals == []:
             raise ValueError("Interval: No empty constructor defined")
         if type(IntervalNumber) == list:
-            raise TypeError("Invalid Arguments. IntervalNumber should be an int. \n Use NamedParameters when creating an interval from other Intervals")
+            raise TypeError(
+                "Invalid Arguments. IntervalNumber should be an int. \n Use NamedParameters when creating an interval from other Intervals"
+            )
         if len(Intervals) >= 2:
             # check the intervals given: aim to only have octaves + 1 non-octave as intervals, so need to perform checks
             validated = []
@@ -269,7 +297,7 @@ class Interval(object):
                 tonalDistance = 0
                 for interval in disputed:
                     tonalDistance += interval.TonalDistance
-                while (tonalDistance > 12):
+                while tonalDistance > 12:
                     validated.append(Interval(8, IntervalQuality.Perfect))
                     tonalDistance -= 12
                 # iterate on minor/major/perfect intervals
@@ -278,28 +306,33 @@ class Interval(object):
                     # tonal distance is 3rd elem (so 2 in 0-indexed)
                     # if found match, add to validated
                     if elem[2] == tonalDistance:
-                        validated.append(Interval(IntervalNumber=elem[0], Quality=IntervalQuality.FromStr(elem[1])))
+                        validated.append(
+                            Interval(
+                                IntervalNumber=elem[0],
+                                Quality=IntervalQuality.FromStr(elem[1]),
+                            )
+                        )
                         foundMatch = True
                         break
                 # else, this means the Interval is a tritone
                 if foundMatch == False:
-                    validated.append(Interval(IntervalNumber=5, Quality=IntervalQuality.Diminished))
+                    validated.append(
+                        Interval(IntervalNumber=5, Quality=IntervalQuality.Diminished)
+                    )
                 # set intervals
                 Intervals = validated
             # last check: in case if is empty, or if only unison were given as inputs (so were pruned)
             if len(validated) == 0:
                 validated.append(Interval(1, IntervalQuality.Perfect))
-        
+
         self.Intervals = Intervals
         if IntervalNumber > 8:
             self.Intervals = [
                 Interval(8, "Perfect"),
-                Interval(IntervalNumber - 7, Quality)
+                Interval(IntervalNumber - 7, Quality),
             ]
         elif IntervalNumber != -1:
-            self.Intervals = [
-                BaseInterval(IntervalNumber, Quality)
-            ]
+            self.Intervals = [BaseInterval(IntervalNumber, Quality)]
 
     # Properties exposing the sublying properties of the last interval in self.Intervals
     @property
@@ -324,7 +357,9 @@ class Interval(object):
     def __str__(self) -> str:
         if len(self) == 1:
             return self[-1].__str__()
-        return "Interval({} Octaves + {})".format(len(self.Intervals) - 1, self.Intervals[-1])
+        return "Interval({} Octaves + {})".format(
+            len(self.Intervals) - 1, self.Intervals[-1]
+        )
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -392,8 +427,8 @@ class Interval(object):
             else:
                 err = ValueError(
                     "Invalid from given starting note. "
-                    "Target: {}, Generated: {}".format(
-                        self, generatedInterval))
+                    "Target: {}, Generated: {}".format(self, generatedInterval)
+                )
 
             return newNote, err
         return NotImplemented
@@ -409,8 +444,8 @@ class Interval(object):
             else:
                 err = ValueError(
                     "Invalid from given starting note. "
-                    "Target: {}, Generated: {}".format(
-                        self, generatedInterval))
+                    "Target: {}, Generated: {}".format(self, generatedInterval)
+                )
 
             return newNote, err
         return NotImplemented
@@ -424,12 +459,18 @@ class Interval(object):
     @staticmethod
     def FindTonalDistanceFromNumberAndQuality(intervalNumber: int, quality: str) -> int:
         # This function gets us the tonal distance, but also ensures that correct parameters have been input
-        return BaseInterval.FindTonalDistanceFromNumberAndQuality(intervalNumber, quality)
+        return BaseInterval.FindTonalDistanceFromNumberAndQuality(
+            intervalNumber, quality
+        )
 
     @classmethod
-    def FindQualityFromNumberAndDistance(cls, intervalNumber: int, tonalDistance: int) -> str:
+    def FindQualityFromNumberAndDistance(
+        cls, intervalNumber: int, tonalDistance: int
+    ) -> str:
         # Need to implement Augmented and Diminished intervals
-        return BaseInterval.FindQualityFromNumberAndDistance(intervalNumber, tonalDistance)
+        return BaseInterval.FindQualityFromNumberAndDistance(
+            intervalNumber, tonalDistance
+        )
 
     @classmethod
     def FromNotes(cls, note0: Note, note1: Note) -> Interval:
@@ -438,19 +479,21 @@ class Interval(object):
             note0, note1 = note1, note0
         # check if there is more than one octave of difference
         while note1 - note0 > 12:
-            intervals.append(
-                Interval(8, "Perfect")
-            )
+            intervals.append(Interval(8, "Perfect"))
             note1 = note1 - 12
 
         intervalNumber = note0.GetIntervalNumber(note1)
         tonalDistance = note1 - note0
-        quality = BaseInterval.FindQualityFromNumberAndDistance(intervalNumber, tonalDistance)
+        quality = BaseInterval.FindQualityFromNumberAndDistance(
+            intervalNumber, tonalDistance
+        )
         intervals.append(BaseInterval(intervalNumber, quality))
         return Interval(Intervals=intervals)
 
     @classmethod
-    def GetValidIntervals(cls, rootNote: Note, listIntervals: List[Interval] = [], toHigher: bool = True) -> List[Interval]:
+    def GetValidIntervals(
+        cls, rootNote: Note, listIntervals: List[Interval] = [], toHigher: bool = True
+    ) -> List[Interval]:
         if listIntervals == []:
             listIntervals = ALL_INTERVALS
         outIntervals = []
@@ -475,8 +518,8 @@ class Interval(object):
             else:
                 return newNote, ValueError(
                     "Invalid from given starting note. "
-                    "Target: {}, Generated: {}".format(
-                        self, generatedInterval))
+                    "Target: {}, Generated: {}".format(self, generatedInterval)
+                )
         raise NotImplementedError()
 
     def Sub(self, other) -> List[Note, ValueError]:
@@ -490,8 +533,8 @@ class Interval(object):
             else:
                 return newNote, ValueError(
                     "Invalid from given starting note. "
-                    "Target: {}, Generated: {}".format(
-                        self, generatedInterval))
+                    "Target: {}, Generated: {}".format(self, generatedInterval)
+                )
         return NotImplemented
 
 
@@ -502,8 +545,12 @@ class IntervalsLibrary(object):
     Records: List[Record] = None
 
 
-CHROMATIC_AND_DIATONIC_INTERVALS = [Interval(*spec[:2]) for spec in MINOR_MAJOR_PERFECT_INTERVALS]
-PERTURBED_INTERVALS = [Interval(*spec[:2]) for spec in
-                       (AUGMENTED_DIMINISHED_INTERVALS + DOUBLY_AUGMENTED_DIMINISHED_INTERVALS)]
+CHROMATIC_AND_DIATONIC_INTERVALS = [
+    Interval(*spec[:2]) for spec in MINOR_MAJOR_PERFECT_INTERVALS
+]
+PERTURBED_INTERVALS = [
+    Interval(*spec[:2])
+    for spec in (AUGMENTED_DIMINISHED_INTERVALS + DOUBLY_AUGMENTED_DIMINISHED_INTERVALS)
+]
 ALL_INTERVALS = [Interval(*spec[:2]) for spec in ALL_INTERVALS_RAW]
 ALL_INTERVALS.sort(key=lambda x: x.TonalDistance)

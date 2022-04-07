@@ -1,5 +1,3 @@
-
-
 # Creating pseudo enum that work with Transcrypt
 class EnumElement(object):
     def __init__(self, name, value):
@@ -12,11 +10,13 @@ class EnumManager(object):
     KeyList = None
     ValuesList = None
 
-    def __init__(self, name):  #, **kwargs):
+    def __init__(self, name):  # , **kwargs):
         self.name = name
 
     def __str__(self):
-        return "<{} - name: {}, value: {}>".format(self.__class__, self.name, self.value)
+        return "<{} - name: {}, value: {}>".format(
+            self.__class__, self.name, self.value
+        )
 
     def __repr__(self):
         return str(self)

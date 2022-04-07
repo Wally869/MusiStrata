@@ -3,6 +3,7 @@ from typing import List, Tuple, Dict, Union
 
 from random import choice
 
+
 def FilterRepeated(elem: List) -> List:
     return list(set(elem))
 
@@ -17,7 +18,9 @@ def ComputeLengthSong(nbBeatsPerBar: int, nbBars: int, tempo: int):
 
 # Instead of iterating, could find from closed form equation
 # I'll do it later I guess
-def FindListNbBarsFromConstraints(nbBeatsPerBar: int, tempo: int, minLenSong: float, maxLenSong: float) -> List[int]:
+def FindListNbBarsFromConstraints(
+    nbBeatsPerBar: int, tempo: int, minLenSong: float, maxLenSong: float
+) -> List[int]:
     """
     minLenSong and maxLenSong in seconds
     """
@@ -33,5 +36,9 @@ def FindListNbBarsFromConstraints(nbBeatsPerBar: int, tempo: int, minLenSong: fl
     return possibilities
 
 
-def FindRandomNbBarsFromConstraints(nbBeatsPerBar: int, tempo: int, minLenSong: float, maxLenSong: float):
-    return choice(FindListNbBarsFromConstraints(nbBeatsPerBar, tempo, minLenSong, maxLenSong))
+def FindRandomNbBarsFromConstraints(
+    nbBeatsPerBar: int, tempo: int, minLenSong: float, maxLenSong: float
+):
+    return choice(
+        FindListNbBarsFromConstraints(nbBeatsPerBar, tempo, minLenSong, maxLenSong)
+    )

@@ -6,28 +6,23 @@ from .EnumManager import EnumManager_Ordered_Looping
 from dataclasses import dataclass, field
 
 
-
 # Values give the distance between notes in term of halftones
 # s denotes a Sharp
-ALL_NOTES = [
-    "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"
-]
+ALL_NOTES = ["C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"]
 
-ALL_STAFF_POSITIONS = [
-    "C", "D", "E", "F", "G", "A", "B"
-]
+ALL_STAFF_POSITIONS = ["C", "D", "E", "F", "G", "A", "B"]
 
 
 class NoteNames(EnumManager_Ordered_Looping):
-    KeyValuesMap={ALL_NOTES[i]: i for i in range(len(ALL_NOTES))}
-    KeyList=ALL_NOTES
-    ValuesList=[i for i in range(len(ALL_NOTES))]
+    KeyValuesMap = {ALL_NOTES[i]: i for i in range(len(ALL_NOTES))}
+    KeyList = ALL_NOTES
+    ValuesList = [i for i in range(len(ALL_NOTES))]
 
 
 class StaffPositions(EnumManager_Ordered_Looping):
-    KeyValuesMap={ALL_STAFF_POSITIONS[i]: i for i in range(len(ALL_STAFF_POSITIONS))}
-    KeyList=ALL_STAFF_POSITIONS
-    ValuesList=[i for i in range(len(ALL_STAFF_POSITIONS))]
+    KeyValuesMap = {ALL_STAFF_POSITIONS[i]: i for i in range(len(ALL_STAFF_POSITIONS))}
+    KeyList = ALL_STAFF_POSITIONS
+    ValuesList = [i for i in range(len(ALL_STAFF_POSITIONS))]
 
 
 # A note with a sharp is considered to belong to higher staff
@@ -43,14 +38,19 @@ NOTE_NAME_TO_STAFF = {
     "F": "F",
     "Fs": "G",
     "G": "G",
-    "Gs": "A"
+    "Gs": "A",
 }
+
 
 class Note(object):
     def __init__(self, Name: str = "A", Octave: int = 5):
         # can't call methods in init?
         if Name not in ALL_NOTES:
-            raise KeyError("'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(Name))
+            raise KeyError(
+                "'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(
+                    Name
+                )
+            )
 
         # Need to check max octave for Midi
         if type(Octave) != int:
@@ -73,7 +73,11 @@ class Note(object):
         except TypeError:
             raise TypeError("'{}' is not a valid note name. Expected type is str.")
         except KeyError:
-            raise KeyError("'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(newName))
+            raise KeyError(
+                "'{}' not a valid note name. Check Notes.ALL_NOTES for valid note names".format(
+                    newName
+                )
+            )
 
     @property
     def Octave(self) -> int:
@@ -134,10 +138,7 @@ class Note(object):
             else:
                 outName, deltaOctave = self._Name + other
 
-                return Note(
-                    Name=outName.name,
-                    Octave=self.Octave + deltaOctave
-                )
+                return Note(Name=outName.name, Octave=self.Octave + deltaOctave)
         else:
             return NotImplemented
 
@@ -150,22 +151,17 @@ class Note(object):
             else:
                 outName, deltaOctave = self._Name - other
 
-                return Note(
-                    Name=outName.name,
-                    Octave=self.Octave + deltaOctave
-                )
+                return Note(Name=outName.name, Octave=self.Octave + deltaOctave)
         else:
             return NotImplemented
 
     def ToDict(self):
-        dictRepr = {
-            "Name": self.Name,
-            "Octave": self.Octave
-        }
+        dictRepr = {"Name": self.Name, "Octave": self.Octave}
         return dictRepr
 
     def ToJSON(self):
         from json import dumps as _dumps
+
         dictRepr = self.ToDict()
         return _dumps(dictRepr)
 
@@ -176,6 +172,7 @@ class Note(object):
     @classmethod
     def FromJSON(cls, jsonData: str):
         from json import loads as _loads
+
         dictRepr = _loads(jsonData)
         return cls.FromDict(dictRepr)
 
@@ -193,7 +190,7 @@ class Note(object):
     @property
     def Frequency(self) -> float:
         # Using this as reference: https://pages.mtu.edu/~suits/notefreqs.html
-        return 16.35 * (2 ** self.Octave) * (2 ** (1 / 12)) ** self._Name.value
+        return 16.35 * (2**self.Octave) * (2 ** (1 / 12)) ** self._Name.value
 
     # Return distance between this note and another in term of semitones
     def GetTonalDistance(self, other) -> int:
@@ -204,10 +201,7 @@ class Note(object):
     # Returning a positive tonal distance
     def GetRootedTonalDistance(self, other) -> int:
         if self.__class__ is other.__class__:
-            return max(
-                self.Height - other.Height,
-                other.Height - self.Height
-            )
+            return max(self.Height - other.Height, other.Height - self.Height)
         return NotImplemented
 
     def GetStaffPositionAsEnumElem(self) -> StaffPositions:
@@ -217,9 +211,7 @@ class Note(object):
         return NOTE_NAME_TO_STAFF[self.Name]
 
     def GetStaffPositionAsInteger(self) -> int:
-        return StaffPositions(
-            self.GetStaffPositionAsLetter()
-        ).value
+        return StaffPositions(self.GetStaffPositionAsLetter()).value
 
     # This is order dependent. Self should be the root note of the chord
     def GetIntervalNumber(self, other: Note) -> int:

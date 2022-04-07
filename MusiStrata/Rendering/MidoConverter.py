@@ -11,21 +11,19 @@ from MusiStrata.Instruments import GetSignalFromInstrument
 midoMidiFile = mido.MidiFile
 midoMessage = mido.Message
 
-# Initial starting point. Used 50 before, but this causes some slight 
+# Initial starting point. Used 50 before, but this causes some slight
 # misalignment when opening the midi file in FL Studio
 START_TICK = 0
 
 # as default, 480 ticks per beat
 TICKS_PER_BEAT = 480
 
+
 def ConvertSong(song: Song, outfile: str) -> midoMidiFile:
     outMidoSong = mido.MidiFile(type=1)
 
     # create tempo message here. Maybe put this message in specific channel?
-    tempoMessage = mido.MetaMessage(
-        "set_tempo",
-        tempo=int(mido.tempo2bpm(song.Tempo))
-    )
+    tempoMessage = mido.MetaMessage("set_tempo", tempo=int(mido.tempo2bpm(song.Tempo)))
 
     # NEED A FIX: drums on track 10 so needs another solution if there is a drums track
     idChannel = 0
@@ -43,19 +41,29 @@ def ConvertSong(song: Song, outfile: str) -> midoMidiFile:
             elif type(trackData.Instrument) == int:
                 signal = trackData.Instrument
             else:
-                raise TypeError("In MidoConverter.ConvertSong: Track Instrument can only be a string name of instrument or an int")
+                raise TypeError(
+                    "In MidoConverter.ConvertSong: Track Instrument can only be a string name of instrument or an int"
+                )
             if idChannel == 9:
                 idChannel += 1
             realIdChannel = idChannel
 
             track.append(
                 mido.Message(
-                    "control_change", control=0, value=trackData.BankUsed, channel=realIdChannel, time=0
+                    "control_change",
+                    control=0,
+                    value=trackData.BankUsed,
+                    channel=realIdChannel,
+                    time=0,
                 )
             )
             track.append(
                 mido.Message(
-                    "control_change", control=32, value=trackData.BankUsed, channel=realIdChannel, time=0
+                    "control_change",
+                    control=32,
+                    value=trackData.BankUsed,
+                    channel=realIdChannel,
+                    time=0,
                 )
             )
 
@@ -70,12 +78,7 @@ def ConvertSong(song: Song, outfile: str) -> midoMidiFile:
         for m in messages:
             track.append(m)
 
-        track.append(
-            mido.MetaMessage(
-                type="end_of_track",
-                time=50
-            )
-        )
+        track.append(mido.MetaMessage(type="end_of_track", time=50))
 
         idChannel += 1
         outMidoSong.tracks.append(track)
@@ -124,7 +127,7 @@ def ConvertNoteStructToMidoMessage(noteStruct, deltaTime, channelId) -> midoMess
         note=noteStruct.Height,
         velocity=noteStruct.Velocity,
         time=int(deltaTime),
-        channel=channelId
+        channel=channelId,
     )
     return outMessage
 
@@ -140,7 +143,7 @@ def PrepTrack(track: Track, nbBeatsPerBar: int) -> List:
             noteon, noteoff = CreateEventsStructs(
                 soundEvent,
                 timeBar + soundEvent.Beat * TICKS_PER_BEAT,
-                soundEvent.Velocity
+                soundEvent.Velocity,
             )
             events += [noteon, noteoff]
 
@@ -166,11 +169,7 @@ def EventsToMido(events, channelId) -> List[midoMessage]:
         if id_event > 0:
             timedelta -= events[id_event - 1].Time
         messages.append(
-            ConvertNoteStructToMidoMessage(
-                events[id_event],
-                timedelta,
-                channelId
-            )
+            ConvertNoteStructToMidoMessage(events[id_event], timedelta, channelId)
         )
 
     return messages

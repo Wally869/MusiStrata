@@ -138,6 +138,7 @@ RAW_CHORDS = (
     MAJOR_CHORDS + MINOR_CHORDS + DOMINANT_CHORDS + DIMINISHED_CHORDS + AUGMENTED_CHORDS
 )
 
+
 for c in RAW_CHORDS:
     c["Chord"] = IChord(c["Intervals"])
     del c["Intervals"]

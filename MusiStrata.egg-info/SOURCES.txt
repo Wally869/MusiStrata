@@ -16,7 +16,6 @@ MusiStrata/Components/Notes.py
 MusiStrata/Components/Scales.py
 MusiStrata/Components/Structure.py
 MusiStrata/Components/__init__.py
-MusiStrata/Data/Chords.py
 MusiStrata/Data/Intervals.py
 MusiStrata/Data/__init__.py
 MusiStrata/Enums/__init__.py

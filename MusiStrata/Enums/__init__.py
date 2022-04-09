@@ -128,6 +128,13 @@ class NoteNames(EnumExtensions.LoopingOrderedEnum):
         elif self == NoteNames.G or self == NoteNames.Fs:
             return StaffPositions.G
 
+    @classmethod
+    def SafeFromInt(cls, value: Union[int, "NoteNames"]) -> "NoteNames":
+        if value.__class__ is NoteNames:
+            return value
+        return cls._value2member_map_[value]
+        
+
 
 class ScaleModes(Enum):
     Ionian = 0

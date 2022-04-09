@@ -72,15 +72,16 @@ class Scale(object):
     def GetScaleNotes(
         self, octave: int = 5, mode: str = "Ionian"
     ) -> List[Note]:
+        mode = ScaleModes.SafeFromStr(mode)
         # Get tone succession for the scale type
         tonesSuccession = self.Type.value
 
-        refNote = Note(Name=self.RefNote, Octave=octave)
+        refNote = Note(name=self.RefNote, octave=octave)
 
         # Reorganize tones_succession according to ScaleModess value (in different mode, tones_succession changes)
         tonesSuccession = (
-            tonesSuccession[ScaleModes(mode).value :]
-            + tonesSuccession[: ScaleModes(mode).value]
+            tonesSuccession[mode.value:]
+            + tonesSuccession[:mode.value]
         )
 
         # Create the reference note for the scale wanted and get notes
@@ -146,8 +147,7 @@ class Scale(object):
     def _BaseChordProgression(
         self, mode: Union[str, ScaleModes] = "Ionian"
     ) -> List[ChordBase]:
-        if type(mode) == str:
-            mode = ScaleModes.FromStr(mode)
+        mode = ScaleModes.SafeFromStr(mode)
         progression = [
             ChordBase.Major,
             ChordBase.Major,
@@ -173,6 +173,7 @@ class Scale(object):
         """
         https://musiccrashcourses.com/lessons/intervals_maj_min.html#:~:text=Intervals%20in%20Major%20Scales,to%20the%20scale%20degree%20numbers.
         """
+        extension = ScaleChordExtension.SafeFromStr(extension)
         if self.Type == "Major":
             return self._ChordExtensionMajor(extension)
         elif self.Type == "Minor":
@@ -207,7 +208,7 @@ class Scale(object):
         while tone >= 8:
             tone -= 8
         if type(mode) == str:
-            mode = ScaleModes.FromStr(mode)
+            mode = ScaleModes.SafeFromStr(mode)
         chordBase = self._BaseChordProgression(mode)[tone]
         chordExtensions = [
             (lambda x: x if type(x) == ChordExtension else self._ChordExtension(x))(ext)
@@ -222,7 +223,7 @@ class Scale(object):
     ) -> List[Chord]:
         while len(extensions) < 7:
             extensions.append([])
-        return [self.GetSingleChord2(tone, extensions[tone], mode) for tone in range(7)]
+        return [self.GetSingleChord(tone, extensions[tone], mode) for tone in range(7)]
 
     def GetChordsNotes(
         self,
@@ -231,7 +232,7 @@ class Scale(object):
         mode: Union[str, ScaleModes] = ScaleModes.Ionian,
     ):
         chords = self.GetChords(extensions=extensions, mode=mode)
-        notes = self.GetScaleNotes(referenceOctave=octave, mode=mode)
+        notes = self.GetScaleNotes(octave=octave, mode=mode)
         output = []
         for idElem in range(len(chords)):
             temp, _ = chords[idElem](notes[idElem])
@@ -246,7 +247,7 @@ class Scale(object):
         indices: List[Tuple[int]] = None,
         mode="Ionian",
     ) -> List[Note]:
-        baseNote = self.GetScaleNotes(referenceOctave=octave, mode=mode)[tone]
+        baseNote = self.GetScaleNotes(octave=octave, mode=mode)[tone]
         chord = self.GetSingleChord(tone, chord_extensions, mode)
         notes, _ = chord(baseNote, indices)
         return notes

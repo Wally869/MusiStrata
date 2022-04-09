@@ -85,7 +85,7 @@ class Note(object):
             else:
                 outName, deltaOctave = self._Name + other
 
-                return Note(Name=outName.name, Octave=self.Octave + deltaOctave)
+                return Note(name=outName.name, octave=self.Octave + deltaOctave)
         else:
             return NotImplemented
 
@@ -98,7 +98,7 @@ class Note(object):
             else:
                 outName, deltaOctave = self._Name - other
 
-                return Note(Name=outName.name, Octave=self.Octave + deltaOctave)
+                return Note(name=outName.name, octave=self.Octave + deltaOctave)
         else:
             return NotImplemented
 
@@ -186,8 +186,9 @@ class Note(object):
     @classmethod
     def FromHeight(cls, height: int) -> Note:
         octave = height // 12
-        name = NoteNames("A").GetElementFromValue(height - octave * 12).name
-        return Note(Name=name, Octave=octave - 1)
+        name_height = height - octave * 12
+        name = NoteNames.SafeFromInt(name_height).name
+        return Note(name=name, octave=octave)
 
     # TRANSCRYPT: Wrapping methods to use this library in the browser
     def Add(self, other):

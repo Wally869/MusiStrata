@@ -7,39 +7,37 @@ from dataclasses import dataclass, field
 
 
 class Note(object):
-    def __init__(self, Name: str = "A", Octave: int = 5):
-        Name = NoteNames.SafeFromStr(Name)
+    def __init__(self, name: str = "A", octave: int = 5):
+        self._Name = NoteNames.SafeFromStr(name)
         
         # Need to check max octave for Midi
-        if type(Octave) != int:
+        if type(octave) != int:
             raise TypeError("Octave must be a non-negative integer.")
-
-        if Octave < 0:
+        elif octave < 0:
             raise ValueError("Octave must be a non-negative integer.")
 
-        self._Name = Name
-        self._Octave = Octave
+        self._Octave = octave
 
     @property
     def Name(self) -> NoteNames:
         return self._Name.name
 
     @Name.setter
-    def Name(self, newName: str) -> None:
-        self._Name = NoteNames.SafeFromStr(newName)
+    def Name(self, new_name: str) -> None:
+        self._Name = NoteNames.SafeFromStr(new_name)
 
     @property
     def Octave(self) -> int:
         return self._Octave
 
     @Octave.setter
-    def Octave(self, newOctave: int) -> None:
-        if type(newOctave) != int:
+    def Octave(self, new_octave: int) -> None:
+        if type(new_octave) != int:
             raise TypeError("Octave must be a non-negative integer.")
         # Separating value checking from type checking
-        if newOctave < 0:
+        if new_octave < 0:
             raise ValueError("Octave must be a non-negative integer.")
-        self._Octave = newOctave
+        self._Octave = new_octave
 
     def __hash__(self):
         return self.Height
@@ -105,18 +103,18 @@ class Note(object):
             return NotImplemented
 
     def ToDict(self):
-        dictRepr = {"Name": self.Name, "Octave": self.Octave}
-        return dictRepr
+        dict_repr = {"Name": self.Name, "Octave": self.Octave}
+        return dict_repr
 
     def ToJSON(self):
         from json import dumps as _dumps
 
-        dictRepr = self.ToDict()
-        return _dumps(dictRepr)
+        dict_repr = self.ToDict()
+        return _dumps(dict_repr)
 
     @classmethod
-    def FromDict(cls, dictRepr: dict):
-        return Note(dictRepr["Name"], dictRepr["Octave"])
+    def FromDict(cls, dict_repr: dict):
+        return Note(dict_repr["Name"], dict_repr["Octave"])
 
     @classmethod
     def FromJSON(cls, jsonData: str):
@@ -127,9 +125,8 @@ class Note(object):
 
     # Added this to expand scales. Can also use Note + 12 for octave difference
     # but I thought additional method would be nice
-    def NewFromOctaveDifference(self, octaveDiff: int) -> Note:
-        newNote = self + 0
-        newNote.Octave += octaveDiff
+    def NewFromOctaveDifference(self, octave_diff: int) -> Note:
+        newNote = self + 12 * octave_diff
         return newNote
 
     @property

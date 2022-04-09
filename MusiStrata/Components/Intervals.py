@@ -12,12 +12,12 @@ from MusiStrata.Enums import IntervalQuality
 # Need to perform check on input arguments. Done in findtonaldistancefromotherspecs
 class BaseInterval(object):
     def __init__(
-        self, IntervalNumber: int, Quality: IntervalQuality
+        self, interval_number: int, quality: IntervalQuality
     ):  # , TonalDistance: int):
-        self.IntervalNumber = IntervalNumber
-        self.Quality = IntervalQuality.SafeFromStr(Quality)
+        self.IntervalNumber = interval_number
+        self.Quality = IntervalQuality.SafeFromStr(quality)
         self.TonalDistance = self.FindTonalDistanceFromNumberAndQuality(
-            IntervalNumber, Quality
+            interval_number, quality
         )
 
     def __str__(self) -> str:
@@ -104,12 +104,12 @@ class BaseInterval(object):
 
     @staticmethod
     def FindTonalDistanceFromNumberAndQuality(
-        intervalNumber: int, quality: IntervalQuality
+        interval_number: int, quality: IntervalQuality
     ) -> int:
         quality = IntervalQuality.SafeFromStr(quality)
         # This function gets us the tonal distance, but also ensures that correct parameters have been input
         for elem in ALL_INTERVALS_RAW:
-            if elem[0] == intervalNumber:
+            if elem[0] == interval_number:
                 elem[1] = IntervalQuality.SafeFromStr(elem[1])
                 if elem[1] == quality:
                     return elem[2]
@@ -117,31 +117,31 @@ class BaseInterval(object):
         raise KeyError(
             "Wrong Inputs: (IntervalNumber: {}, Quality: {}) "
             "is not a valid combination for an interval.".format(
-                intervalNumber, quality
+                interval_number, quality
             )
         )
 
     @classmethod
     def FindQualityFromNumberAndDistance(
-        cls, intervalNumber: int, tonalDistance: int
+        cls, interval_number: int, tonal_distance: int
     ) -> str:
         # Need to implement Augmented and Diminished intervals
         # function, or use bigger all_intervals_raw?
         for interval in ALL_INTERVALS:
             if (
-                interval.IntervalNumber == intervalNumber
-                and interval.TonalDistance == tonalDistance
+                interval.IntervalNumber == interval_number
+                and interval.TonalDistance == tonal_distance
             ):
                 return interval.Quality
         return None
 
     @classmethod
-    def GetValidIntervals(cls, rootNote: Note, listIntervals: List[Interval] = []):
-        if listIntervals == []:
-            listIntervals = ALL_INTERVALS
+    def GetValidIntervals(cls, root_note: Note, list_intervals: List[Interval] = []):
+        if list_intervals == []:
+            list_intervals = ALL_INTERVALS
         outIntervals = []
-        for interval in listIntervals:
-            _, err = interval.add(rootNote)
+        for interval in list_intervals:
+            _, err = interval.add(root_note)
             if err is None:
                 outIntervals.append(interval)
         return outIntervals
@@ -158,13 +158,13 @@ class BaseInterval(object):
 class Interval(object):
     def __init__(
         self,
-        IntervalNumber: int = -1,
-        Quality: IntervalQuality = IntervalQuality.Major,
+        interval_number: int = -1,
+        quality: IntervalQuality = IntervalQuality.Major,
         Intervals: List[Interval] = [],
     ):
-        if IntervalNumber == -1 and Intervals == []:
+        if interval_number == -1 and Intervals == []:
             raise ValueError("Interval: No empty constructor defined")
-        if type(IntervalNumber) == list:
+        if type(interval_number) == list:
             raise TypeError(
                 "Invalid Arguments. IntervalNumber should be an int. \n Use NamedParameters when creating an interval from other Intervals"
             )
@@ -218,13 +218,13 @@ class Interval(object):
                 validated.append(Interval(1, IntervalQuality.Perfect))
 
         self.Intervals = Intervals
-        if IntervalNumber > 8:
+        if interval_number > 8:
             self.Intervals = [
                 Interval(8, "Perfect"),
-                Interval(IntervalNumber - 7, Quality),
+                Interval(interval_number - 7, quality),
             ]
-        elif IntervalNumber != -1:
-            self.Intervals = [BaseInterval(IntervalNumber, Quality)]
+        elif interval_number != -1:
+            self.Intervals = [BaseInterval(interval_number, quality)]
 
     # Properties exposing the sublying properties of the last interval in self.Intervals
     @property
@@ -346,19 +346,19 @@ class Interval(object):
         return self[-1].ShortStr()
 
     @staticmethod
-    def FindTonalDistanceFromNumberAndQuality(intervalNumber: int, quality: str) -> int:
+    def FindTonalDistanceFromNumberAndQuality(interval_number: int, quality: str) -> int:
         # This function gets us the tonal distance, but also ensures that correct parameters have been input
         return BaseInterval.FindTonalDistanceFromNumberAndQuality(
-            intervalNumber, quality
+            interval_number, quality
         )
 
     @classmethod
     def FindQualityFromNumberAndDistance(
-        cls, intervalNumber: int, tonalDistance: int
+        cls, interval_number: int, tonal_distance: int
     ) -> str:
         # Need to implement Augmented and Diminished intervals
         return BaseInterval.FindQualityFromNumberAndDistance(
-            intervalNumber, tonalDistance
+            interval_number, tonal_distance
         )
 
     @classmethod
@@ -381,19 +381,19 @@ class Interval(object):
 
     @classmethod
     def GetValidIntervals(
-        cls, rootNote: Note, listIntervals: List[Interval] = [], toHigher: bool = True
+        cls, root_note: Note, intervals: List[Interval] = [], toHigher: bool = True
     ) -> List[Interval]:
-        if listIntervals == []:
-            listIntervals = ALL_INTERVALS
-        outIntervals = []
-        for interval in listIntervals:
+        if intervals == []:
+            intervals = ALL_INTERVALS
+        out_intervals = []
+        for interval in intervals:
             if toHigher:
-                _, err = rootNote + interval
+                _, err = root_note + interval
             else:
-                _, err = rootNote - interval
+                _, err = root_note - interval
             if err is None:
-                outIntervals.append(interval)
-        return outIntervals
+                out_intervals.append(interval)
+        return out_intervals
 
     # TRANSCRYPT: Wrapping methods to use this library in the browser
     def Add(self, other) -> List[Note, ValueError]:

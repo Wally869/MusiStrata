@@ -53,9 +53,9 @@ MINOR_FROM_MAJOR = {
 
 
 class Scale(object):
-    def __init__(self, RefNote: Union[str, NoteNames] = "A", ScaleType: Union[str, Mode] = "Major"):
-        self.RefNote = NoteNames.SafeFromStr(RefNote)
-        self.Type = Mode.SafeFromStr(ScaleType)
+    def __init__(self, ref_note: Union[str, NoteNames] = "A", scale_type: Union[str, Mode] = "Major"):
+        self.RefNote = NoteNames.SafeFromStr(ref_note)
+        self.Type = Mode.SafeFromStr(scale_type)
 
     def __str__(self):
         return "Scale({})".format(self.RefNote.name + "-" + self.Type.name)
@@ -70,12 +70,12 @@ class Scale(object):
             return self.RefNote == other.RefNote and self.Type == other.Type
 
     def GetScaleNotes(
-        self, referenceOctave: int = 5, mode: str = "Ionian"
+        self, octave: int = 5, mode: str = "Ionian"
     ) -> List[Note]:
         # Get tone succession for the scale type
         tonesSuccession = self.Type.value
 
-        refNote = Note(Name=self.RefNote, Octave=referenceOctave)
+        refNote = Note(Name=self.RefNote, Octave=octave)
 
         # Reorganize tones_succession according to ScaleModess value (in different mode, tones_succession changes)
         tonesSuccession = (
@@ -128,10 +128,10 @@ class Scale(object):
         return KeyError
 
     def GetPentatonicScaleNotes(
-        self, referenceOctave: int = 5, mode: str = "Ionian"
+        self, octave: int = 5, mode: str = "Ionian"
     ) -> List[Note]:
         # Make use of GetScaleNotes method
-        allScaleNotes = self.GetScaleNotes(referenceOctave=referenceOctave, mode=mode)
+        allScaleNotes = self.GetScaleNotes(referenceOctave=octave, mode=mode)
 
         # only keep notes where there is a difference of a whole tone
         # compared to previous in scale
@@ -226,12 +226,12 @@ class Scale(object):
 
     def GetChordsNotes(
         self,
-        referenceOctave: int = 5,
+        octave: int = 5,
         extensions: List[List[Union[ChordExtension, ScaleChordExtension]]] = [],
         mode: Union[str, ScaleModes] = ScaleModes.Ionian,
     ):
         chords = self.GetChords(extensions=extensions, mode=mode)
-        notes = self.GetScaleNotes(referenceOctave=referenceOctave, mode=mode)
+        notes = self.GetScaleNotes(referenceOctave=octave, mode=mode)
         output = []
         for idElem in range(len(chords)):
             temp, _ = chords[idElem](notes[idElem])
@@ -240,22 +240,22 @@ class Scale(object):
 
     def GetSingleChordNotes(
         self,
-        refTone: int,
-        refOctave: int,
-        chordExtensions: List[ChordExtension] = [],
+        tone: int,
+        octave: int,
+        chord_extensions: List[ChordExtension] = [],
         indices: List[Tuple[int]] = None,
         mode="Ionian",
     ) -> List[Note]:
-        baseNote = self.GetScaleNotes(referenceOctave=refOctave, mode=mode)[refTone]
-        chord = self.GetSingleChord(refTone, chordExtensions, mode)
+        baseNote = self.GetScaleNotes(referenceOctave=octave, mode=mode)[tone]
+        chord = self.GetSingleChord(tone, chord_extensions, mode)
         notes, _ = chord(baseNote, indices)
         return notes
 
 
 def ExtendScaleNotes(
-    scaleNotes: List[Note],
-    extensionFactor: Union[int, float],
-    singleDirection: bool = False,
+    scale_notes: List[Note],
+    extension_factor: Union[int, float],
+    single_direction: bool = False,
     direction: str = "+",
 ) -> List[Note]:
     """
@@ -266,24 +266,24 @@ def ExtendScaleNotes(
     when passing a float, compute an int and recursively call ExtendScaleNotes
     """
 
-    if type(extensionFactor) == float:
-        intExtensionFactor = int(extensionFactor * len(scaleNotes))
+    if type(extension_factor) == float:
+        intExtensionFactor = int(extension_factor * len(scale_notes))
         return ExtendScaleNotes(
-            scaleNotes, intExtensionFactor, singleDirection, direction
+            scale_notes, intExtensionFactor, single_direction, direction
         )
 
     # ensure scaleNotes are sorted in ascending order
-    scaleNotes = sorted(scaleNotes, key=lambda x: x.Height)
+    scale_notes = sorted(scale_notes, key=lambda x: x.Height)
 
     directions = ["+", "-"]
     # Get number of elements
-    if singleDirection:
+    if single_direction:
         directions = [direction]
 
-    outScaleNotes = [n for n in scaleNotes]
+    outScaleNotes = [n for n in scale_notes]
     for currDirection in directions:
         addedElements = 0
-        refNotes = scaleNotes
+        refNotes = scale_notes
         nbOctaves = 1
         tonalDelta = 12
         if currDirection == "-":
@@ -292,9 +292,9 @@ def ExtendScaleNotes(
             # if going down, pool note must be reversed
             refNotes = refNotes[::-1]
 
-        while addedElements < extensionFactor:
+        while addedElements < extension_factor:
             for note in refNotes:
-                if addedElements > extensionFactor:
+                if addedElements > extension_factor:
                     break
                 outScaleNotes.append(note + nbOctaves * tonalDelta)
                 addedElements += 1

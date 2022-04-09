@@ -161,27 +161,27 @@ class Note(object):
 
     # This is order dependent. Self should be the root note of the chord
     def GetIntervalNumber(self, other: Note) -> int:
-        if self.__class__ is other.__class__:
-            staff1 = self.GetStaffPositionAsEnumElem()
-            staff2 = other.GetStaffPositionAsEnumElem()
-
-            outValue = 0
-            while staff1.value != staff2.value:
-                outValue += 1
-                staff1 = (staff1 + 1)[0]
-
-            # lowest note is root of chord and therefore the base for interval calculation
-            # Incrementing by one so that it makes sense (a A - B chord is a second, but this return 1)
+        if self.__class__ is not other.__class__:
+            raise TypeError("Note - GetIntervalError requires Note input.")
+            
+        staff1 = self.GetStaffPositionAsEnumElem()
+        staff2 = other.GetStaffPositionAsEnumElem()
+        outValue = 0
+        while staff1.value != staff2.value:
             outValue += 1
-            # adding exception for octave
-            if outValue == 1:
-                if abs(self - other) <= 2:
-                    outValue = 1
-                else:
-                    outValue = 8
+            staff1 = (staff1 + 1)[0]
 
-            return outValue
-        raise TypeError("Note - GetIntervalError requires Note input.")
+        # lowest note is root of chord and therefore the base for interval calculation
+        # Incrementing by one so that it makes sense (a A - B chord is a second, but this return 1)
+        outValue += 1
+        # adding exception for octave
+        if outValue == 1:
+            if abs(self - other) <= 2:
+                outValue = 1
+            else:
+                outValue = 8
+
+        return outValue
 
     @classmethod
     def FromHeight(cls, height: int) -> Note:

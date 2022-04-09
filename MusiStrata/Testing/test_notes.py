@@ -51,7 +51,7 @@ def test_interval_number():
     n2 = Note("E", 5)
     assert n.GetIntervalNumber(n2)
 
-def test_from_value():
+def test_from_height():
     n = Note("A", 4)
     height_note = n.Height
     n2 = Note.FromHeight(height_note)

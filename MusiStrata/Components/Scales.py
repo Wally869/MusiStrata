@@ -91,8 +91,8 @@ class Scale(object):
 
         return scaleNotes
 
-    def GetScaleNotesNames(self, mode: str = "Ionian") -> List[str]:
-        return [n.Name for n in self.GetScaleNotes(mode=mode)]
+    def GetNotesNames(self, mode: str = "Ionian") -> List[str]:
+        return [n.Name for n in self.GetNotes(mode=mode)]
 
     # Implementing circle of fifths here
     def GetNeighbourScales(self) -> List[Scale]:
@@ -117,22 +117,23 @@ class Scale(object):
             return self.GetMajorFromMinorByRefNote(self.RefNote)
 
     @staticmethod
-    def GetMinorFromMajorByRefNote(refNote: str) -> Scale:
-        return Scale(RefNote=MINOR_FROM_MAJOR[refNote], ScaleType="Minor")
+    def GetMinorFromMajorByRefNote(ref_note: str) -> Scale:
+        return Scale(ref_note=MINOR_FROM_MAJOR[ref_note], scale_type="Minor")
 
     @staticmethod
-    def GetMajorFromMinorByRefNote(refNote: str) -> Scale:
+    def GetMajorFromMinorByRefNote(ref_note: str) -> Scale:
         keys = list(MINOR_FROM_MAJOR.keys())
         for k in keys:
-            if MINOR_FROM_MAJOR[k] == refNote:
-                return Scale(RefNote=k, ScaleType="Major")
+            if MINOR_FROM_MAJOR[k] == ref_note:
+                return Scale(ref_note=k, scale_type="Major")
         return KeyError
 
-    def GetPentatonicScaleNotes(
-        self, octave: int = 5, mode: str = "Ionian"
+    def GetPentatonicNotes(
+        self, octave: int = 5, mode: Union[str, ScaleModes] = "Ionian"
     ) -> List[Note]:
+        mode = ScaleModes.SafeFromStr(mode)
         # Make use of GetScaleNotes method
-        allScaleNotes = self.GetScaleNotes(referenceOctave=octave, mode=mode)
+        allScaleNotes = self.GetScaleNotes(octave=octave, mode=mode)
 
         # only keep notes where there is a difference of a whole tone
         # compared to previous in scale
@@ -178,8 +179,9 @@ class Scale(object):
             return self._ChordExtensionMajor(extension)
         elif self.Type == Mode.Minor:
             return self._ChordExtensionMinor(extension)
-
-    def _ChordExtensionMajor(self, extension: ScaleChordExtension) -> ChordExtension:
+    
+    @classmethod
+    def _ChordExtensionMajor(cls, extension: ScaleChordExtension) -> ChordExtension:
         if extension == ScaleChordExtension.Seventh:
             return ChordExtension.M7
         elif extension == ScaleChordExtension.Ninth:
@@ -189,7 +191,8 @@ class Scale(object):
         elif extension == ScaleChordExtension.Thirteenth:
             return ChordExtension.M13
 
-    def _ChordExtensionMinor(self, extension: ScaleChordExtension) -> ChordExtension:
+    @classmethod
+    def _ChordExtensionMinor(cls, extension: ScaleChordExtension) -> ChordExtension:
         if extension == ScaleChordExtension.Seventh:
             return ChordExtension.m7
         elif extension == ScaleChordExtension.Ninth:

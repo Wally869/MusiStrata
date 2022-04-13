@@ -75,7 +75,7 @@ class ChordExtension(Enum):
     EleventhDiminished = (11, "Diminished")
     D11 = (11, "Diminished")
     ThirteenthMajor = (13, "Major")
-    M13 = (13, "Perfect")
+    M13 = (13, "Major")
     ThirteenthMinor = (13, "Minor")
     m13 = (13, "Minor")
 
@@ -143,7 +143,10 @@ class NoteNames(EnumExtensions.LoopingOrderedEnum):
         if value.__class__ is NoteNames:
             return value
         return cls._value2member_map_[value]
-        
+    
+    @classmethod
+    def list(cls):
+        return list(map(lambda c: c.name, cls))
 
 
 class ScaleModes(Enum):

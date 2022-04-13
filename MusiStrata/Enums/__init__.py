@@ -43,12 +43,22 @@ class ScaleChordExtension(Enum):
         for member in cls._member_map_.keys():
             if name == member:
                 return cls._member_map_[name]
-        raise KeyError("ScaleChordExtension - FromStr: {} is not a valid key", name)
+        raise KeyError("ScaleChordExtension - SafeFromStr: {} is not a valid key", name)
 
     @classmethod
-    def FromInt(cls, val: int) -> "ScaleChordExtension":
+    def SafeFromInt(cls, val: int) -> "ScaleChordExtension":
+        if val.__class__ is ScaleChordExtension:
+            return val        
         if val == 7:
-            return
+            return cls.Seventh
+        elif val == 9:
+            return cls.Ninth
+        elif val == 11:
+            return cls.Eleventh
+        elif val == 13:
+            return cls.Thirteenth
+        else:
+            raise ValueError("ScaleChordExtension - SafeFromInt: {} is not a valid value", val)
 
 
 class ChordExtension(Enum):
@@ -169,7 +179,7 @@ class ScaleModes(Enum):
         for member in cls._member_map_.keys():
             if name == member:
                 return cls._member_map_[name]
-        raise KeyError("ScaleModes - FromStr: {} is not a valid key", name)
+        raise KeyError("ScaleModes - SafeFromStr: {} is not a valid key", name)
 
 
 class Mode(Enum):
@@ -184,7 +194,7 @@ class Mode(Enum):
         for member in cls._member_map_.keys():
             if name == member:
                 return cls._member_map_[name]
-        raise KeyError("Mode - FromStr: {} is not a valid key", name)
+        raise KeyError("Mode - SafeFromStr: {} is not a valid key", name)
 
 
 class ScaleTones(Enum):

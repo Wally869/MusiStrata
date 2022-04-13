@@ -171,12 +171,12 @@ class Scale(object):
 
     def _ChordExtension(self, extension: ScaleChordExtension) -> ChordExtension:
         """
-        https://musiccrashcourses.com/lessons/intervals_maj_min.html#:~:text=Intervals%20in%20Major%20Scales,to%20the%20scale%20degree%20numbers.
+            https://musiccrashcourses.com/lessons/intervals_maj_min.html#:~:text=Intervals%20in%20Major%20Scales,to%20the%20scale%20degree%20numbers.
         """
         extension = ScaleChordExtension.SafeFromStr(extension)
-        if self.Type == "Major":
+        if self.Type == Mode.Major:
             return self._ChordExtensionMajor(extension)
-        elif self.Type == "Minor":
+        elif self.Type == Mode.Minor:
             return self._ChordExtensionMinor(extension)
 
     def _ChordExtensionMajor(self, extension: ScaleChordExtension) -> ChordExtension:

@@ -51,6 +51,10 @@ class SoundEvent:
         dictRepr = _loads(jsonData)
         return cls.FromDict(dictRepr)
 
+    @classmethod
+    def FromNotes(beat: float, duration: float, notes: List[Note]) -> List["SoundEvent"]:
+        return [SoundEvent(Beat=beat, Duration=duration, Note=note) for note in notes]
+
 
 def GenerateSoundEventsFromListNotes(beat: float, duration: float, notes: List[Note]):
     return [SoundEvent(Beat=beat, Duration=duration, Note=note) for note in notes]
@@ -160,11 +164,11 @@ class Track:
 
     def __str__(self):
         if self.IsDrumsTrack:
-            outStr = "Drum Track - "
+            outStr = "DrumsTrack("
         else:
-            outStr = "Track - "
-
-        return outStr + self.Name + " - " + self.Instrument
+            outStr = "Track("
+        
+        return outStr + self.Name + " - " + ("NA" if self.Instrument == "" else self.Instrument) + ")"
 
     def __repr__(self):
         return str(self)
@@ -175,6 +179,9 @@ class Track:
         if self.__class__ is other.__class__:
             outTrack = self
             outTrack.Bars = outTrack.Bars + other.Bars
+            return outTrack
+        elif other.__class__ is Bar:
+            outTrack = Track(self.Name, self.Instrument, self.Bars[:] + [other], self.IsDrumsTrack, self.BankUsed)
             return outTrack
         else:
             return NotImplemented

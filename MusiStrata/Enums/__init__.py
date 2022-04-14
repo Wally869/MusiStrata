@@ -4,6 +4,12 @@ from enum import Enum
 from MusiStrata.Utils import EnumExtensions
 
 
+class TrackType(Enum):
+    Instrument = 0,
+    Drums = 1,
+    Sample = 2
+
+
 class ChordBase(Enum):
     Major = [(1, "Perfect"), (3, "Major"), (5, "Perfect")]
     M = [(1, "Perfect"), (3, "Major"), (5, "Perfect")]

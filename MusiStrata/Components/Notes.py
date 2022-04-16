@@ -138,6 +138,11 @@ class Note(object):
         # Using this as reference: https://pages.mtu.edu/~suits/notefreqs.html
         return 16.35 * (2**self.Octave) * (2 ** (1 / 12)) ** self._Name.value
 
+    def StaffDistance(self, other: "Note") -> int:
+        if self.__class__ is other.__class__:
+            pass
+        raise NotImplementedError("Not Implemented Yet")
+
     # Return distance between this note and another in term of semitones
     def GetTonalDistance(self, other) -> int:
         if self.__class__ is other.__class__:

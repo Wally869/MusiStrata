@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List, Tuple, Dict, Union
 
-from MusiStrata.Enums import NoteNames, StaffPositions
+from MusiStrata.Enums import NoteNames
 
 from dataclasses import dataclass, field
 
@@ -140,7 +140,7 @@ class Note(object):
 
     def StaffDistance(self, other: "Note") -> int:
         if self.__class__ is other.__class__:
-            pass
+            return abs(self._Name.ToStaffPosition().value - other._Name.ToStaffPosition().value)
         raise NotImplementedError("Not Implemented Yet")
 
     # Return distance between this note and another in term of semitones
@@ -155,14 +155,14 @@ class Note(object):
             return max(self.Height - other.Height, other.Height - self.Height)
         return NotImplemented
 
-    def GetStaffPositionAsEnumElem(self) -> StaffPositions:
+    def GetStaffPositionAsEnumElem(self) -> "StaffPositions":
         return self._Name.ToStaffPosition()
 
     def GetStaffPositionAsLetter(self) -> str:
         return self._Name.ToStaffPosition().name
 
     def GetStaffPositionAsInteger(self) -> int:
-        return StaffPositions(self.GetStaffPositionAsLetter()).value
+        return self._Name.ToStaffPosition().value   #StaffPositions(self.GetStaffPositionAsLetter()).value
 
     # This is order dependent. Self should be the root note of the chord
     def GetIntervalNumber(self, other: Note) -> int:

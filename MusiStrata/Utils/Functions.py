@@ -72,6 +72,11 @@ def _MinimizeDistance_MoreNotesInBase(notes_1: List[Note], notes_2: List[Note], 
 
 
 def _MinimizeDistance_MoreNotesInBase_WithPadding(notes_1: List[Note], notes_2: List[Note]) -> List[Note]:
+    """
+        Smoothen transition between notes_1 and notes_2 with len(notes_1) > len(notes_2) with padding allowed. 
+        Find all combinations of notes with length of notes_2 padded by duplicating notes, then find combination
+        that minimizes staff distance, adjust octave height and prune solutions that end up with twice the same note.   
+    """
     delta_len = len(notes_1) - len(notes_2)
     #perms = list(product(notes_2, delta_len))
     perms_base = [list(elem) for elem in list(permutations(notes_2))]
@@ -86,30 +91,28 @@ def _MinimizeDistance_MoreNotesInBase_WithPadding(notes_1: List[Note], notes_2: 
         curr = combinations[id_perm]
         summed = 0
         for id_elem in range(len(curr)):
-            summed += distance(notes_1[id_elem], curr[id_elem])
+            summed += notes_1[id_elem].StaffDistance(curr[id_elem])  # distance(notes_1[id_elem], curr[id_elem])
         distances.append((id_perm, summed))
-    """
-    # find lowest  
-    min_distance = 999
-    chosen_id = 0
-    for id_elem in range(len(distances)):
-        if distances[id_elem] < min_distance:
-            min_distance = distances[id_elem]
-            chosen_id = id_elem
-    """
+
     # sort by distance  
     distances = sorted(distances, key=lambda x: x[1])
-    outputs = []
+    # get value min and prune
+    min_distance = distances[0][1]
+    #distances = list(filter(lambda x: x[1] == min_distance, distances))
+    pruned = []
     for elem in distances:
         curr_notes = combinations[elem[0]]
         curr_notes = AdjustOctaves(notes_1, curr_notes)
         if len(set(curr_notes)) == len(curr_notes):
-            outputs.append(curr_notes)
-            break
-    #out_notes = notes_2 + perms[chosen_id]
-    # now minimize tonal pairwise distance 
-    #out_notes = AdjustOctaves(notes_1, out_notes)
-    return outputs[0]
+            # compute tonal distance
+            summed_tonal_distance = 0
+            for id_note in range(len(curr_notes)):
+                summed_tonal_distance += abs(curr_notes[id_note] - notes_1[id_note])
+            pruned.append((summed_tonal_distance, curr_notes))
+    
+    pruned = sorted(pruned, key=lambda x: x[0])
+    return pruned[0][1]
+
 
 
 def _MinimizeDistance_MoreNotesInBase_NoPadding(notes_1: List[Note], notes_2: List[Note]) -> List[Note]:
@@ -161,15 +164,7 @@ def _MinimizeDistance_EqualNotes(notes_1: List[Note], notes_2: List[Note]) -> Li
         for id_elem in range(len(perm)):
             summed += distance(notes_1[id_elem], perm[id_elem])
         distances.append((id_perm, summed))
-    """
-    # find lowest  
-    min_distance = 999
-    chosen_id = 0
-    for id_elem in range(len(distances)):
-        if distances[id_elem] < min_distance:
-            min_distance = distances[id_elem]
-            chosen_id = id_elem
-    """
+
     # sort by distance  
     distances = sorted(distances, key=lambda x: x[1])
     outputs = []
@@ -178,9 +173,7 @@ def _MinimizeDistance_EqualNotes(notes_1: List[Note], notes_2: List[Note]) -> Li
         curr_notes = AdjustOctaves(notes_1, curr_notes)
         if len(set(curr_notes)) == len(curr_notes):
             outputs.append(curr_notes)
-    #out_notes = perms[chosen_id]
-    # now minimize tonal pairwise distance 
-    #out_notes = AdjustOctaves(notes_1, out_notes)
+
     return outputs[0]
 
 

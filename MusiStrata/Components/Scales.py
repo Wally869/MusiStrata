@@ -92,7 +92,7 @@ class Scale(object):
         return scaleNotes
 
     def GetNotesNames(self, mode: str = "Ionian") -> List[str]:
-        return [n.Name for n in self.GetNotes(mode=mode)]
+        return [n.Name for n in self.GetScaleNotes(mode=mode)]
 
     # Implementing circle of fifths here
     def GetNeighbourScales(self) -> List[Scale]:
@@ -151,7 +151,7 @@ class Scale(object):
         mode = ScaleModes.SafeFromStr(mode)
         progression = [
             ChordBase.Major,
-            ChordBase.Major,
+            ChordBase.Minor,
             ChordBase.Minor,
             ChordBase.Major,
             ChordBase.Major,
@@ -160,7 +160,7 @@ class Scale(object):
         ]
         if self.Type == "Minor":
             progression = [
-                ChordBase.Major,
+                ChordBase.Minor,
                 ChordBase.Diminished,
                 ChordBase.Major,
                 ChordBase.Minor,

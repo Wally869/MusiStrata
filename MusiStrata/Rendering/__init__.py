@@ -9,6 +9,8 @@ class RenderFormats(Enum):
     MIDI = 0
     LMMS = 1
     WAV = 2
+    LILYPOND = 3
+    ABC = 4
 
 
 def Render(song: Song, outfile: str, format: RenderFormats):
@@ -20,6 +22,10 @@ def Render(song: Song, outfile: str, format: RenderFormats):
         raise NotImplementedError("Rendering - Format Not Implemented: LMMS")
     elif format == RenderFormats.WAV:
         raise NotImplementedError("Rendering - Format Not Implemented: WAV")
+    elif format == RenderFormats.LILYPOND:
+        raise NotImplementedError("Rendering - Format Not Implemented: LILYPOND")
+    elif format == RenderFormats.ABC:
+        raise NotImplementedError("Rendering - Format Not Implemented: ABC")
     else:
         raise ValueError("Render - Invalid Format")
 

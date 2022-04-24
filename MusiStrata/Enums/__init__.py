@@ -166,19 +166,20 @@ class ScaleModes(Enum):
 
     @classmethod
     def ToString(cls) -> str:
+        # not useful since can use property name  
         if cls == ScaleModes.Ionian:
             return "Ionian"
-        elif cls == ScaleModes.Ionian:
+        elif cls == ScaleModes.Dorian:
             return "Dorian"
-        elif cls == ScaleModes.Ionian:
+        elif cls == ScaleModes.Phrygian:
             return "Phrygian"
-        elif cls == ScaleModes.Ionian:
+        elif cls == ScaleModes.Lydian:
             return "Lydian"
-        elif cls == ScaleModes.Ionian:
+        elif cls == ScaleModes.Mixolydian:
             return "Mixolydian"
-        elif cls == ScaleModes.Ionian:
+        elif cls == ScaleModes.Aeolian:
             return "Aeolian"
-        elif cls == ScaleModes.Ionian:
+        elif cls == ScaleModes.Locrian:
             return "Locrian"
 
     @classmethod
@@ -189,6 +190,16 @@ class ScaleModes(Enum):
             if name == member:
                 return cls._member_map_[name]
         raise KeyError("ScaleModes - SafeFromStr: {} is not a valid key", name)
+
+    @classmethod
+    def SafeFromInt(cls, value: int) -> "ScaleModes":
+        if value.__class__ is ScaleModes:
+            return value
+        for elem in cls:
+            if elem.value == value:
+                return elem
+        raise KeyError("ScaleModes - SafeFromInt: {} is not a valid key", value)
+             
 
 
 class Mode(Enum):

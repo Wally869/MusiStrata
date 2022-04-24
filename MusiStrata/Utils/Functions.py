@@ -24,11 +24,11 @@ def _MinimizeDistance_LessNotesInBase(notes_1: List[Note], notes_2: List[Note]) 
         Find the subset of notes from notes_2 which minimizes distance from notes_1.
         Remaining notes will be considered as chord extensions, and set above the other notes. 
     """
-    perms = [list(elem) for elem in product(notes_2, len(notes_1))]
+    perms = [list(elem) for elem in product(notes_2, repeat=len(notes_1))]
 
     distances = []
     for perm in perms:
-        curr = notes_2[:] + perm
+        curr = perm  #notes_2[:] + perm
         summed = 0
         for id_elem in range(len(curr)):
             summed += distance(notes_1[id_elem], curr[id_elem])
@@ -41,7 +41,7 @@ def _MinimizeDistance_LessNotesInBase(notes_1: List[Note], notes_2: List[Note]) 
         if distances[id_elem] < min_distance:
             min_distance = distances[id_elem]
             chosen_id = id_elem
-    
+
     out_notes = perms[chosen_id]
     # gotta find missing from out_notes and save them on the side
     missing: List[Note] = []
@@ -57,11 +57,11 @@ def _MinimizeDistance_LessNotesInBase(notes_1: List[Note], notes_2: List[Note]) 
         if elem.Height > max_height:
             max_height = elem.Height
 
-    for id_elem in range(missing):
-        while(missing[id_elem].height < max_height):
+    for id_elem in range(len(missing)):
+        while(missing[id_elem].Height < max_height):
             missing[id_elem] = missing[id_elem] + 12
 
-    return out_notes + missing
+    return out_notes   #+ missing
 
 
 def _MinimizeDistance_MoreNotesInBase(notes_1: List[Note], notes_2: List[Note], can_pad: bool = False) -> List[Note]:

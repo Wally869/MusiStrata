@@ -246,12 +246,12 @@ class Scale(object):
         self,
         tone: int,
         octave: int,
-        chord_extensions: List[ChordExtension] = [],
+        extensions: List[ChordExtension] = [],
         indices: List[Tuple[int]] = None,
         mode="Ionian",
     ) -> List[Note]:
         baseNote = self.GetScaleNotes(octave=octave, mode=mode)[tone]
-        chord = self.GetSingleChord(tone, chord_extensions, mode)
+        chord = self.GetSingleChord(tone, extensions, mode)
         notes, _ = chord(baseNote, indices)
         return notes
 

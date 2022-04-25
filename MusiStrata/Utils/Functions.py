@@ -181,11 +181,13 @@ def MinimizeDistance(notes_1: List[Note], notes_2: List[Note], can_pad: bool = T
     """
         Minimize distance between notes of 2 chords. Consider first notes first chord as immutable
     """
+    smoothed: List[Note]
     if len(notes_1) == len(notes_2):
-        return _MinimizeDistance_EqualNotes(notes_1, notes_2)
+        smoothed = _MinimizeDistance_EqualNotes(notes_1, notes_2)
     elif len(notes_1) > len(notes_2):
-        return _MinimizeDistance_MoreNotesInBase(notes_1, notes_2, can_pad)
+        smoothed = _MinimizeDistance_MoreNotesInBase(notes_1, notes_2, can_pad)
     else:
-        return _MinimizeDistance_LessNotesInBase(notes_1, notes_2)
+        smoothed = _MinimizeDistance_LessNotesInBase(notes_1, notes_2)
 
-    
+    return sorted(smoothed, key=lambda x : x.Height)
+

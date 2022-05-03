@@ -213,6 +213,8 @@ class Scale(object):
         if type(mode) == str:
             mode = ScaleModes.SafeFromStr(mode)
         chordBase = self._BaseChordProgression(mode)[tone]
+        if type(extensions) != list:
+            extensions = [extensions]
         chordExtensions = [
             (lambda x: x if type(x) == ChordExtension else self._ChordExtension(x))(ext)
             for ext in extensions
@@ -226,6 +228,11 @@ class Scale(object):
     ) -> List[Chord]:
         while len(extensions) < 7:
             extensions.append([])
+        """
+        for i in range(7):
+            if type(extensions[i]) != list:
+                extensions[i] = [extensions[i]]
+        """
         return [self.GetSingleChord(tone, extensions[tone], mode) for tone in range(7)]
 
     def GetChordsNotes(

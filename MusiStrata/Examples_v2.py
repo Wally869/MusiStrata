@@ -6,15 +6,18 @@ from random import seed, choice
 from copy import deepcopy
 from os import path, mkdir
 
+from random import choice
 
 CHORD_PROGRESSION = [0, 4, 5, 3]
 
+from MusiStrata import ScaleChordExtension as SCE
 
 def GenerateExample1():
     sc = Scale("C", "Major")
-    extensions = [None, CE.m7, CE.m9, CE.m7, [CE.P11], None, None]
-    sc_chords = sc.GetChordsProgression(extensions=extensions)
-    sc_notes = sc.GetScaleNotes(4)
+    extensions = [[CE.m7], [CE.m7], [CE.m9], [CE.m7], [CE.P11], [CE.m7], [CE.m7]]
+    extensions = [choice([SCE.Seventh, SCE.Ninth]) for i in range(7)]
+    #extensions = ["Seventh" for _ in range(7)]
+    sc_chords = sc.GetChords(extensions=extensions)
 
     bars = []
     for currID in CHORD_PROGRESSION:
@@ -30,3 +33,5 @@ def GenerateExample1():
     song = Song(Tempo=120, Tracks=[track])
 
     Render(song, "Examples/example-v2.mid", RenderFormats.MIDI)
+
+GenerateExample1()

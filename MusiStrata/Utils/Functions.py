@@ -191,3 +191,9 @@ def MinimizeDistance(notes_1: List[Note], notes_2: List[Note], can_pad: bool = T
 
     return sorted(smoothed, key=lambda x : x.Height)
 
+
+### DO IT DIFFERENTLY  
+# do something like: reference_chord, required_notes, optional_notes ?
+# would need to distinguish between can use required_notes for padding or not?  
+# also, return more than 1 possibility? might be useful with some analytics features? bit too complex maybe
+# maybe pass a maximal tonal distance between the 2 chords?  

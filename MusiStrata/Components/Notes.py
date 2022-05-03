@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List, Tuple, Dict, Union
 
-from MusiStrata.Enums import NoteNames
+from MusiStrata.Enums import NoteNames, StaffPositions
 
 from dataclasses import dataclass, field
 
@@ -11,10 +11,8 @@ class Note(object):
         self._Name = NoteNames.SafeFromStr(name)
         
         # Need to check max octave for Midi
-        if type(octave) != int:
+        if type(octave) != int or octave < 0:
             raise TypeError("Octave must be a non-negative integer.")
-        elif octave < 0:
-            raise ValueError("Octave must be a non-negative integer.")
 
         self._Octave = octave
 
@@ -32,11 +30,8 @@ class Note(object):
 
     @Octave.setter
     def Octave(self, new_octave: int) -> None:
-        if type(new_octave) != int:
+        if type(new_octave) != int or new_octave < 0:
             raise TypeError("Octave must be a non-negative integer.")
-        # Separating value checking from type checking
-        if new_octave < 0:
-            raise ValueError("Octave must be a non-negative integer.")
         self._Octave = new_octave
 
     def __hash__(self):
@@ -50,7 +45,7 @@ class Note(object):
 
     def __eq__(self, other) -> bool:
         if self.__class__ is not other.__class__:
-            return False
+            raise TypeError()
         else:
             if self.Name == other.Name and self.Octave == other.Octave:
                 return True
@@ -60,22 +55,22 @@ class Note(object):
     def __ge__(self, other) -> bool:
         if self.__class__ is other.__class__:
             return self.Height >= other.Height
-        return NotImplemented
+        raise TypeError()
 
     def __gt__(self, other) -> bool:
         if self.__class__ is other.__class__:
             return self.Height > other.Height
-        return NotImplemented
+        raise TypeError()
 
-    def __le__(self, other) -> bool:
+    def __le__(self, other: "Note") -> bool:
         if self.__class__ is other.__class__:
             return self.Height <= other.Height
-        return NotImplemented
+        raise TypeError()
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: "Note") -> bool:
         if self.__class__ is other.__class__:
             return self.Height < other.Height
-        return NotImplemented
+        raise TypeError()
 
     def __add__(self, other: int) -> Note:
         if type(other) == int:
@@ -84,7 +79,6 @@ class Note(object):
                 return self.__sub__(abs(other))
             else:
                 outName, deltaOctave = self._Name + other
-
                 return Note(name=outName.name, octave=self.Octave + deltaOctave)
         else:
             return NotImplemented
@@ -97,7 +91,6 @@ class Note(object):
                 return self.__add__(abs(other))
             else:
                 outName, deltaOctave = self._Name - other
-
                 return Note(name=outName.name, octave=self.Octave + deltaOctave)
         else:
             return NotImplemented
@@ -107,10 +100,10 @@ class Note(object):
         return dict_repr
 
     def ToJSON(self):
-        from json import dumps as _dumps
+        from json import dumps
 
         dict_repr = self.ToDict()
-        return _dumps(dict_repr)
+        return dumps(dict_repr)
 
     @classmethod
     def FromDict(cls, dict_repr: dict):
@@ -118,16 +111,10 @@ class Note(object):
 
     @classmethod
     def FromJSON(cls, jsonData: str):
-        from json import loads as _loads
+        from json import loads as loads
 
-        dictRepr = _loads(jsonData)
+        dictRepr = loads(jsonData)
         return cls.FromDict(dictRepr)
-
-    # Added this to expand scales. Can also use Note + 12 for octave difference
-    # but I thought additional method would be nice
-    def NewFromOctaveDifference(self, octave_diff: int) -> Note:
-        newNote = self + 12 * octave_diff
-        return newNote
 
     @property
     def Height(self) -> int:
@@ -141,21 +128,33 @@ class Note(object):
     def StaffDistance(self, other: "Note") -> int:
         if self.__class__ is other.__class__:
             return abs(self._Name.ToStaffPosition().value - other._Name.ToStaffPosition().value)
-        raise NotImplementedError("Not Implemented Yet")
+        raise TypeError("Can only compute staff distance between notes")
 
     # Return distance between this note and another in term of semitones
     def GetTonalDistance(self, other) -> int:
         if self.__class__ is other.__class__:
             return self.Height - other.Height
-        return NotImplemented
+        raise TypeError("Note - GetTonalDistance - Requires other to be Note")
 
     # Returning a positive tonal distance
     def GetRootedTonalDistance(self, other) -> int:
         if self.__class__ is other.__class__:
             return max(self.Height - other.Height, other.Height - self.Height)
-        return NotImplemented
+        raise TypeError("Note - GetRootedTonalDistance - Requires other to be Note")
 
-    def GetStaffPositionAsEnumElem(self) -> "StaffPositions":
+    @property
+    def StaffPosition(self) -> StaffPositions:
+        return self._Name.ToStaffPosition()
+
+    @property
+    def StaffPositionName(self) -> StaffPositions:
+        return self._Name.ToStaffPosition().name
+
+    @property
+    def StaffPositionInteger(self) -> StaffPositions:
+        return self._Name.ToStaffPosition().value
+
+    def GetStaffPositionAsEnumElem(self) -> StaffPositions:
         return self._Name.ToStaffPosition()
 
     def GetStaffPositionAsLetter(self) -> str:
@@ -169,8 +168,8 @@ class Note(object):
         if self.__class__ is not other.__class__:
             raise TypeError("Note - GetIntervalError requires Note input.")
             
-        staff1 = self.GetStaffPositionAsEnumElem()
-        staff2 = other.GetStaffPositionAsEnumElem()
+        staff1 = self.StaffPosition
+        staff2 = other.StaffPosition
         outValue = 0
         while staff1.value != staff2.value:
             outValue += 1

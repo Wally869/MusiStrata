@@ -174,12 +174,42 @@ class Scale(object):
         """
             https://musiccrashcourses.com/lessons/intervals_maj_min.html#:~:text=Intervals%20in%20Major%20Scales,to%20the%20scale%20degree%20numbers.
         """
-        extension = ScaleChordExtension.SafeFromStr(extension)
+        if type(extension) is str:
+            extension = ScaleChordExtension.SafeFromStr(extension)
+        if type(extension) is int:
+            if self.Type == Mode.Major:
+                return self._ChordExtensionIntMajor(extension)
+            elif self.Type == Mode.Minor:
+                return self._ChordExtensionIntMinor(extension)            
         if self.Type == Mode.Major:
             return self._ChordExtensionMajor(extension)
         elif self.Type == Mode.Minor:
             return self._ChordExtensionMinor(extension)
     
+    def _ChordExtensionIntMajor(self, extension: int) -> ChordExtension:
+        if extension == 7:
+            return ChordExtension.M7
+        elif extension == 9:
+            return ChordExtension.M9
+        elif extension == 11:
+            return ChordExtension.P11
+        elif extension == 13:
+            return ChordExtension.M13
+        else:
+            raise NotImplementedError("Only extensions for 7, 9, 11 and 13")
+
+    def _ChordExtensionIntMinor(self, extension: int) -> ChordExtension:
+        if extension == 7:
+            return ChordExtension.m7
+        elif extension == 9:
+            return ChordExtension.M9
+        elif extension == 11:
+            return ChordExtension.P11
+        elif extension == 13:
+            return ChordExtension.m13
+        else: 
+            raise NotImplementedError("Only extensions for 7, 9, 11 and 13")
+
     @classmethod
     def _ChordExtensionMajor(cls, extension: ScaleChordExtension) -> ChordExtension:
         if extension == ScaleChordExtension.Seventh:
@@ -205,7 +235,7 @@ class Scale(object):
     def GetSingleChord(
         self,
         tone: int,
-        extensions: List[Union[ChordExtension, ScaleChordExtension]] = [],
+        extensions: List[Union[ChordExtension, ScaleChordExtension, int]] = [],
         mode: Union[str, ScaleModes] = ScaleModes.Ionian,
     ) -> Chord:
         while tone >= 8:
@@ -216,23 +246,18 @@ class Scale(object):
         if type(extensions) != list:
             extensions = [extensions]
         chordExtensions = [
-            (lambda x: x if type(x) == ChordExtension else self._ChordExtension(x))(ext)
+            [] if ext is None else (lambda x: x if type(x) == ChordExtension else self._ChordExtension(x))(ext) 
             for ext in extensions
         ]
         return Chord.FromBaseExtensions(chordBase, chordExtensions)
 
     def GetChords(
         self,
-        extensions: List[List[Union[ChordExtension, ScaleChordExtension]]] = [],
+        extensions: List[List[Union[ChordExtension, ScaleChordExtension, int]]] = [],
         mode: Union[str, ScaleModes] = ScaleModes.Ionian,
     ) -> List[Chord]:
         while len(extensions) < 7:
             extensions.append([])
-        """
-        for i in range(7):
-            if type(extensions[i]) != list:
-                extensions[i] = [extensions[i]]
-        """
         return [self.GetSingleChord(tone, extensions[tone], mode) for tone in range(7)]
 
     def GetChordsNotes(

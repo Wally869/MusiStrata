@@ -84,7 +84,7 @@ def ConvertSong(song: Song, outfile: str) -> midoMidiFile:
         outMidoSong.tracks.append(track)
 
     outMidoSong.save(outfile)
-    print("Rendering Successful - " + outfile)
+    print("Rendering Successful - " + outfile + "\n")
     return outMidoSong
 
 

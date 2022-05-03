@@ -14,24 +14,24 @@ def GenerateExample1():
         Beat=0.0,
         Duration=1.0,
         Note=Note(
-            Name="A",
-            Octave=5,
+            name="A",
+            octave=5,
         ),
     )
     note2 = SoundEvent(
         Beat=2.0,
         Duration=1.0,
         Note=Note(
-            Name="C",
-            Octave=5,
+            name="C",
+            octave=5,
         ),
     )
     note3 = SoundEvent(
         Beat=3.0,
         Duration=0.5,
         Note=Note(
-            Name="D",
-            Octave=5,
+            name="D",
+            octave=5,
         ),
     )
 
@@ -55,24 +55,24 @@ def GenerateExample2():
         Beat=0.0,
         Duration=1.0,
         Note=Note(
-            Name="A",
-            Octave=5,
+            name="A",
+            octave=5,
         ),
     )
     note2 = SoundEvent(
         Beat=2.0,
         Duration=1.0,
         Note=Note(
-            Name="C",
-            Octave=5,
+            name="C",
+            octave=5,
         ),
     )
     note3 = SoundEvent(
         Beat=3.0,
         Duration=0.5,
         Note=Note(
-            Name="D",
-            Octave=5,
+            name="D",
+            octave=5,
         ),
     )
 
@@ -100,9 +100,9 @@ def GenerateExample3():
     """
     seed(42)
 
-    note1 = SoundEvent(Beat=0.0, Duration=1.0, Note=Note(Octave=5))
-    note2 = SoundEvent(Beat=2.0, Duration=1.0, Note=Note(Octave=5))
-    note3 = SoundEvent(Beat=3.0, Duration=0.5, Note=Note(Octave=5))
+    note1 = SoundEvent(Beat=0.0, Duration=1.0, Note=Note(octave=5))
+    note2 = SoundEvent(Beat=2.0, Duration=1.0, Note=Note(octave=5))
+    note3 = SoundEvent(Beat=3.0, Duration=0.5, Note=Note(octave=5))
 
     bar = Bar([note1, note2, note3])
 

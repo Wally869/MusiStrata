@@ -101,12 +101,11 @@ class Scale(object):
     def GetSameTypeNeighbours(self) -> List[Scale]:
         # Minors and Majors have the same neighbours, but differentiating anyway
         if self.Type == Mode.Major:
-            neighboursRefNotes = MAJOR_NEIGHBOURS[self.RefNote.value]
+            neighboursRefNotes = MAJOR_NEIGHBOURS[self.RefNote.name]
         else:
-            neighboursRefNotes = MINOR_NEIGHBOURS[self.RefNote.value]
-
+            neighboursRefNotes = MINOR_NEIGHBOURS[self.RefNote.name]
         return [
-            Scale(RefNote=refNote, ScaleType=self.Type)
+            Scale(ref_note=refNote, scale_type=self.Type)
             for refNote in neighboursRefNotes
         ]
 
@@ -121,12 +120,13 @@ class Scale(object):
         return Scale(ref_note=MINOR_FROM_MAJOR[ref_note], scale_type="Minor")
 
     @staticmethod
-    def GetMajorFromMinorByRefNote(ref_note: str) -> Scale:
+    def GetMajorFromMinorByRefNote(ref_note: Union[str, NoteNames]) -> Scale:
+        ref_note = NoteNames.SafeFromStr(ref_note)
         keys = list(MINOR_FROM_MAJOR.keys())
         for k in keys:
-            if MINOR_FROM_MAJOR[k] == ref_note:
+            if MINOR_FROM_MAJOR[k] == ref_note.name:
                 return Scale(ref_note=k, scale_type="Major")
-        return KeyError
+        raise KeyError("Scale - GetMajorFromMinorByRefNote - " + str(ref_note))
 
     def GetPentatonicNotes(
         self, octave: int = 5, mode: Union[str, ScaleModes] = "Ionian"

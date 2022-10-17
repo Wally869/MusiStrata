@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 
 
 class Note(object):
-    def __init__(self, name: str = "A", octave: int = 5):
+    def __init__(self, name: Union[str, NoteNames] = "A", octave: int = 5):
         self._Name = NoteNames.SafeFromStr(name)
         
         # Need to check max octave for Midi
@@ -21,7 +21,7 @@ class Note(object):
         return self._Name.name
 
     @Name.setter
-    def Name(self, new_name: str) -> None:
+    def Name(self, new_name: Union[str, NoteNames]) -> None:
         self._Name = NoteNames.SafeFromStr(new_name)
 
     @property
@@ -43,7 +43,7 @@ class Note(object):
     def __repr__(self) -> str:
         return str(self)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Note) -> bool:
         if self.__class__ is not other.__class__:
             raise TypeError()
         else:
@@ -52,22 +52,22 @@ class Note(object):
             else:
                 return False
 
-    def __ge__(self, other) -> bool:
+    def __ge__(self, other: Note) -> bool:
         if self.__class__ is other.__class__:
             return self.Height >= other.Height
         raise TypeError()
 
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other: Note) -> bool:
         if self.__class__ is other.__class__:
             return self.Height > other.Height
         raise TypeError()
 
-    def __le__(self, other: "Note") -> bool:
+    def __le__(self, other: Note) -> bool:
         if self.__class__ is other.__class__:
             return self.Height <= other.Height
         raise TypeError()
 
-    def __lt__(self, other: "Note") -> bool:
+    def __lt__(self, other: Note) -> bool:
         if self.__class__ is other.__class__:
             return self.Height < other.Height
         raise TypeError()
@@ -125,19 +125,19 @@ class Note(object):
         # Using this as reference: https://pages.mtu.edu/~suits/notefreqs.html
         return 16.35 * (2**self.Octave) * (2 ** (1 / 12)) ** self._Name.value
 
-    def StaffDistance(self, other: "Note") -> int:
+    def StaffDistance(self, other: Note) -> int:
         if self.__class__ is other.__class__:
             return abs(self._Name.ToStaffPosition().value - other._Name.ToStaffPosition().value)
         raise TypeError("Can only compute staff distance between notes")
 
     # Return distance between this note and another in term of semitones
-    def GetTonalDistance(self, other) -> int:
+    def GetTonalDistance(self, other: Note) -> int:
         if self.__class__ is other.__class__:
             return self.Height - other.Height
         raise TypeError("Note - GetTonalDistance - Requires other to be Note")
 
     # Returning a positive tonal distance
-    def GetRootedTonalDistance(self, other) -> int:
+    def GetRootedTonalDistance(self, other: Note) -> int:
         if self.__class__ is other.__class__:
             return max(self.Height - other.Height, other.Height - self.Height)
         raise TypeError("Note - GetRootedTonalDistance - Requires other to be Note")

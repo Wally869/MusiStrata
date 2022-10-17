@@ -23,9 +23,26 @@ def test_interval_addition():
     assert n2 == Note("A", 6)
     assert err is None
 
-def test_interval_from_notes():
+def test_interval_from_notes_1():
     n = Note("A", 5)
     n2 = Note("A", 6)
     i = Interval.FromNotes(n, n2)
     assert i == Interval(8, "Perfect")
 
+def test_interval_from_notes_2():
+    n = Note("C", 5)
+    n2 = Note("G", 5)
+    i = Interval.FromNotes(n, n2)
+    assert i == Interval(5, "Perfect")
+
+def test_interval_from_notes_3():
+    n = Note("C", 5)
+    n2 = Note("E", 5)
+    i = Interval.FromNotes(n, n2)
+    assert i == Interval(3, "Major")
+
+def test_interval_from_notes_4():
+    n = Note("C", 5)
+    n2 = Note("Ds", 5)
+    i = Interval.FromNotes(n, n2)
+    assert i == Interval(3, "Minor")

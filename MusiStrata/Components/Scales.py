@@ -251,6 +251,25 @@ class Scale(object):
         ]
         return Chord.FromBaseExtensions(chordBase, chordExtensions)
 
+    def GetSingleChord2(
+        self,
+        tone: int,
+        extensions: List[int] = [],
+        mode: Union[str, ScaleModes] = ScaleModes.Ionian,
+    ) -> Chord:
+        while tone >= 8:
+            tone -= 8
+        if type(mode) == str:
+            mode = ScaleModes.SafeFromStr(mode)
+        chordBase = self._BaseChordProgression(mode)[tone]
+        if type(extensions) != list:
+            extensions = [extensions]
+        chordExtensions = [
+            [] if ext is None else (lambda x: x if type(x) == ChordExtension else self._ChordExtension(x))(ext) 
+            for ext in extensions
+        ]
+        return Chord.FromBaseExtensions(chordBase, chordExtensions)
+
     def GetChords(
         self,
         extensions: List[List[Union[ChordExtension, ScaleChordExtension, int]]] = [],

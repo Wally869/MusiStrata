@@ -89,7 +89,7 @@ class Chord(object):
         self, root_note: Note, indices: List[Tuple(int, int)]
     ) -> Tuple[List[Note], List[ValueError]]:
         """
-        Wrapping __call__ in another function to call it in Transcrypt.
+        Wrapping __call__ in another function to call it in Transcrypt. 
         """
         return self.__call__(root_note, indices)
 

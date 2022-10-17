@@ -10,6 +10,12 @@ class TrackType(Enum):
     Sample = 2
 
 
+class Alterations(Enum):
+    Natural = 0,
+    Sharp = 1,
+    Flat = -1
+
+
 class ChordBase(Enum):
     Major = [(1, "Perfect"), (3, "Major"), (5, "Perfect")]
     M = [(1, "Perfect"), (3, "Major"), (5, "Perfect")]
@@ -105,6 +111,7 @@ class StaffPositions(EnumExtensions.LoopingOrderedEnum):
     B = 6  #"B"
 
 
+# need to rewrite NoteNames to handle sharps AND flats
 class NoteNames(EnumExtensions.LoopingOrderedEnum):
     C = 0
     Cs = 1

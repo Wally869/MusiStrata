@@ -7,5 +7,4 @@ class MidiRenderer(IRenderer):
     @classmethod
     def Render(cls, song: Song, outfile: str):
         from .MidoConverter import ConvertSong
-
         ConvertSong(song, outfile)

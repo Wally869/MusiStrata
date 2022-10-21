@@ -8,6 +8,8 @@ from os import path, mkdir
 
 from random import choice
 
+from Utils import invert
+
 CHORD_PROGRESSION = [0, 4, 5, 3]
 
 from MusiStrata import ScaleChordExtension as SCE
@@ -34,4 +36,21 @@ def GenerateExample1():
 
     Render(song, "Examples/example-v2.mid", RenderFormats.MIDI)
 
-GenerateExample1()
+
+def GenerateExample2():
+    sc = Scale("C", "Major")
+    progression = [0, 2, 4, 0]
+    bars = []
+    for currID in progression:
+        notes = Chord.FromScaleTones([currID, currID + 2, currID + 4], 5, sc)
+        if currID == 4:
+            notes = invert(notes, 2)
+            notes = [note - 12 for note in notes]        
+        barNotes = [SoundEvent(0.0, 4.0, n) for n in notes]
+        bars.append(Bar(barNotes))
+    track = Track(Bars=bars, Instrument="Acoustic Grand Piano")
+    song = Song(Tempo=120, Tracks=[track])
+    Render(song, "Examples/example2-v2.mid", RenderFormats.MIDI)
+
+#GenerateExample1()
+GenerateExample2()

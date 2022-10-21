@@ -53,7 +53,7 @@ ALL_INTERVALS_RAW = (
 # it is used in a method of Interval so using this trick
 ALL_INTERVALS = []
 
-
+"""
 # same as Instruments and Drums?
 # could be nice to easily access diatonic and chromatic intervals, and filter on interval number
 class IntervalsLibrary(object):
@@ -70,3 +70,4 @@ PERTURBED_INTERVALS = [
 ]
 ALL_INTERVALS = [IInterval(*spec) for spec in ALL_INTERVALS_RAW]
 ALL_INTERVALS.sort(key=lambda x: x.TonalDistance)
+"""

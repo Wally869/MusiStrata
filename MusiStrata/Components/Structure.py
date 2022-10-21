@@ -3,6 +3,8 @@ from typing import List, Tuple, Dict, Union
 
 from dataclasses import dataclass, field
 
+from Interfaces.Components import ISong
+
 
 from .Notes import *
 
@@ -175,7 +177,10 @@ class Track:
 
     # Adding an __add__ overload to allow concatenating bars in a simple way
     # this is to make easier to generate sections and then appending them
-    def __add__(self, other: Track) -> Track:
+    def __add__(self, other: Union[Track, Bar]) -> Track:
+        """
+            Add other to self.Bars
+        """
         if self.__class__ is other.__class__:
             outTrack = self
             outTrack.Bars = outTrack.Bars + other.Bars
@@ -223,7 +228,7 @@ class TimeSignature:
 
 
 @dataclass
-class Song:
+class Song(ISong):
     Tempo: int = 80
     BeatsPerBar: int = 4
     Tracks: list = field(default_factory=list)

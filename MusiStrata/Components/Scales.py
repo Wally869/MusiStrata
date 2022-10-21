@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import List, Tuple, Dict, Union
 
-from MusiStrata.Components.Chords import Chord
 from MusiStrata.Components.Notes import NoteNames, Note
 
 from MusiStrata.Utils import FilterRepeated as FilterOutRepeatedNotes
@@ -98,6 +97,9 @@ class Scale(object):
     def GetNeighbourScales(self) -> List[Scale]:
         return self.GetSameTypeNeighbours() + [self.GetDifferentTypeNeighbour()]
 
+    def GetNeighbourScale(self, direction: int, scale_type: Union[str, Mode] = "Major") -> Scale:
+        pass
+
     def GetSameTypeNeighbours(self) -> List[Scale]:
         # Minors and Majors have the same neighbours, but differentiating anyway
         if self.Type == Mode.Major:
@@ -145,166 +147,13 @@ class Scale(object):
         # only 5 notes in pentatonic scale
         return pentatonicScaleNotes[:5]
 
-    def _BaseChordProgression(
-        self, mode: Union[str, ScaleModes] = "Ionian"
-    ) -> List[ChordBase]:
-        mode = ScaleModes.SafeFromStr(mode)
-        progression = [
-            ChordBase.Major,
-            ChordBase.Minor,
-            ChordBase.Minor,
-            ChordBase.Major,
-            ChordBase.Major,
-            ChordBase.Minor,
-            ChordBase.Diminished,
-        ]
-        if self.Type == "Minor":
-            progression = [
-                ChordBase.Minor,
-                ChordBase.Diminished,
-                ChordBase.Major,
-                ChordBase.Minor,
-                ChordBase.Minor,
-                ChordBase.Major,
-                ChordBase.Major,
-            ]
-        return progression[mode.value :] + progression[: mode.value]
-
-    def _ChordExtension(self, extension: ScaleChordExtension) -> ChordExtension:
-        """
-            https://musiccrashcourses.com/lessons/intervals_maj_min.html#:~:text=Intervals%20in%20Major%20Scales,to%20the%20scale%20degree%20numbers.
-        """
-        if type(extension) is str:
-            extension = ScaleChordExtension.SafeFromStr(extension)
-        if type(extension) is int:
-            if self.Type == Mode.Major:
-                return self._ChordExtensionIntMajor(extension)
-            elif self.Type == Mode.Minor:
-                return self._ChordExtensionIntMinor(extension)            
-        if self.Type == Mode.Major:
-            return self._ChordExtensionMajor(extension)
-        elif self.Type == Mode.Minor:
-            return self._ChordExtensionMinor(extension)
-    
-    def _ChordExtensionIntMajor(self, extension: int) -> ChordExtension:
-        if extension == 7:
-            return ChordExtension.M7
-        elif extension == 9:
-            return ChordExtension.M9
-        elif extension == 11:
-            return ChordExtension.P11
-        elif extension == 13:
-            return ChordExtension.M13
-        else:
-            raise NotImplementedError("Only extensions for 7, 9, 11 and 13")
-
-    def _ChordExtensionIntMinor(self, extension: int) -> ChordExtension:
-        if extension == 7:
-            return ChordExtension.m7
-        elif extension == 9:
-            return ChordExtension.M9
-        elif extension == 11:
-            return ChordExtension.P11
-        elif extension == 13:
-            return ChordExtension.m13
-        else: 
-            raise NotImplementedError("Only extensions for 7, 9, 11 and 13")
-
-    @classmethod
-    def _ChordExtensionMajor(cls, extension: ScaleChordExtension) -> ChordExtension:
-        if extension == ScaleChordExtension.Seventh:
-            return ChordExtension.M7
-        elif extension == ScaleChordExtension.Ninth:
-            return ChordExtension.M9
-        elif extension == ScaleChordExtension.Eleventh:
-            return ChordExtension.P11
-        elif extension == ScaleChordExtension.Thirteenth:
-            return ChordExtension.M13
-
-    @classmethod
-    def _ChordExtensionMinor(cls, extension: ScaleChordExtension) -> ChordExtension:
-        if extension == ScaleChordExtension.Seventh:
-            return ChordExtension.m7
-        elif extension == ScaleChordExtension.Ninth:
-            return ChordExtension.M9
-        elif extension == ScaleChordExtension.Eleventh:
-            return ChordExtension.P11
-        elif extension == ScaleChordExtension.Thirteenth:
-            return ChordExtension.m13
-
-    def GetSingleChord(
-        self,
-        tone: int,
-        extensions: List[Union[ChordExtension, ScaleChordExtension, int]] = [],
-        mode: Union[str, ScaleModes] = ScaleModes.Ionian,
-    ) -> Chord:
-        while tone >= 8:
-            tone -= 8
-        if type(mode) == str:
-            mode = ScaleModes.SafeFromStr(mode)
-        chordBase = self._BaseChordProgression(mode)[tone]
-        if type(extensions) != list:
-            extensions = [extensions]
-        chordExtensions = [
-            [] if ext is None else (lambda x: x if type(x) == ChordExtension else self._ChordExtension(x))(ext) 
-            for ext in extensions
-        ]
-        return Chord.FromBaseExtensions(chordBase, chordExtensions)
-
-    def GetSingleChord2(
-        self,
-        tone: int,
-        extensions: List[int] = [],
-        mode: Union[str, ScaleModes] = ScaleModes.Ionian,
-    ) -> Chord:
-        while tone >= 8:
-            tone -= 8
-        if type(mode) == str:
-            mode = ScaleModes.SafeFromStr(mode)
-        chordBase = self._BaseChordProgression(mode)[tone]
-        if type(extensions) != list:
-            extensions = [extensions]
-        chordExtensions = [
-            [] if ext is None else (lambda x: x if type(x) == ChordExtension else self._ChordExtension(x))(ext) 
-            for ext in extensions
-        ]
-        return Chord.FromBaseExtensions(chordBase, chordExtensions)
-
-    def GetChords(
-        self,
-        extensions: List[List[Union[ChordExtension, ScaleChordExtension, int]]] = [],
-        mode: Union[str, ScaleModes] = ScaleModes.Ionian,
-    ) -> List[Chord]:
-        while len(extensions) < 7:
-            extensions.append([])
-        return [self.GetSingleChord(tone, extensions[tone], mode) for tone in range(7)]
-
-    def GetChordsNotes(
-        self,
-        octave: int = 5,
-        extensions: List[List[Union[ChordExtension, ScaleChordExtension]]] = [],
-        mode: Union[str, ScaleModes] = ScaleModes.Ionian,
-    ):
-        chords = self.GetChords(extensions=extensions, mode=mode)
-        notes = self.GetScaleNotes(octave=octave, mode=mode)
-        output = []
-        for idElem in range(len(chords)):
-            temp, _ = chords[idElem](notes[idElem])
-            output.append(temp)
-        return output
-
-    def GetSingleChordNotes(
-        self,
-        tone: int,
-        octave: int,
-        extensions: List[ChordExtension] = [],
-        indices: List[Tuple[int]] = None,
-        mode="Ionian",
-    ) -> List[Note]:
-        baseNote = self.GetScaleNotes(octave=octave, mode=mode)[tone]
-        chord = self.GetSingleChord(tone, extensions, mode)
-        notes, _ = chord(baseNote, indices)
-        return notes
+    def GetNote(self, tone: int, octave: int, mode: str = "Ionian") -> Note:
+        scale_notes = self.GetScaleNotes(octave, mode)
+        note = scale_notes[tone % (len(scale_notes) - 1)]
+        while tone >= len(scale_notes):
+            note += 12
+            tone -= len(scale_notes)
+        return note
 
 
 def ExtendScaleNotes(

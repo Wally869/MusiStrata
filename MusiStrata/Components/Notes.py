@@ -5,8 +5,10 @@ from MusiStrata.Enums import NoteNames, StaffPositions
 
 from dataclasses import dataclass, field
 
+from Interfaces.Components import INote
 
-class Note(object):
+
+class Note(INote):
     def __init__(self, name: Union[str, NoteNames] = "A", octave: int = 5):
         self._Name = NoteNames.SafeFromStr(name)
         

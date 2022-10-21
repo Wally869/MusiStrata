@@ -1,11 +1,17 @@
 from __future__ import annotations
 from typing import List, Tuple, Dict, Union
 
+from Components.Scales import Scale
+from Data.Chords import CHORDS_DESCRIPTIONS, ChordDescription
+
 from .Notes import *
 from .Intervals import *
 
 from MusiStrata.Enums import ChordBase, ChordExtension, IntervalQuality
 
+"""
+    https://musiccrashcourses.com/lessons/intervals_maj_min.html#:~:text=Intervals%20in%20Major%20Scales,to%20the%20scale%20degree%20numbers.
+"""
 
 class Chord(object):
     def __init__(self, chord_intervals: List[Interval]):
@@ -40,6 +46,22 @@ class Chord(object):
             extension = ChordExtension.SafeFromStr(extension)
             intervals.append(Interval(*extension.value))
         return Chord(intervals)
+
+    @classmethod
+    def FromIntervals(cls, root_note: Note, intervals: List[Interval]) -> List[Note]:
+        chord = [root_note]
+        return chord + [(root_note + interval)[0] for interval in intervals]
+
+    @classmethod
+    def FromScaleTones(cls, tones: List[int], octave: int, scale: Scale, mode: str = "Ionian") -> List[Note]:
+        return [scale.GetNote(tone, octave, mode) for tone in tones]
+
+    @classmethod
+    def FromChordDescription(cls, root_note: Note, chord_description: Union[str, ChordDescription]) -> List[Note]:
+        if chord_description.__class__ is str:
+            return cls.FromChordDescription(CHORDS_DESCRIPTIONS[chord_description])
+        else:
+            return [root_note + interval for interval in chord_description.TonalIntervals]
 
     def CheckValidFromNote(self, root_note: Note) -> bool:
         _, errors = self(root_note)

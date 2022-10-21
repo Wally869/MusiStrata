@@ -1,20 +1,11 @@
 from typing import List, Union
 
-from MusiStrata.Enums import IntervalQuality
 
 class INote(object):
     pass
 
-
 class IInterval(object):
-    def __init__(self, IntervalNumber: int, Quality: Union[str, IntervalQuality], TonalDistance: int = None):
-        self.IntervalNumber: int = IntervalNumber
-        self.Quality: IntervalQuality = IntervalQuality.SafeFromStr(Quality)
-        self.TonalDistance: int = TonalDistance
-
-    def ToInterval(self) -> "Interval":
-        from MusiStrata.Components import Interval
-        return Interval(self.IntervalNumber, self.Quality)
+    pass
 
 
 class IScale(object):
@@ -39,6 +30,8 @@ class ITrack(object):
     IsDrumsTrack: bool
     BankUsed: int
 
+class ISong(object):
+    pass
 
 
 

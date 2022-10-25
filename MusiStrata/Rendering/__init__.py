@@ -13,21 +13,22 @@ class RenderFormats(Enum):
     ABC = 4
 
 
-def Render(song: Song, outfile: str, format: RenderFormats):
-    if format == RenderFormats.MIDI:
-        from .MidiRenderer import MidiRenderer
-
-        MidiRenderer.Render(song, outfile)
-    elif format == RenderFormats.LMMS:
-        raise NotImplementedError("Rendering - Format Not Implemented: LMMS")
-    elif format == RenderFormats.WAV:
-        raise NotImplementedError("Rendering - Format Not Implemented: WAV")
-    elif format == RenderFormats.LILYPOND:
-        raise NotImplementedError("Rendering - Format Not Implemented: LILYPOND")
-    elif format == RenderFormats.ABC:
-        raise NotImplementedError("Rendering - Format Not Implemented: ABC")
-    else:
-        raise ValueError("Render - Invalid Format")
+def Render(song: Song, outfile: str, format: RenderFormats, **kwargs):
+    match format:
+        case RenderFormats.MIDI:
+            from .MidiRenderer import MidiRenderer
+            MidiRenderer.Render(song, outfile)
+        case RenderFormats.LMMS:
+            raise NotImplementedError("Rendering - Format Not Implemented: LMMS")
+        case RenderFormats.WAV:
+            from .WavRenderer import WavRenderer
+            WavRenderer.Render(song, outfile, kwargs.get("sample_rate", 20000))
+        case RenderFormats.LILYPOND:
+            raise NotImplementedError("Rendering - Format Not Implemented: LILYPOND")
+        case RenderFormats.ABC:
+            raise NotImplementedError("Rendering - Format Not Implemented: ABC")
+        case _:
+            raise ValueError("Render - Invalid Format")
 
 
 def Play(element, nbBeatsInBar: int = 4, sampleRate: int = 16000, tempo: int = 60):

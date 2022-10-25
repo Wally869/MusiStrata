@@ -1,7 +1,5 @@
-
-
-from dataclasses import dataclass
 from typing import List
+from dataclasses import dataclass
 
 
 @dataclass
@@ -12,28 +10,36 @@ class ChordDescription:
     """
     Name: str
     Code: str
-    TonalIntervals: List[int]
+    Intervals: List[str]
 
 
 CHORDS_DESCRIPTIONS: List[ChordDescription] = {
     "m": ChordDescription(
         "Minor",
         "m",
-        [0, 3, 7]
+        [
+            "P1", "m3", "P5"
+        ]
     ),
     "M": ChordDescription(
         "Major",
         "M",
-        [0, 4, 7]
+        [
+            "P1", "M3", "P5"
+        ]
     ),
     "m7": ChordDescription(
         "Minor 7th",
         "m7",
-        [0, 3, 7, 10]
+        [
+            "P1", "m3", "P5", "m7"
+        ]
     ),
     "M7": ChordDescription(
         "Major 7th",
         "M7",
-        [0, 4, 7, 11]
+        [
+            "P1", "M3", "P5", "M7"
+        ]
     )
 }

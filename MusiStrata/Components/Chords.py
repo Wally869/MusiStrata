@@ -48,20 +48,39 @@ class Chord(object):
         return Chord(intervals)
 
     @classmethod
-    def FromIntervals(cls, root_note: Note, intervals: List[Interval]) -> List[Note]:
-        chord = [root_note]
-        return chord + [(root_note + interval)[0] for interval in intervals]
+    def FromNotes(cls, notes: List[Note]) -> Chord:
+        """
+            Extract intervals from given notes and compose a chord. 
+            Notes get sorted by height.
+        """
+        notes = sorted(notes, lambda x: x.Height)
+        intervals = [Interval.FromNotes(notes[0], notes[id_note]) for id_note in range(len(notes))]
+        return Chord(intervals)
 
     @classmethod
-    def FromScaleTones(cls, tones: List[int], octave: int, scale: Scale, mode: str = "Ionian") -> List[Note]:
-        return [scale.GetNote(tone, octave, mode) for tone in tones]
+    def FromIntervals(cls, intervals: List[Interval]) -> Chord:
+        """
+            Same as base __init__
+        """
+        return Chord(intervals)
 
     @classmethod
-    def FromChordDescription(cls, root_note: Note, chord_description: Union[str, ChordDescription]) -> List[Note]:
+    def FromScaleTones(cls, tones: List[int], scale: Scale, mode: str = "Ionian") -> Chord: #List[Note]:
+        notes = [scale.GetNote(tone, 5, mode) for tone in tones]
+        intervals = [Interval.FromNotes(notes[0], notes[id_note]) for id_note in range(len(notes))]
+        return Chord(intervals)
+
+    @classmethod
+    def FromStr(cls, code: str) -> Chord:
+        return cls.FromChordDescription(code)
+
+    @classmethod
+    def FromChordDescription(cls, chord_description: Union[str, ChordDescription]) -> Chord: #List[Note]:
         if chord_description.__class__ is str:
             return cls.FromChordDescription(CHORDS_DESCRIPTIONS[chord_description])
         else:
-            return [root_note + interval for interval in chord_description.TonalIntervals]
+            # return [root_note + interval for interval in chord_description.TonalIntervals]
+            return Chord([Interval.FromIntervalDescription(interval_description) for interval_description in chord_description.Intervals])
 
     def CheckValidFromNote(self, root_note: Note) -> bool:
         _, errors = self(root_note)
@@ -70,9 +89,7 @@ class Chord(object):
                 return False
         return True
 
-    # change __call__ to generating alternate chord, and add __radd__ with note?
-    # just create new methods for now
-    def __call__(
+    def __safecall__(
         self, root_note: Note, indices: List[Tuple(int, int)] = None
     ) -> Tuple[List[Note], List[ValueError]]:
         """
@@ -94,6 +111,11 @@ class Chord(object):
             out_errors.append(errors[elem[0]])
         return out_notes, errors
 
+    def __call__(
+        self, root_note: Note, indices: List[Tuple(int, int)] = None
+    ) -> List[Note]:
+        return self.__safecall__(root_note, indices)[0]
+
     def __radd__(self, other) -> Tuple[List[Note], List[ValueError]]:
         if type(other) == Note:
             outNotes = []
@@ -107,17 +129,4 @@ class Chord(object):
             return Interval(Intervals=[self, other])
         raise NotImplementedError()
 
-    def call(
-        self, root_note: Note, indices: List[Tuple(int, int)]
-    ) -> Tuple[List[Note], List[ValueError]]:
-        """
-        Wrapping __call__ in another function to call it in Transcrypt. 
-        """
-        return self.__call__(root_note, indices)
-
-    def add(self, other) -> Tuple[List[Note], List[ValueError]]:
-        """
-        Wrapping __radd__ in another function to call it in Transcrypt.
-        """
-        return self.__radd__(other)
 

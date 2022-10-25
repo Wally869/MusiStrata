@@ -1,3 +1,4 @@
+from email.policy import default
 from typing import List, Union
 from enum import Enum
 
@@ -246,12 +247,23 @@ class IntervalQuality(Enum):
         for member in cls._member_map_.keys():
             if name == member:
                 return cls._member_map_[name]
-        if name == "Doubly Diminished":
-            return cls.DoublyDiminished
-        elif name == "Doubly Augmented":
-            return cls.DoublyDiminished
-        else:
-            raise KeyError("Unknown Interval Quality - key: {}".format(name))
+        match name:
+            case "Doubly Diminished":
+                return cls.DoublyDiminished
+            case "Doubly Augmented":
+                return cls.DoublyAugmented
+            case "m":
+                return cls.Minor
+            case "M":
+                return cls.Major
+            case "P":
+                return cls.Perfect
+            case "D":
+                return cls.Diminished
+            case "A":
+                return cls.Augmented
+            case _:
+                raise KeyError("Unknown Interval Quality - key: {}".format(name))
 
     @classmethod
     def list(cls):

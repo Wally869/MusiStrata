@@ -1,12 +1,15 @@
 from __future__ import annotations
 from typing import List, Tuple, Dict, Union
 
+from Data.Intervals import IntervalDescription
+
 from .Notes import *
 
 from MusiStrata.Data.Intervals import ALL_INTERVALS, ALL_INTERVALS_RAW, MINOR_MAJOR_PERFECT_INTERVALS
 from MusiStrata.Utils import Record, Library
 
 from MusiStrata.Enums import IntervalQuality
+from MusiStrata.Data.Intervals import GetAllIntervals, MAP_INTERVALS
 
 
 # Need to perform check on input arguments. Done in findtonaldistancefromotherspecs
@@ -127,7 +130,7 @@ class BaseInterval(object):
     ) -> str:
         # Need to implement Augmented and Diminished intervals
         # function, or use bigger all_intervals_raw?
-        for interval in ALL_INTERVALS:
+        for interval in GetAllIntervals():
             if (
                 interval.IntervalNumber == interval_number
                 and interval.TonalDistance == tonal_distance
@@ -345,6 +348,26 @@ class Interval(object):
     def ShortStr(self) -> str:
         return self[-1].ShortStr()
 
+    @classmethod
+    def FromStr(cls, code: str) -> Interval:
+        """
+            From code such as P-5, m-3... First is letter, second is interval number 
+        """
+        quality = code[0]
+        number = int(code[1:])
+        return Interval(number, quality)
+         
+
+    @classmethod 
+    def FromIntervalDescription(cls, interval_description: Union[str, IntervalDescription]) -> Interval:
+        if interval_description.__class__ is str:
+            return cls.FromIntervalDescription(MAP_INTERVALS[interval_description])
+        else:
+            return Interval(
+                interval_description.IntervalNumber,
+                interval_description.Quality
+            )
+
     @staticmethod
     def FindTonalDistanceFromNumberAndQuality(interval_number: int, quality: str) -> int:
         # This function gets us the tonal distance, but also ensures that correct parameters have been input
@@ -395,10 +418,4 @@ class Interval(object):
                 out_intervals.append(interval)
         return out_intervals
 
-    # TRANSCRYPT: Wrapping methods to use this library in the browser
-    def Add(self, other) -> List[Note, ValueError]:
-        return self.__radd__(other)
-
-    def Sub(self, other) -> List[Note, ValueError]:
-        return self.__rsub__(other)
 

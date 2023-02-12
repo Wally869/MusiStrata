@@ -1,13 +1,16 @@
 from __future__ import annotations
-from typing import List, Tuple, Dict, Union
+from typing import List, Tuple, Dict, Union, Optional
 
-from Components.Scales import Scale
-from Data.Chords import CHORDS_DESCRIPTIONS, ChordDescription
+from .Scales import Scale
+from MusiStrata.Data.Chords import CHORDS_DESCRIPTIONS, ChordDescription
 
 from .Notes import *
 from .Intervals import *
 
-from MusiStrata.Enums import ChordBase, ChordExtension, IntervalQuality
+from MusiStrata.Enums import ChordBase, ChordExtension, IntervalQuality, Mode
+
+
+
 
 """
     https://musiccrashcourses.com/lessons/intervals_maj_min.html#:~:text=Intervals%20in%20Major%20Scales,to%20the%20scale%20degree%20numbers.
@@ -53,7 +56,7 @@ class Chord(object):
             Extract intervals from given notes and compose a chord. 
             Notes get sorted by height.
         """
-        notes = sorted(notes, lambda x: x.Height)
+        notes = sorted(notes, key=lambda x: x.Height)
         intervals = [Interval.FromNotes(notes[0], notes[id_note]) for id_note in range(len(notes))]
         return Chord(intervals)
 
@@ -82,15 +85,26 @@ class Chord(object):
             # return [root_note + interval for interval in chord_description.TonalIntervals]
             return Chord([Interval.FromIntervalDescription(interval_description) for interval_description in chord_description.Intervals])
 
+    @classmethod
+    def GetScaleChords(cls, scale: Scale, extension: str = "", mode: str = "Ionian") -> List[Chord]:
+        code_major = ["M", "m", "m", "M", "M", "m", "D"]
+        code_minor = ["m", "D", "M", "m", "m", "M", "M"]
+        match scale.Type:
+            case Mode.Major:
+                return [cls.FromStr(chord_code + str(extension)) for chord_code in code_major]
+            case Mode.Minor:
+                return [cls.FromStr(chord_code + str(extension)) for chord_code in code_minor]
+        
+
     def CheckValidFromNote(self, root_note: Note) -> bool:
-        _, errors = self(root_note)
+        _, errors = self.__safecall__(root_note)
         for err in errors:
             if err is not None:
                 return False
         return True
 
     def __safecall__(
-        self, root_note: Note, indices: List[Tuple(int, int)] = None
+        self, root_note: Note, indices: Optional[List[Tuple[int, int]]] = None
     ) -> Tuple[List[Note], List[ValueError]]:
         """
         Get notes composing Chord, starting from rootNote and returns those specified by indices.
@@ -112,7 +126,7 @@ class Chord(object):
         return out_notes, errors
 
     def __call__(
-        self, root_note: Note, indices: List[Tuple(int, int)] = None
+        self, root_note: Note, indices: Optional[List[Tuple[int, int]]] = None
     ) -> List[Note]:
         return self.__safecall__(root_note, indices)[0]
 

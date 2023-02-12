@@ -3,7 +3,7 @@ from typing import List, Tuple, Dict, Union
 
 from dataclasses import dataclass, field
 
-from Interfaces.Components import ISong
+from MusiStrata.Interfaces.Components import ISong
 
 
 from .Notes import *

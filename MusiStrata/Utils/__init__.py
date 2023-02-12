@@ -1,4 +1,4 @@
-from Interfaces.Components import INote
+from MusiStrata.Interfaces.Components import INote
 from .PrimitiveClassesUtils import Record, Library
 from .utils import *
 

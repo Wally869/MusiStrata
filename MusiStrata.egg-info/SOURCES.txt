@@ -16,9 +16,11 @@ MusiStrata/Components/Notes.py
 MusiStrata/Components/Scales.py
 MusiStrata/Components/Structure.py
 MusiStrata/Components/__init__.py
+MusiStrata/Data/Chords.py
 MusiStrata/Data/Intervals.py
 MusiStrata/Data/__init__.py
 MusiStrata/Enums/__init__.py
+MusiStrata/Globals/__init__.py
 MusiStrata/Instruments/MidiDrums.py
 MusiStrata/Instruments/MidiInstruments.py
 MusiStrata/Instruments/__init__.py
@@ -28,6 +30,8 @@ MusiStrata/Interfaces/__init__.py
 MusiStrata/Rendering/MidiRenderer.py
 MusiStrata/Rendering/MidoConverter.py
 MusiStrata/Rendering/NotePlayer.py
+MusiStrata/Rendering/Utils.py
+MusiStrata/Rendering/WavRenderer.py
 MusiStrata/Rendering/__init__.py
 MusiStrata/Utils/EnumExtensions.py
 MusiStrata/Utils/Functions.py

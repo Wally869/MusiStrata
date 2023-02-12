@@ -4,7 +4,6 @@ from typing import List, Tuple, Dict, Union
 from MusiStrata.Components.Notes import NoteNames, Note
 
 from MusiStrata.Utils import FilterRepeated as FilterOutRepeatedNotes
-from MusiStrata.Enums import ScaleModes, Mode
 
 from MusiStrata.Enums import (
     ChordBase,

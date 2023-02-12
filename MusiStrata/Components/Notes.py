@@ -5,7 +5,7 @@ from MusiStrata.Enums import NoteNames, StaffPositions
 
 from dataclasses import dataclass, field
 
-from Interfaces.Components import INote
+from MusiStrata.Interfaces.Components import INote
 
 
 class Note(INote):
@@ -37,7 +37,7 @@ class Note(INote):
         self._Octave = new_octave
 
     def __hash__(self):
-        return self.Height
+        return "note{}".format(self.Height)
 
     def __str__(self) -> str:
         return "Note({})".format(self.Name + str(self.Octave))
@@ -149,11 +149,11 @@ class Note(INote):
         return self._Name.ToStaffPosition()
 
     @property
-    def StaffPositionName(self) -> StaffPositions:
+    def StaffPositionName(self) -> str:
         return self._Name.ToStaffPosition().name
 
     @property
-    def StaffPositionInteger(self) -> StaffPositions:
+    def StaffPositionInteger(self) -> int:
         return self._Name.ToStaffPosition().value
 
     def GetStaffPositionAsEnumElem(self) -> StaffPositions:

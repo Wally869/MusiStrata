@@ -1,4 +1,5 @@
 from typing import List, Tuple, Dict, Union
+from typing_extensions import Self
 from enum import Enum
 
 
@@ -70,7 +71,7 @@ class OrderedEnum(ExtendedEnum):
 
 
 class LoopingOrderedEnum(OrderedEnum):
-    def __add__(self, other: int):
+    def __add__(self, other: int) -> Tuple[Self, int]:
         if type(other) != int:
             return NotImplemented
 
@@ -91,7 +92,7 @@ class LoopingOrderedEnum(OrderedEnum):
 
         return self.GetAllElements()[currId], nbLoops
 
-    def __sub__(self, other):
+    def __sub__(self, other) -> Tuple[Self, int]:
         # Order-dependent implementation of __sub__ if objects of same class
         if self.__class__ is other.__class__:
             outValue = self.value - other.value

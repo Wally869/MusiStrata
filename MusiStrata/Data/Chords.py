@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 from dataclasses import dataclass
 
 
@@ -13,7 +13,7 @@ class ChordDescription:
     Intervals: List[str]
 
 
-CHORDS_DESCRIPTIONS: List[ChordDescription] = {
+CHORDS_DESCRIPTIONS: Dict[str, ChordDescription] = {
     "m": ChordDescription(
         "Minor",
         "m",
@@ -41,5 +41,19 @@ CHORDS_DESCRIPTIONS: List[ChordDescription] = {
         [
             "P1", "M3", "P5", "M7"
         ]
-    )
+    ),
+    "D": ChordDescription(
+        "Diminished",
+        "D",
+        [
+            "P1", "m3", "D5"
+        ]
+    ),
+    "D7": ChordDescription(
+        "Diminished 7th",
+        "D7",
+        [
+            "P1", "m3", "D5", "D7"
+        ]
+    ),
 }

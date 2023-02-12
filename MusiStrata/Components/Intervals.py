@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import List, Tuple, Dict, Union
+from typing import List, Tuple, Dict, Union, Optional
 
-from Data.Intervals import IntervalDescription
+from MusiStrata.Data.Intervals import IntervalDescription
 
 from .Notes import *
 
@@ -127,7 +127,7 @@ class BaseInterval(object):
     @classmethod
     def FindQualityFromNumberAndDistance(
         cls, interval_number: int, tonal_distance: int
-    ) -> str:
+    ) -> IntervalQuality:
         # Need to implement Augmented and Diminished intervals
         # function, or use bigger all_intervals_raw?
         for interval in GetAllIntervals():
@@ -136,7 +136,7 @@ class BaseInterval(object):
                 and interval.TonalDistance == tonal_distance
             ):
                 return interval.Quality
-        return None
+        raise Exception("Never")
 
     @classmethod
     def GetValidIntervals(cls, root_note: Note, list_intervals: List[Interval] = []):
@@ -163,7 +163,7 @@ class Interval(object):
         self,
         interval_number: int = -1,
         quality: IntervalQuality = IntervalQuality.Major,
-        Intervals: List[Interval] = [],
+        Intervals: Optional[List[Interval]] = None,
     ):
         if interval_number == -1 and Intervals == []:
             raise ValueError("Interval: No empty constructor defined")
@@ -171,54 +171,55 @@ class Interval(object):
             raise TypeError(
                 "Invalid Arguments. IntervalNumber should be an int. \n Use NamedParameters when creating an interval from other Intervals"
             )
-        if len(Intervals) >= 2:
-            # check the intervals given: aim to only have octaves + 1 non-octave as intervals, so need to perform checks
-            validated = []
-            disputed = []
-            for interval in Intervals:
-                if interval == Interval(1, IntervalQuality.Perfect):
-                    # skip the unison
-                    continue
-                elif interval == Interval(8, IntervalQuality.Perfect):
-                    # octave is ok
-                    validated.append(interval)
+        if Intervals:
+            if len(Intervals) >= 2:
+                # check the intervals given: aim to only have octaves + 1 non-octave as intervals, so need to perform checks
+                validated = []
+                disputed = []
+                for interval in Intervals:
+                    if interval == Interval(1, IntervalQuality.Perfect):
+                        # skip the unison
+                        continue
+                    elif interval == Interval(8, IntervalQuality.Perfect):
+                        # octave is ok
+                        validated.append(interval)
+                    else:
+                        # the rest need to be reconciliated
+                        disputed.append(interval)
+                if len(disputed) == 1 or (len(validated) > 0 and len(disputed) == 0):
+                    Intervals = validated + disputed
                 else:
-                    # the rest need to be reconciliated
-                    disputed.append(interval)
-            if len(disputed) == 1 or (len(validated) > 0 and len(disputed) == 0):
-                Intervals = validated + disputed
-            else:
-                # try to find nearest interval, based on number of semitones
-                tonalDistance = 0
-                for interval in disputed:
-                    tonalDistance += interval.TonalDistance
-                while tonalDistance > 12:
-                    validated.append(Interval(8, IntervalQuality.Perfect))
-                    tonalDistance -= 12
-                # iterate on minor/major/perfect intervals
-                foundMatch = False
-                for elem in MINOR_MAJOR_PERFECT_INTERVALS:
-                    # tonal distance is 3rd elem (so 2 in 0-indexed)
-                    # if found match, add to validated
-                    if elem[2] == tonalDistance:
-                        validated.append(
-                            Interval(
-                                IntervalNumber=elem[0],
-                                Quality=IntervalQuality.SafeFromStr(elem[1]),
+                    # try to find nearest interval, based on number of semitones
+                    tonalDistance = 0
+                    for interval in disputed:
+                        tonalDistance += interval.TonalDistance
+                    while tonalDistance > 12:
+                        validated.append(Interval(8, IntervalQuality.Perfect))
+                        tonalDistance -= 12
+                    # iterate on minor/major/perfect intervals
+                    foundMatch = False
+                    for elem in MINOR_MAJOR_PERFECT_INTERVALS:
+                        # tonal distance is 3rd elem (so 2 in 0-indexed)
+                        # if found match, add to validated
+                        if elem[2] == tonalDistance:
+                            validated.append(
+                                Interval(
+                                    IntervalNumber=elem[0],
+                                    Quality=IntervalQuality.SafeFromStr(elem[1]),
+                                )
                             )
+                            foundMatch = True
+                            break
+                    # else, this means the Interval is a tritone
+                    if foundMatch == False:
+                        validated.append(
+                            Interval(IntervalNumber=5, Quality=IntervalQuality.Diminished)
                         )
-                        foundMatch = True
-                        break
-                # else, this means the Interval is a tritone
-                if foundMatch == False:
-                    validated.append(
-                        Interval(IntervalNumber=5, Quality=IntervalQuality.Diminished)
-                    )
-                # set intervals
-                Intervals = validated
-            # last check: in case if is empty, or if only unison were given as inputs (so were pruned)
-            if len(validated) == 0:
-                validated.append(Interval(1, IntervalQuality.Perfect))
+                    # set intervals
+                    Intervals = validated
+                # last check: in case if is empty, or if only unison were given as inputs (so were pruned)
+                if len(validated) == 0:
+                    validated.append(Interval(1, IntervalQuality.Perfect))
 
         self.Intervals = Intervals
         if interval_number > 8:

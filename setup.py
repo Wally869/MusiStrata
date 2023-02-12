@@ -14,6 +14,7 @@ setup(
         "MusiStrata.Utils",
         "MusiStrata.Enums",
         "MusiStrata.Data",
+        "MusiStrata.Globals"
     ],
     install_requires=["mido", "soundcard"],
     zip_safe=False,

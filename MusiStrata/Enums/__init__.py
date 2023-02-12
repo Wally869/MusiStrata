@@ -1,5 +1,5 @@
-from email.policy import default
-from typing import List, Union
+from typing import List, Union, cast
+from typing_extensions import Self
 from enum import Enum
 
 from MusiStrata.Utils import EnumExtensions
@@ -35,12 +35,14 @@ class ChordBase(Enum):
     aug = [(1, "Perfect"), (3, "Major"), (5, "Augmented")]
 
     @classmethod
-    def SafeFromStr(cls, name: str) -> "ChordBase":
+    def SafeFromStr(cls, name: Union[Self, str]) -> Self:
         if name.__class__ is ChordBase:
-            return name
-        for member in cls._member_map_.keys():
-            if name == member:
-                return cls._member_map_[name]
+            return cast(ChordBase, name)
+        else:
+            name = cast(str, name)
+            for member in cls._member_map_.keys():
+                if name == member:
+                    return cls._member_map_[name]
 
 
 class ScaleChordExtension(Enum):
@@ -128,7 +130,7 @@ class NoteNames(EnumExtensions.LoopingOrderedEnum):
     B = 11
 
     @classmethod
-    def SafeFromStr(cls, name: Union[str, "NoteNames"]) -> "NoteNames":
+    def SafeFromStr(cls, name: Union[str, Self]) -> Self:
         if name.__class__ is NoteNames:
             return name
         for member in cls._member_map_.keys():
@@ -136,7 +138,7 @@ class NoteNames(EnumExtensions.LoopingOrderedEnum):
                 return cls._member_map_[name]
         raise KeyError("NoteNames - FromStr: {} is not a valid key", name)
 
-    def ToStaffPosition(self):
+    def ToStaffPosition(self) -> StaffPositions:
         if self == NoteNames.A or self == NoteNames.Gs:
             return StaffPositions.A
         elif self == NoteNames.B or self == NoteNames.As:
@@ -149,7 +151,7 @@ class NoteNames(EnumExtensions.LoopingOrderedEnum):
             return StaffPositions.E
         elif self == NoteNames.F:
             return StaffPositions.F
-        elif self == NoteNames.G or self == NoteNames.Fs:
+        else: # self == NoteNames.G or self == NoteNames.Fs:
             return StaffPositions.G
 
     @classmethod
@@ -241,7 +243,7 @@ class IntervalQuality(Enum):
     DoublyAugmented = "DoublyAugmented"
 
     @classmethod
-    def SafeFromStr(cls, name: str):
+    def SafeFromStr(cls, name: Union[Self, str]) -> Self:
         if name.__class__ is IntervalQuality:
             return name
         for member in cls._member_map_.keys():

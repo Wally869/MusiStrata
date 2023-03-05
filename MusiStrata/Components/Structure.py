@@ -13,9 +13,6 @@ from .Notes import *
 Dataclasses to represent song components
 """
 
-# TypeStripper preprocessing tag below, do not remove
-# NoTypeStripping
-
 
 @dataclass
 class SoundEvent:
@@ -28,7 +25,7 @@ class SoundEvent:
         dictRepr = {
             "Beat": self.Beat,
             "Duration": self.Duration,
-            "Note": self.Note.ToDict(),
+            "Note": self.Note.to_dict(),
             "Velocity": self.Velocity,
         }
         return dictRepr
@@ -43,7 +40,7 @@ class SoundEvent:
         return SoundEvent(
             Beat=dictRepr["Beat"],
             Duration=dictRepr["Duration"],
-            Note=Note.FromDict(dictRepr["Note"]),
+            Note=Note.from_dict(dictRepr["Note"]),
         )
 
     @classmethod
@@ -54,7 +51,7 @@ class SoundEvent:
         return cls.FromDict(dictRepr)
 
     @classmethod
-    def FromNotes(beat: float, duration: float, notes: List[Note]) -> List["SoundEvent"]:
+    def FromNotes(cls, beat: float, duration: float, notes: List[Note]) -> List["SoundEvent"]:
         return [SoundEvent(Beat=beat, Duration=duration, Note=note) for note in notes]
 
 
@@ -110,7 +107,7 @@ class Bar:
         return [self] * other
 
     def append(self, other: Union[SoundEvent, List[SoundEvent]]):
-        if type(other) == list:
+        if type(other) is list:
             if type(other[0]) != SoundEvent:
                 raise TypeError(
                     "Bar Class - The append method only accepts a SoundEvent object or a list of SoundEvent objects"
@@ -132,6 +129,7 @@ class Track:
     Bars: list = field(default_factory=list)
     IsDrumsTrack: bool = False
     BankUsed: int = 0
+    # Automation: np.ndarray[float]
 
     def ToDict(self) -> dict:
         dictRepr = {
@@ -181,7 +179,7 @@ class Track:
         """
             Add other to self.Bars
         """
-        if self.__class__ is other.__class__:
+        if type(other) is Track:
             outTrack = self
             outTrack.Bars = outTrack.Bars + other.Bars
             return outTrack
@@ -191,13 +189,13 @@ class Track:
         else:
             return NotImplemented
 
-    def DuplicateBars(self, duplication_factor: Union[int, float]):
+    def DuplicateBars(self, duplication_factor: int):
         # duplicate bars and append them to the track
         # casting float to int
         self.Bars = self.Bars * duplication_factor
 
     def append(self, other: Union[Bar, List[Bar]]):
-        if type(other) == list:
+        if type(other) is list:
             if type(other[0]) != Bar:
                 raise TypeError(
                     "Track Class - The append method only accepts a Bar object or a list of Bar objects"

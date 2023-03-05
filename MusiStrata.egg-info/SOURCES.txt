@@ -18,9 +18,15 @@ MusiStrata/Components/Structure.py
 MusiStrata/Components/__init__.py
 MusiStrata/Data/Chords.py
 MusiStrata/Data/Intervals.py
+MusiStrata/Data/Intervals2.py
+MusiStrata/Data/Scales.py
 MusiStrata/Data/__init__.py
+MusiStrata/Enums/Chords.py
+MusiStrata/Enums/Intervals.py
+MusiStrata/Enums/Notes.py
+MusiStrata/Enums/Scales.py
+MusiStrata/Enums/Structure.py
 MusiStrata/Enums/__init__.py
-MusiStrata/Globals/__init__.py
 MusiStrata/Instruments/MidiDrums.py
 MusiStrata/Instruments/MidiInstruments.py
 MusiStrata/Instruments/__init__.py

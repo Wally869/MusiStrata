@@ -13,8 +13,7 @@ setup(
         "MusiStrata.Instruments",
         "MusiStrata.Utils",
         "MusiStrata.Enums",
-        "MusiStrata.Data",
-        "MusiStrata.Globals"
+        "MusiStrata.Data"
     ],
     install_requires=["mido", "soundcard"],
     zip_safe=False,

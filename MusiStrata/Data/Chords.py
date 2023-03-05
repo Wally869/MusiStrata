@@ -42,18 +42,25 @@ CHORDS_DESCRIPTIONS: Dict[str, ChordDescription] = {
             "P1", "M3", "P5", "M7"
         ]
     ),
-    "D": ChordDescription(
+    "d": ChordDescription(
         "Diminished",
-        "D",
+        "d",
         [
-            "P1", "m3", "D5"
+            "P1", "m3", "d5"
         ]
     ),
     "D7": ChordDescription(
         "Diminished 7th",
         "D7",
         [
-            "P1", "m3", "D5", "D7"
+            "P1", "m3", "d5", "d7"
         ]
     ),
+    "A": ChordDescription(
+        "Augmented",
+        "A",
+        [
+            "P1", "M3", "A5"
+        ]
+    )
 }

@@ -1,6 +1,5 @@
 from MusiStrata.Components import *
 from MusiStrata.Rendering import Render, RenderFormats
-from MusiStrata.Enums import ChordExtension as CE
 
 from random import seed, choice
 
@@ -15,8 +14,8 @@ def GenerateExample2():
     progression = [0, 2, 4, 0]
     bars = []
     for currID in progression:
-        chord = Chord.FromScaleTones([currID, currID + 2, currID + 4], sc)
-        notes = chord.__call__(sc.GetNote(currID, 5))
+        chord = Chord("m7")
+        notes = chord(sc.get_note(currID, 5))
         if currID == 4:
             notes = invert(notes, 2)
             notes = [note - 12 for note in notes]        
@@ -26,19 +25,14 @@ def GenerateExample2():
     song = Song(Tempo=120, Tracks=[track])
     Render(song, "Examples/example2-v2.mid", RenderFormats.MIDI)
 
+
 def GenerateExample3():
     sc = Scale("C", "Major")
     progression = [0, 2, 4, 0]
     bars = []
     for currID in progression:
-        root_note = sc.GetNote(currID, 5)
-        notes = Chord.FromStr("m7" if currID != 2 else "M7")(root_note, [(0, 0), (2, 0), (3, 0)])
-        if currID == 4:
-            notes = invert(notes, 2)
-            notes = [note - 12 for note in notes]    
-        elif currID == 2:
-            notes = invert(notes, 2)
-            notes = [note - 12 for note in notes]   
+        root_note = sc.get_note(currID, 5)
+        notes = Chord("m7" if currID != 2 else "M7")(root_note - 12, 2)
         barNotes = [SoundEvent(0.0, 4.0, n) for n in notes]
         bars.append(Bar(barNotes))
     track = Track(Bars=bars, Instrument="Acoustic Grand Piano")
@@ -50,10 +44,10 @@ def GenerateExample3():
 def GenerateExample4():
     sc = Scale("C", "Major")
     progression = [0, 2, 4, 0]
-    chords = Chord.GetScaleChords(sc, "7")
+    chords = Scale.get_scale_chords(sc)
     bars = []
     for currID in progression:
-        root_note = sc.GetNote(currID, 5)
+        root_note = sc.get_note(currID, 5)
         notes = chords[currID](root_note)
         if currID == 4:
             notes = invert(notes, 2)
@@ -67,7 +61,7 @@ def GenerateExample4():
 
     bars = []
     for currID in progression:
-        root_note = sc.GetNote(currID, 6)
+        root_note = sc.get_note(currID, 6)
         notes = chords[currID](root_note)
         barNotes = [SoundEvent(i, 1.0, choice(notes)) for i in range(4)]
         bars.append(Bar(barNotes))

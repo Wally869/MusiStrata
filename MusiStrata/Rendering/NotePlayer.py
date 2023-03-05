@@ -1,5 +1,4 @@
-from __future__ import annotations
-from typing import List, Tuple, Dict, Union
+from typing import List, Tuple, Dict, Union, cast
 
 from MusiStrata.Components import Note, Bar
 import soundcard as sc
@@ -15,8 +14,9 @@ DEFAULT_SPEAKER = sc.default_speaker()
 
 
 def PlayNotes(notes: Union[List[Note], Note], sampleRate: int = 10000) -> None:
-    if type(notes) == Note:
+    if type(notes) is Note:
         return PlayNotes([notes])
+    notes = cast(List[Note], notes)
     deltaTimes = np.arange(sampleRate) / sampleRate
     output = np.zeros(len(deltaTimes))
     for n in notes:
@@ -42,7 +42,7 @@ def PlayBar(
 
 def SaveBarsToSineArray(
     bars: List[Bar], nbBeatsInBar: float = 4.0, sampleRate: int = 10000, tempo: int = 60
-) -> List[npNdarray, int]:
+) -> Tuple[npNdarray, int]:
     deltaTimes = (
         np.arange(int(sampleRate * nbBeatsInBar * len(bars) * 60 / tempo)) / sampleRate
     )

@@ -111,9 +111,9 @@ class NoteOff:
         return "note_off"
 
 
-def CreateEventsStructs(soundEvent, baseTime, velocity) -> Tuple:
+def CreateEventsStructs(soundEvent: SoundEvent, baseTime, velocity) -> Tuple:
     # here using the Note struct defined in Structs.py
-    noteHeight = soundEvent.Note.Height
+    noteHeight = soundEvent.Note.height
     noteOnObject = NoteOn(baseTime, noteHeight, velocity)
     deltaTime = soundEvent.Duration * TICKS_PER_BEAT
     noteOffObject = NoteOff(baseTime + deltaTime, noteHeight)

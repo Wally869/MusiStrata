@@ -93,6 +93,6 @@ def GetAllIntervals():
             for spec in (AUGMENTED_DIMINISHED_INTERVALS + DOUBLY_AUGMENTED_DIMINISHED_INTERVALS)
         ]
         ALL_INTERVALS = [Interval(spec[0], spec[1]) for spec in ALL_INTERVALS_RAW]
-        ALL_INTERVALS.sort(key=lambda x: x.TonalDistance) 
+        ALL_INTERVALS.sort(key=lambda x: x.tonal_distance) 
     return ALL_INTERVALS
 

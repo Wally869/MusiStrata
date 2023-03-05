@@ -6,4 +6,3 @@ import MusiStrata.Utils as Utils
 import MusiStrata.Instruments as Instruments
 import MusiStrata.Enums as Enums
 
-import MusiStrata.Globals as Globals

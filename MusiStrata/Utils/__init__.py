@@ -1,9 +1,8 @@
-from MusiStrata.Interfaces.Components import INote
-from .PrimitiveClassesUtils import Record, Library
+from typing import Any
 from .utils import *
+from .PrimitiveClassesUtils import *
 
-
-def invert(notes: List[INote], inversions: int) -> List[INote]:
+def invert(notes: List[Any], inversions: int) -> List[Any]:
     """
         From a list of notes, while inversions > 0 pop the first note, add an octave and put it at the end of the stack
     """

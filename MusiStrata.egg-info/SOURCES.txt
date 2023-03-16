@@ -38,6 +38,11 @@ MusiStrata/Rendering/NotePlayer.py
 MusiStrata/Rendering/Utils.py
 MusiStrata/Rendering/WavRenderer.py
 MusiStrata/Rendering/__init__.py
+MusiStrata/Structure/Bar.py
+MusiStrata/Structure/Song.py
+MusiStrata/Structure/SoundEvent.py
+MusiStrata/Structure/Track.py
+MusiStrata/Structure/__init__.py
 MusiStrata/Utils/EnumExtensions.py
 MusiStrata/Utils/Functions.py
 MusiStrata/Utils/PrimitiveClassesUtils.py

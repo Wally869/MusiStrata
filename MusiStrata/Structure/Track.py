@@ -18,7 +18,7 @@ class Track:
     BankUsed: int = 0
     # Automation: np.ndarray[float]
 
-    def to_song(self, tempo: int = 80, beats_per_bar: int = 4) -> Song:
+    def to_song(self, tempo: int = 80, beats_per_bar: int = 4) -> "Song":
         from .Song import Song
         return Song(
             tempo,

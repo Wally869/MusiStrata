@@ -9,6 +9,7 @@ setup(
         "MusiStrata",
         "MusiStrata.Interfaces",
         "MusiStrata.Components",
+        "MusiStrata.Structure",
         "MusiStrata.Rendering",
         "MusiStrata.Instruments",
         "MusiStrata.Utils",

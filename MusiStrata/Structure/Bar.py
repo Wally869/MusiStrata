@@ -22,14 +22,14 @@ class Bar:
         from json import dumps as _dumps
         return _dumps(self.ToDict())
 
-    def to_track(self, instrument: str = "") -> Track:
+    def to_track(self, instrument: str = "") -> "Track":
         from .Track import Track
         return Track(
             Instrument=instrument,
             Bars=[self]
         )
     
-    def to_song(self, tempo: int = 80, beats_per_bar: int = 40, instrument: str = "") -> Song:
+    def to_song(self, tempo: int = 80, beats_per_bar: int = 40, instrument: str = "") -> "Song":
         from .Song import Song
         return Song(
             tempo,

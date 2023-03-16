@@ -1,6 +1,7 @@
 from typing import List
 
-from MusiStrata.Components import Song, Note, Bar
+from MusiStrata.Components import Note
+from MusiStrata.Structure import Bar, Song
 
 from enum import Enum
 

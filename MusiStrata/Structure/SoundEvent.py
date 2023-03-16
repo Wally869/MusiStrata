@@ -11,12 +11,12 @@ if TYPE_CHECKING:
     from .Song import Song
 
 
-@dataclass
 class SoundEvent:
-    Beat: float = 0.0
-    Duration: float = 1.0
-    Note: Note = Note()
-    Velocity: int = 60
+    def __init__(self, beat: float = 0.0, duration: float = 1.0, note: Note = Note(), velocity: int = 60) -> None:
+        self.Beat = beat
+        self.Duration = duration
+        self.Note = note
+        self.Velocity = velocity
 
     def ToDict(self) -> dict:
         dictRepr = {
@@ -49,20 +49,20 @@ class SoundEvent:
 
     @classmethod
     def FromNotes(cls, beat: float, duration: float, notes: List[Note]) -> List[Self]:
-        return [SoundEvent(Beat=beat, Duration=duration, Note=note) for note in notes]
+        return [SoundEvent(beat, duration, note) for note in notes]
 
-    def to_bar(self) -> Bar:
+    def to_bar(self) -> "Bar":
         from .Bar import Bar
         return Bar([self])
     
-    def to_track(self, instrument: str = "") -> Track:
+    def to_track(self, instrument: str = "") -> "Track":
         from .Track import Track
         return Track(
             Instrument=instrument,
             Bars=[Bar(self)]
         )
 
-    def to_song(self, tempo: int = 80, beats_per_bar: int = 4, instrument: str = "") -> Song:
+    def to_song(self, tempo: int = 80, beats_per_bar: int = 4, instrument: str = "") -> "Song":
         from .Song import Song
         return Song(
             tempo,

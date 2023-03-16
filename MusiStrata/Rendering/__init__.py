@@ -35,15 +35,13 @@ def Play(element, nbBeatsInBar: int = 4, sampleRate: int = 16000, tempo: int = 6
     played = False
     if type(element) is Note or (type(element) is list and type(element[0]) is Note):
         from .NotePlayer import PlayNotes
-
         PlayNotes(element, sampleRate)
         played = True
     elif type(element) is Bar:
         element = [element]
     if type(element) is list and type(element[0]) is Bar:
         from .NotePlayer import PlayBars
-
         PlayBars(element, nbBeatsInBar, sampleRate, tempo)
         played = True
     if not played:
-        raise NotImplementedError("Play - Type Not Supporter: {}".format(type(element)))
+        raise NotImplementedError("Play - Type Not Supportes: {}".format(type(element)))

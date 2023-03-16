@@ -1,6 +1,7 @@
-from typing import List, Tuple, Dict, Union, cast
+from typing import List, Tuple, Union, cast
 
-from MusiStrata.Components import Note, Bar
+from MusiStrata.Components import Note
+from MusiStrata.Structure import *
 import soundcard as sc
 import numpy as np
 from scipy import signal

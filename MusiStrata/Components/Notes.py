@@ -43,6 +43,7 @@ class Note:
     @property
     def Frequency(self) -> float:
         """
+            Convert height to frequency in hertz.
             Using this as reference: https://pages.mtu.edu/~suits/notefreqs.html
         """
         return 16.35 * (2 ** self.octave) * (2 ** (1 / 12)) ** self.name.value

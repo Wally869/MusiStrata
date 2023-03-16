@@ -2,7 +2,7 @@ from typing import List, Union, TYPE_CHECKING
 from typing_extensions import Self
 from dataclasses import dataclass
 
-from Components.Notes import Note
+from MusiStrata.Components.Notes import Note
 
 from MusiStrata.Data.Scales import SCALE_CHORD_CODES, SCALE_TONES
 

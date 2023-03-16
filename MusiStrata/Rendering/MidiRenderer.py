@@ -1,6 +1,6 @@
 from MusiStrata.Interfaces import IRenderer
 
-from MusiStrata.Components import Song
+from MusiStrata.Structure import Song
 
 
 class MidiRenderer(IRenderer):

@@ -1,8 +1,8 @@
 from typing import List, Optional
 from typing_extensions import Self
 
-from Components.Notes import Note
-from Components.Intervals import Interval
+from MusiStrata.Components.Notes import Note
+from MusiStrata.Components.Intervals import Interval
 
 from rustshed import Result, Ok, Err
 

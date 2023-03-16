@@ -3,7 +3,7 @@ from typing import List, Tuple, Dict, Union
 
 import mido
 
-from MusiStrata.Components import *
+from MusiStrata.Structure import *
 from MusiStrata.Instruments import GetSignalFromInstrument
 
 

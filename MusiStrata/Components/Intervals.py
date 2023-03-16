@@ -2,7 +2,7 @@ from typing import List, Tuple, Optional, Union, cast, TYPE_CHECKING
 from typing_extensions import Self
 from dataclasses import dataclass
 
-from Components.Notes import Note
+from MusiStrata.Components.Notes import Note
 from MusiStrata.Components.Scales import Scale
 from MusiStrata.Enums import IntervalQuality
 

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="MusiStrata",
-    version="1.0.0",
+    version="2.a.0",
     url="http://github.com/Wally869/MusiStrata",
     author="Wally869",
     packages=[

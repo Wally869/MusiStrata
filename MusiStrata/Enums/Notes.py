@@ -1,4 +1,4 @@
-from typing import List, Union, cast
+from typing import List, Union, cast, Tuple
 from typing_extensions import Self
 
 from enum import Enum
@@ -54,6 +54,21 @@ class NoteNames(EnumExtensions.LoopingOrderedEnum):
     A = 9
     As = 10
     B = 11
+
+    def get_circle_pos(self) -> Tuple[float, float]:
+        """
+            Convert note value to a circle position with radius of 1.
+            Can be used in distance calculations.
+        """
+        from numpy import sin, cos, radians
+        rads: float = radians(float(self.value) / 12.0 * 360.0)
+        return (cos(rads), sin(rads))
+    
+    def get_circle_distance(self, other: Self) -> float:
+        from numpy import sqrt
+        self_pos = self.get_circle_pos()
+        other_pos = other.get_circle_pos()
+        return sqrt((self_pos[0] - other_pos[0]) ** 2 + (self_pos[1] - other_pos[1]) ** 2)
 
     @classmethod
     def SafeFromStr(cls, name: Union[str, Self]) -> Self:

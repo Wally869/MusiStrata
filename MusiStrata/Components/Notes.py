@@ -1,8 +1,9 @@
-from typing import Union, Optional, Dict
+from typing import Union, Optional, Dict, Tuple, TYPE_CHECKING
 from typing_extensions import Self
 from dataclasses import dataclass
 
 from MusiStrata.Enums import NoteNames
+
 
 @dataclass
 class Note:
@@ -64,6 +65,12 @@ class Note:
         return self.name == other.name and self.octave == other.octave
 
     def __add__(self, delta: int) -> Self:
+        # add special case if string for easy intervals
+        if type(delta) is str:
+            from MusiStrata.Components.Intervals import Interval
+            return self + Interval.from_code(delta)
+        elif type(delta) is not int:
+            return delta.__radd__(self)
         name, delta_octave = self.name + delta
         return Note(
             name,
@@ -76,6 +83,12 @@ class Note:
             name,
             self.octave + delta_octave
         )
+    
+    def get_circle_pos(self) -> Tuple[float, float]:
+        return self.name.get_circle_pos()
+    
+    def get_circle_distance(self, other: Self) -> float:
+        return self.name.get_circle_distance(other.name)
 
     def get_tonal_distance(self, other: Self) -> int:
         """

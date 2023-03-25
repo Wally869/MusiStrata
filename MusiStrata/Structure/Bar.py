@@ -29,7 +29,7 @@ class Bar:
             Bars=[self]
         )
     
-    def to_song(self, tempo: int = 80, beats_per_bar: int = 40, instrument: str = "") -> "Song":
+    def to_song(self, tempo: int = 80, beats_per_bar: int = 4, instrument: str = "") -> "Song":
         from .Song import Song
         return Song(
             tempo,
@@ -85,3 +85,8 @@ class Bar:
             raise TypeError(
                 "Bar Class - The append method only accepts a SoundEvent object or a list of SoundEvent objects"
             )
+
+    def copy(self) -> Self:
+        return Bar(
+            [se.copy() for se in self.SoundEvents]
+        )

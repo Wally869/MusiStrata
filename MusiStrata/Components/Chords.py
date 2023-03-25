@@ -59,6 +59,10 @@ class Chord:
         ]
     
     def get_notes(self, base_note: Note, inversion: int = 0) -> List[Note]:
+        """
+           Resolve a chord using a given note, can invert the chord.
+           This is wrapped by __call__ for easier use.
+        """
         notes = [
             base_note + interval for interval in self.intervals
         ]

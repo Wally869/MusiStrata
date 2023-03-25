@@ -18,6 +18,12 @@ class SoundEvent:
         self.Note = note
         self.Velocity = velocity
 
+    def __str__(self) -> str:
+        return "<SoundEvent (Beat: {} - Duration: {} - Node: {} - Velocity: {})>".format(self.Beat, self.Duration, self.Note, self.Velocity)
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
     def ToDict(self) -> dict:
         dictRepr = {
             "Beat": self.Beat,
@@ -68,4 +74,11 @@ class SoundEvent:
             tempo,
             beats_per_bar,
             [self.to_track(instrument)]
+        )
+
+    def copy(self) -> Self:
+        return SoundEvent(
+            self.Beat,
+            self.Duration,
+            self.Note
         )

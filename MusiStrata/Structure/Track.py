@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class Track:
     Name: str = "Untitled"
     Instrument: str = ""
-    Bars: list = field(default_factory=list)
+    Bars: List[Bar] = field(default_factory=list)
     IsDrumsTrack: bool = False
     BankUsed: int = 0
     # Automation: np.ndarray[float]
@@ -103,6 +103,15 @@ class Track:
             raise TypeError(
                 "Track Class - The append method only accepts a Bar object or a list of Bar objects"
             )
+
+    def copy(self) -> Self:
+        return Track(
+            self.Name,
+            self.Instrument,
+            [bar.copy() for bar in self.Bars],
+            self.IsDrumsTrack,
+            self.BankUsed
+        )
 
 
 # Do I really need a timesignature? For my implementation, beats per bar is enough?

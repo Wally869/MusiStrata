@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "MusiStrata"
+version = "2.a.0"
+authors = [
+  { name="Wally869", email="Wally869@protonmail.com" },
+]
+description = "Create and manipulate Musical Components. This library serves as a building block for creation of music or analysis of Midi files in python."
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Wally869/MusiStrata"
+"Bug Tracker" = "https://github.com/Wally869/MusiStrata/issues"
